@@ -37,10 +37,13 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tomboy\" />
+    <Folder Include="Tomboy\Storage\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Tomboy\Note.cs" />
     <Compile Include="Tomboy\Tag.cs" />
     <Compile Include="Tomboy\Engine.cs" />
+    <Compile Include="Tomboy\Storage\IStorage.cs" />
+    <Compile Include="Tomboy\Storage\DiskStorage.cs" />
   </ItemGroup>
 </Project>
