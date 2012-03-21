@@ -6,7 +6,7 @@
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{040AA912-9738-438A-A7FD-5BB02C40C30A}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>Tomboy</RootNamespace>
     <AssemblyName>Tomboy-library</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
@@ -40,7 +40,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Tomboy\Note.cs" />
-    <Compile Include="Tomboy\NoteDataBufferSynchronizer.cs" />
     <Compile Include="Tomboy\Tag.cs" />
     <Compile Include="Tomboy\Engine.cs" />
   </ItemGroup>

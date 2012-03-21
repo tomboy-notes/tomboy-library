@@ -1,10 +1,19 @@
-﻿<Properties>
+﻿<Properties GitUserInfo="UsingGIT">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Tomboy/Note.cs">
     <Files>
-      <File FileName="../../tomboy/Tomboy/Note.cs" Line="364" Column="3" />
-      <File FileName="Tomboy/Note.cs" Line="3" Column="17" />
+      <File FileName="Tomboy/Note.cs" Line="12" Column="16" />
+      <File FileName="Tomboy/Tag.cs" Line="1" Column="1" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="Tomboy-library" expanded="True" selected="True">
+            <Node name="Tomboy" expanded="True" />
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

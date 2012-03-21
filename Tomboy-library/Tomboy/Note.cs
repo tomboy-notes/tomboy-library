@@ -14,21 +14,13 @@ namespace Tomboy
 		DateTime create_date;
 		DateTime change_date;
 		DateTime metadata_change_date;
-		int cursor_pos, selection_bound_pos;
-		int width, height;
 		int x, y;
-		bool open_on_startup;
 		Dictionary<string, Tag> tags;
-		const int noPosition = -1;
 
 		public Note (string uri)
 		{
 			this.uri = uri;
 			this.text = "";
-			x = noPosition;
-			y = noPosition;
-			selection_bound_pos = noPosition;
-
 			tags = new Dictionary<string, Tag> ();
 
 			create_date = DateTime.MinValue;
@@ -95,47 +87,6 @@ namespace Tomboy
 				metadata_change_date = value;
 			}
 		}
-		
-
-		// FIXME: the next six attributes don't belong here (the data
-		// model), but belong into the view; for now they are kept here
-		// for backwards compatibility
-
-		public int CursorPosition {
-			get {
-				return cursor_pos;
-			}
-			set {
-				cursor_pos = value;
-			}
-		}
-		
-		public int SelectionBoundPosition {
-			get {
-				return selection_bound_pos;
-			}
-			set {
-				selection_bound_pos = value;
-			}
-		}
-
-		public int Width {
-			get {
-				return width;
-			}
-			set {
-				width = value;
-			}
-		}
-
-		public int Height {
-			get {
-				return height;
-			}
-			set {
-				height = value;
-			}
-		}
 
 		public int X {
 			get {
@@ -161,15 +112,6 @@ namespace Tomboy
 			}
 		}
 
-		public bool IsOpenOnStartup {
-			get {
-				return open_on_startup;
-			}
-			set {
-				open_on_startup = value;
-			}
-		}
-
 		public void SetPositionExtent (int x, int y, int width, int height)
 		{
 			if (x < 0 || y < 0)
@@ -179,18 +121,6 @@ namespace Tomboy
 
 			this.x = x;
 			this.y = y;
-			this.width = width;
-			this.height = height;
-		}
-
-		public bool HasPosition ()
-		{
-			return x != noPosition && y != noPosition;
-		}
-
-		public bool HasExtent ()
-		{
-			return width != 0 && height != 0;
 		}
 	}
 }
