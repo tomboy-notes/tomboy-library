@@ -34,10 +34,12 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Reference Include="System.Xml" />
+    <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tomboy\" />
     <Folder Include="Tomboy\Storage\" />
+    <Folder Include="tests\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Tomboy\Note.cs" />
@@ -45,5 +47,6 @@
     <Compile Include="Tomboy\Engine.cs" />
     <Compile Include="Tomboy\Storage\IStorage.cs" />
     <Compile Include="Tomboy\Storage\DiskStorage.cs" />
+    <Compile Include="tests\StorageTests.cs" />
   </ItemGroup>
 </Project>
