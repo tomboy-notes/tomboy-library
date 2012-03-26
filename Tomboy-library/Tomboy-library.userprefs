@@ -1,5 +1,4 @@
 ﻿<Properties GitUserInfo="UsingGIT">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Tomboy/Storage/DiskStorage.cs">
     <Files>
       <File FileName="Tomboy/Note.cs" Line="17" Column="12" />
