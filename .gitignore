@@ -1,0 +1,5 @@
+#Ignore userprefs file (Contains stuff like which files you have open)
+.userprefs
+#Ignore MonoDevelop Parser Information Database
+.pidb
+
