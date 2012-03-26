@@ -9,7 +9,6 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Tomboy</RootNamespace>
     <AssemblyName>Tomboy-library</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -48,5 +47,8 @@
     <Compile Include="Tomboy\Storage\IStorage.cs" />
     <Compile Include="Tomboy\Storage\DiskStorage.cs" />
     <Compile Include="tests\StorageTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="tests\test_notes\90d8eb70-989d-4b26-97bc-ba4b9442e51f.note" />
   </ItemGroup>
 </Project>

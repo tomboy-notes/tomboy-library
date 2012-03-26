@@ -2,4 +2,6 @@
 *.userprefs
 #Ignore MonoDevelop Parser Information Database
 *.pidb
-
+#Ignore build output folders
+bin/
+test-results/
