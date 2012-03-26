@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<note version="0.3" xmlns:link="http://beatniksoftware.com/tomboy/link" xmlns:size="http://beatniksoftware.com/tomboy/size" xmlns="http://beatniksoftware.com/tomboy">
+  <title>Start Here</title>
+  <text xml:space="preserve"><note-content version="0.1">Start Here
+
+<bold>Welcome to Tomboy!</bold>
+
+Use this "Start Here" note to begin organizing your ideas and thoughts.
+
+You can create new notes to hold your ideas by selecting the "Create New Note" item from the Tomboy Notes menu in your GNOME Panel. Your note will be saved automatically.
+
+Then organize the notes you create by linking related notes and ideas together!
+
+We've created a note called <link:internal>Using Links in Tomboy</link:internal>.  Notice how each time we type <link:internal>Using Links in Tomboy</link:internal> it automatically gets underlined?  Click on the link to open the note.</note-content></text>
+  <last-change-date>2012-03-26T21:51:54.2191587+02:00</last-change-date>
+  <last-metadata-change-date>2012-03-26T21:51:54.2221590+02:00</last-metadata-change-date>
+  <create-date>2009-05-04T17:10:54.4871750+02:00</create-date>
+  <cursor-position>531</cursor-position>
+  <selection-bound-position>531</selection-bound-position>
+  <width>450</width>
+  <height>360</height>
+  <x>1305</x>
+  <y>93</y>
+  <tags>
+    <tag>system:notebook:Computer Notes</tag>
+  </tags>
+  <open-on-startup>False</open-on-startup>
+</note>
