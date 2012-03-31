@@ -15,6 +15,14 @@ namespace Tomboy
 		/// A Generic list of Notes
 		/// </returns>
 		List<Note> GetNotes ();
+		
+		/// <summary>
+		/// Sets the path to where Notes are located
+		/// </summary>
+		/// <param name='path'>
+		/// Path.
+		/// </param>
+		void SetPath (string path);
 	}
 }
 

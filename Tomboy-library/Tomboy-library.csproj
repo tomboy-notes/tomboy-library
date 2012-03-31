@@ -35,6 +35,7 @@
   <ItemGroup>
     <Reference Include="System.Xml" />
     <Reference Include="nunit.framework" />
+    <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tomboy\" />
@@ -48,5 +49,9 @@
     <Compile Include="Tomboy\Storage\IStorage.cs" />
     <Compile Include="Tomboy\Storage\DiskStorage.cs" />
     <Compile Include="tests\StorageTests.cs" />
+    <Compile Include="Tomboy\TomboyException.cs" />
+    <Compile Include="Tomboy\Utils.cs" />
+    <Compile Include="Tomboy\XmlEncoder.cs" />
+    <Compile Include="Tomboy\XmlDecoder.cs" />
   </ItemGroup>
 </Project>
