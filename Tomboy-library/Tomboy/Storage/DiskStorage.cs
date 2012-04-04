@@ -182,6 +182,9 @@ namespace Tomboy
 			if (path_to_notes == null)
 				throw new TomboyException ("No Notes path has been defined");
 			
+			/* For anyone wanting to implement another / different backend,
+			 * this could be changed in the implementing class to retreive whatever notes
+			 */
 			string [] files = Directory.GetFiles (path_to_notes, "*.note");
 			foreach (string file_path in files) {
 				try {
@@ -206,6 +209,9 @@ namespace Tomboy
 		private static Note ReadFile (string read_file, string uri)
 		{
 			Note note;
+			/* Reader.Read should be called by all storage classes.
+			 * The Reader is responsible for taking the XML data and turning it into a Note object
+			 */
 			using (var xml = new XmlTextReader (new StreamReader (read_file, System.Text.Encoding.UTF8)) {Namespaces = false})
 				note = Reader.Read (xml, uri);
 

@@ -3,9 +3,23 @@ using System.Xml;
 
 namespace Tomboy
 {
+	/// <summary>
+	/// Reader is responsible for consuming Notes in XML format
+	/// and returning the Note as a object.
+	/// </summary>
 	public class Reader
 	{
-
+		/// <summary>
+		/// Read the specified xml and uri.
+		/// </summary>
+		/// <description>XML is the raw Note XML for each note in the system.</description>
+		/// <description>uri is in the format of //tomboy:NoteHash</description>
+		/// <param name='xml'>
+		/// Xml.
+		/// </param>
+		/// <param name='uri'>
+		/// URI.
+		/// </param>
 		public static Note Read (XmlTextReader xml, string uri)
 		{
 			Note note = new Note (uri);
