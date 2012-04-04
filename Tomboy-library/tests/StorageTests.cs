@@ -11,7 +11,7 @@ namespace Tomboy
 		public void DiskStorageReadTitle ()
 		{
 			string StartHereNotePath = "../../tests/test_notes/90d8eb70-989d-4b26-97bc-ba4b9442e51f.note";
-			Note StartHere = DiskStorage.Read (StartHereNotePath, "tomboy://90d8eb70-989d-4b26-97bc-ba4b9442e51f");
+			Note StartHere =  DiskStorage.Read (StartHereNotePath, "tomboy://90d8eb70-989d-4b26-97bc-ba4b9442e51f");
 			Assert.AreEqual (StartHere.Title, "Start Here");
 		}
 		
@@ -19,7 +19,7 @@ namespace Tomboy
 		public void Test_GetNotes ()
 		{
 			IStorage storage = DiskStorage.Instance;
-			storage.SetPath ("/home/jjennings/.local/share/tomboy");
+			storage.SetPath ("../../tests/test_notes");
 			List<Note> notes = storage.GetNotes ();
 			Assert.IsNotNull (notes);
 			Assert.IsTrue (notes.Count > 0);			

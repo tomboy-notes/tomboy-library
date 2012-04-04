@@ -178,16 +178,14 @@ namespace Tomboy
 		
 		public List<Note> GetNotes ()
 		{
+			List<Note> notes = new List<Note> ();	
 			if (path_to_notes == null)
 				throw new TomboyException ("No Notes path has been defined");
 			
-			List<Note> notes = new List<Note> ();			
 			string [] files = Directory.GetFiles (path_to_notes, "*.note");
-
 			foreach (string file_path in files) {
 				try {
 					notes.Add (Read (file_path, Utils.GetURI (file_path)));
-					
 				} catch (System.Xml.XmlException e) {
 					Console.WriteLine ("Failed to read Note {0}", file_path); /* so we know what note we cannot read */
 					Console.WriteLine (e);
@@ -202,78 +200,14 @@ namespace Tomboy
 				
 		public static Note Read (string read_file, string uri)
 		{
-			return Instance.ReadFile (read_file, uri);
+			return ReadFile (read_file, uri);
 		}
 
-		public virtual Note ReadFile (string read_file, string uri)
+		private static Note ReadFile (string read_file, string uri)
 		{
 			Note note;
-			string version;
 			using (var xml = new XmlTextReader (new StreamReader (read_file, System.Text.Encoding.UTF8)) {Namespaces = false})
-				note = Read (xml, uri, out version);
-
-			return note;
-		}
-
-		public virtual Note Read (XmlTextReader xml, string uri)
-		{
-			string version; // discarded
-			Note note = Read (xml, uri, out version);
-			return note;
-		}
-
-		private Note Read (XmlTextReader xml, string uri, out string version)
-		{
-			Note note = new Note (uri);
-			DateTime date;
-			int num;
-			version = String.Empty;
-
-			while (xml.Read ()) {
-				switch (xml.NodeType) {
-				case XmlNodeType.Element:
-					switch (xml.Name) {
-					case "note":
-						version = xml.GetAttribute ("version");
-						break;
-					case "title":
-						note.Title = xml.ReadString ();
-						break;
-					case "text":
-						// <text> is just a wrapper around <note-content>
-						// NOTE: Use .text here to avoid triggering a save.
-						note.Text = xml.ReadInnerXml ();
-						break;
-					case "last-change-date":
-						if (DateTime.TryParse (xml.ReadString (), out date))
-							note.ChangeDate = date;
-						else
-							note.ChangeDate = DateTime.Now;
-						break;
-					case "last-metadata-change-date":
-						if (DateTime.TryParse (xml.ReadString (), out date))
-							note.MetadataChangeDate = date;
-						else
-							note.MetadataChangeDate = DateTime.Now;
-						break;
-					case "create-date":
-						if (DateTime.TryParse (xml.ReadString (), out date))
-							note.CreateDate = date;
-						else
-							note.CreateDate = DateTime.Now;
-						break;
-					case "x":
-						if (int.TryParse (xml.ReadString (), out num))
-							note.X = num;
-						break;
-					case "y":
-						if (int.TryParse (xml.ReadString (), out num))
-							note.Y = num;
-						break;
-					}
-					break;
-				}
-			}
+				note = Reader.Read (xml, uri);
 
 			return note;
 		}		
