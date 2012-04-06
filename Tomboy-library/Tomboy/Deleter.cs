@@ -1,8 +1,10 @@
+// 
+//  Deleter.cs
+//  
 //  Author:
 //       jjennings <jaredljennings@gmail.com>
 //  
 //  Copyright (c) 2012 jjennings
-//  Robert Nordan
 // 
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -16,32 +18,15 @@
 // 
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 using System;
-using System.Collections.Generic;
 
 namespace Tomboy
 {
-	/// <summary>
-	/// Handles interaction with backend system is used to store notes.
-	/// </summary>
-	public interface IStorage
+	public class Deleter
 	{
-		/// <summary>
-		/// Gets notes.
-		/// </summary>
-		/// <returns>
-		/// A Generic list of Notes
-		/// </returns>
-		List<Note> GetNotes ();
-		
-		/// <summary>
-		/// Sets the path to where Notes are located
-		/// </summary>
-		/// <param name='path'>
-		/// Path.
-		/// </param>
-		void SetPath (string path);
+		public Deleter ()
+		{
+		}
 	}
 }
 
