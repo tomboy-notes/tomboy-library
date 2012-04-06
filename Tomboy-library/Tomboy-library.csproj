@@ -53,6 +53,8 @@
     <Compile Include="Tomboy\XmlEncoder.cs" />
     <Compile Include="Tomboy\XmlDecoder.cs" />
     <Compile Include="Tomboy\Reader.cs" />
+    <Compile Include="Tomboy\Writer.cs" />
+    <Compile Include="tests\test_notes\TesterNote.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="tests\test_notes\90d8eb70-989d-4b26-97bc-ba4b9442e51f.note" />

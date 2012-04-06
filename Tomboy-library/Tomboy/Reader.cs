@@ -10,6 +10,11 @@ namespace Tomboy
 	public class Reader
 	{
 		/// <summary>
+		/// Current XML version
+		/// </summary>
+		public const string CURRENT_VERSION = "0.3";
+		
+		/// <summary>
 		/// Read the specified xml and uri.
 		/// </summary>
 		/// <description>XML is the raw Note XML for each note in the system.</description>

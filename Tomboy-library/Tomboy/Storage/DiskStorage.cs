@@ -10,14 +10,6 @@ namespace Tomboy
 		
 		private static DiskStorage instance = null;
 		private static readonly object lock_ = new object();
-		/// <summary>
-		/// Current XML version
-		/// </summary>
-		private const string CURRENT_VERSION = "0.3";
-
-		// NOTE: If this changes from a standard format, make sure to update
-		//       XML parsing to have a DateTime.TryParseExact
-		public const string DATE_TIME_FORMAT = "yyyy-MM-ddTHH:mm:ss.fffffffzzz";
 		
 		/// <summary>
 		/// The path_to_notes.
@@ -70,15 +62,15 @@ namespace Tomboy
 		/// </param>
 		public static void Write (string write_file, Note note)
 		{
-			Instance.WriteFile (write_file, note);
+			WriteFile (write_file, note);
 		}
 
-		public virtual void WriteFile (string write_file, Note note)
+		private static void WriteFile (string write_file, Note note)
 		{
 			string tmp_file = write_file + ".tmp";
 
 			using (var xml = XmlWriter.Create (tmp_file, XmlEncoder.DocumentSettings))
-				Write (xml, note);
+				Writer.Write (xml, note);
 
 			if (File.Exists (write_file)) {
 				string backup_path = write_file + "~";
@@ -97,83 +89,6 @@ namespace Tomboy
 				// Move the temp file to write_file
 				File.Move (tmp_file, write_file);
 			}
-		}
-
-		public static void Write (TextWriter writer, Note note)
-		{
-			Instance.WriteFile (writer, note);
-		}
-
-		public void WriteFile (TextWriter writer, Note note)
-		{
-			using (var xml = XmlWriter.Create (writer, XmlEncoder.DocumentSettings))
-				Write (xml, note);
-		}
-
-		void Write (XmlWriter xml, Note note)
-		{
-			xml.WriteStartDocument ();
-			xml.WriteStartElement (null, "note", "http://beatniksoftware.com/tomboy");
-			xml.WriteAttributeString(null,
-			                         "version",
-			                         null,
-			                         CURRENT_VERSION);
-			xml.WriteAttributeString("xmlns",
-			                         "link",
-			                         null,
-			                         "http://beatniksoftware.com/tomboy/link");
-			xml.WriteAttributeString("xmlns",
-			                         "size",
-			                         null,
-			                         "http://beatniksoftware.com/tomboy/size");
-
-			xml.WriteStartElement (null, "title", null);
-			xml.WriteString (note.Title);
-			xml.WriteEndElement ();
-
-			xml.WriteStartElement (null, "text", null);
-			xml.WriteAttributeString ("xml", "space", null, "preserve");
-			// Insert <note-content> blob...
-			xml.WriteRaw (note.Text);
-			xml.WriteEndElement ();
-
-			xml.WriteStartElement (null, "last-change-date", null);
-			xml.WriteString (
-			        XmlConvert.ToString (note.ChangeDate, DATE_TIME_FORMAT));
-			xml.WriteEndElement ();
-
-			xml.WriteStartElement (null, "last-metadata-change-date", null);
-			xml.WriteString (
-			        XmlConvert.ToString (note.MetadataChangeDate, DATE_TIME_FORMAT));
-			xml.WriteEndElement ();
-
-			if (note.CreateDate != DateTime.MinValue) {
-				xml.WriteStartElement (null, "create-date", null);
-				xml.WriteString (
-				        XmlConvert.ToString (note.CreateDate, DATE_TIME_FORMAT));
-				xml.WriteEndElement ();
-			}
-
-			xml.WriteStartElement (null, "x", null);
-			xml.WriteString (note.X.ToString ());
-			xml.WriteEndElement ();
-
-			xml.WriteStartElement (null, "y", null);
-			xml.WriteString (note.Y.ToString ());
-			xml.WriteEndElement ();
-
-			if (note.Tags.Count > 0) {
-				xml.WriteStartElement (null, "tags", null);
-				foreach (Tag tag in note.Tags.Values) {
-					xml.WriteStartElement (null, "tag", null);
-					xml.WriteString (tag.Name);
-					xml.WriteEndElement ();
-				}
-				xml.WriteEndElement ();
-			}
-			
-			xml.WriteEndElement (); // Note
-			xml.WriteEndDocument ();
 		}
 		
 		public List<Note> GetNotes ()
@@ -200,7 +115,16 @@ namespace Tomboy
 			}
 			return notes;
 		}
-				
+
+		/// <summary>
+		/// Read the specified read_file and uri.
+		/// </summary>
+		/// <param name='read_file'>
+		/// Read_file : Full path of the note file
+		/// </param>
+		/// <param name='uri'>
+		/// URI. : Example: tomboy://90d8eb70-989d-4b26-97bc-ba4b9442e51d
+		/// </param>
 		public static Note Read (string read_file, string uri)
 		{
 			return ReadFile (read_file, uri);
