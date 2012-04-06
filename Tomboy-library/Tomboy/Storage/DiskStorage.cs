@@ -83,7 +83,16 @@ namespace Tomboy
 		{
 			WriteFile (write_file, note);
 		}
-
+		
+		/// <summary>
+		/// Writes the file to the actual file system.
+		/// </summary>
+		/// <param name='write_file'>
+		/// Write_file.
+		/// </param>
+		/// <param name='note'>
+		/// Note.
+		/// </param>
 		private static void WriteFile (string write_file, Note note)
 		{
 			string tmp_file = write_file + ".tmp";
