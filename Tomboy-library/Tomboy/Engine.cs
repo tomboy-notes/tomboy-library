@@ -27,10 +27,41 @@ namespace Tomboy
 	/// </summary>
 	public class Engine
 	{
-		public Engine ()
+		/* holds whatever storage interface will be used */
+		private IStorage storage;
+		
+		//TODO:Should be part of perferences. For now this hack exists
+		private string path = "../../tests/test_notes";
+		
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Tomboy.Engine"/> class.
+		/// </summary>
+		/// <description>Must provide whatever storage class that should be used by the Engine</description>
+		/// <param name='storage'>
+		/// Storage.
+		/// </param>
+		public Engine (IStorage storage)
 		{
+			this.storage = storage;
+			this.storage.SetPath (path);
 		}
-
+		
+		/* holds the current notes
+		 * This will change as notes are added or removed */
+		private Dictionary<string, Note> notes;
+		
+		/// <summary>
+		/// Gets the notes.
+		/// </summary>
+		/// <returns>
+		/// Dictionary<string, Note>
+		/// </returns>
+		public Dictionary<string, Note> GetNotes ()
+		{
+			if (this.notes == null)
+				this.notes = this.storage.GetNotes ();
+			return this.notes;
+		}
 	}
 }
 
