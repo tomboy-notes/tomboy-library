@@ -29,7 +29,9 @@ namespace Tomboy
 		[Test()]
 		public void Engine_Get_Notes ()
 		{
+			DiskStorage.Instance.SetPath ("../../tests/test_notes");
 			Engine engine = new Engine (DiskStorage.Instance);
+			Assert.IsFalse (engine.GetNotes ().ContainsKey ("note://tomboy/90d8eb70-989d-4b26-97bc-EXAMPLE"));
 			Assert.IsTrue (engine.GetNotes ().ContainsKey ("note://tomboy/90d8eb70-989d-4b26-97bc-ba4b9442e51f"));
 		}
 	}

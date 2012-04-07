@@ -30,9 +30,6 @@ namespace Tomboy
 		/* holds whatever storage interface will be used */
 		private IStorage storage;
 		
-		//TODO:Should be part of perferences. For now this hack exists
-		private string path = "../../tests/test_notes";
-		
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Tomboy.Engine"/> class.
 		/// </summary>
@@ -43,7 +40,6 @@ namespace Tomboy
 		public Engine (IStorage storage)
 		{
 			this.storage = storage;
-			this.storage.SetPath (path);
 		}
 		
 		/* holds the current notes
