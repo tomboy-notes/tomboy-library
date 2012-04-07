@@ -22,6 +22,10 @@ using System;
 
 namespace Tomboy
 {
+	/// <summary>
+	/// Class handles any actions that we need to perform when a Note is deleted.
+	/// This class doesn't actually handle removing the Note from the filesystem.
+	/// </summary>
 	public class Deleter
 	{
 		public Deleter ()

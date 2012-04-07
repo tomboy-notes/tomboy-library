@@ -41,7 +41,7 @@ namespace Tomboy
 		{
 			IStorage storage = DiskStorage.Instance;
 			storage.SetPath ("../../tests/test_notes");
-			List<Note> notes = storage.GetNotes ();
+			Dictionary<string, Note> notes = storage.GetNotes ();
 			Assert.IsNotNull (notes);
 			Assert.IsTrue (notes.Count > 0);			
 		}
@@ -52,6 +52,15 @@ namespace Tomboy
 			
 			DiskStorage.Write ("../../tests/test_notes/90d8eb70-989d-4b26-97bc-ba4b9442e51d.note", TesterNote.GetTesterNote ());
 			
+		}
+		
+		[Test()]
+		public void DiskStorage_ByKeyName ()
+		{			
+			IStorage storage = DiskStorage.Instance;
+			storage.SetPath ("../../tests/test_notes");
+			Dictionary<string, Note> notes = storage.GetNotes ();
+			Assert.IsTrue (notes.ContainsKey ("note://tomboy/90d8eb70-989d-4b26-97bc-ba4b9442e51f"));
 		}
 	}
 }

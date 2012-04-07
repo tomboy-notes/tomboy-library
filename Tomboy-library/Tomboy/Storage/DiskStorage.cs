@@ -119,9 +119,9 @@ namespace Tomboy
 			}
 		}
 		
-		public List<Note> GetNotes ()
+		public Dictionary<string,Note> GetNotes ()
 		{
-			List<Note> notes = new List<Note> ();	
+			Dictionary<string,Note> notes = new Dictionary<string,Note> ();
 			if (path_to_notes == null)
 				throw new TomboyException ("No Notes path has been defined");
 			
@@ -131,7 +131,8 @@ namespace Tomboy
 			string [] files = Directory.GetFiles (path_to_notes, "*.note");
 			foreach (string file_path in files) {
 				try {
-					notes.Add (Read (file_path, Utils.GetURI (file_path)));
+					Note note = Read (file_path, Utils.GetURI (file_path));
+					notes.Add (note.Uri, note);
 				} catch (System.Xml.XmlException e) {
 					Console.WriteLine ("Failed to read Note {0}", file_path); /* so we know what note we cannot read */
 					Console.WriteLine (e);
@@ -168,6 +169,6 @@ namespace Tomboy
 				note = Reader.Read (xml, uri);
 
 			return note;
-		}		
+		}
 	}
 }

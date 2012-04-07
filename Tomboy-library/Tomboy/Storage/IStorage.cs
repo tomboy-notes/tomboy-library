@@ -33,7 +33,7 @@ namespace Tomboy
 		/// <returns>
 		/// A Generic list of Notes
 		/// </returns>
-		List<Note> GetNotes ();
+		Dictionary<string, Note> GetNotes ();
 		
 		/// <summary>
 		/// Sets the path to where Notes are located
