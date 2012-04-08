@@ -19,6 +19,9 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Xml;
+using System.IO;
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace Tomboy
@@ -26,13 +29,38 @@ namespace Tomboy
 	[TestFixture()]
 	public class EngineTests
 	{
+		Engine engine;
+		[TestFixtureSetUp] public void Init()
+		{
+			DiskStorage.Instance.SetPath ("../../tests/test_notes");
+			engine = new Engine (DiskStorage.Instance);
+		}
+		
 		[Test()]
 		public void Engine_Get_Notes ()
 		{
-			DiskStorage.Instance.SetPath ("../../tests/test_notes");
-			Engine engine = new Engine (DiskStorage.Instance);
 			Assert.IsFalse (engine.GetNotes ().ContainsKey ("note://tomboy/90d8eb70-989d-4b26-97bc-EXAMPLE"));
 			Assert.IsTrue (engine.GetNotes ().ContainsKey ("note://tomboy/90d8eb70-989d-4b26-97bc-ba4b9442e51f"));
+		}
+		
+		[Test()]
+		public void Engine_New_Note ()
+		{
+			Note note = engine.NewNote ();
+			note.Title = "Unit Test Note";
+			note.Text = "Unit test note by NewNote() method";
+			engine.SaveNote (note);
+						
+			Console.WriteLine ("Note URI '" + note.Uri + "'");
+			Note note2 = null;
+			Dictionary<string, Note> notes = engine.GetNotes ();
+			notes.TryGetValue (note.Uri, out note2);
+			Console.WriteLine ("Note2 URI '" + note2.Uri + "'");
+			Assert.IsTrue (engine.GetNotes ().ContainsKey (note.Uri));
+						
+			//string StartHereNotePath = "../../tests/test_notes/" + Utils.GetNoteFileNameFromURI (note) + ".note";
+			//using (var xml = new XmlTextReader (new StreamReader (StartHereNotePath, System.Text.Encoding.UTF8)) {Namespaces = false})
+			//	Console.WriteLine (xml);
 		}
 	}
 }

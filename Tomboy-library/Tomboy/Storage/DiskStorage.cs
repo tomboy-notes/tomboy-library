@@ -70,6 +70,11 @@ namespace Tomboy
 			path_to_notes = path;
 		}
 		
+		public void SaveNote (Note note)
+		{
+			Console.WriteLine ("Saving Note " + note.Title);
+		}
+		
 		/// <summary>
 		/// Write the specified write_file and note to storage
 		/// </summary>

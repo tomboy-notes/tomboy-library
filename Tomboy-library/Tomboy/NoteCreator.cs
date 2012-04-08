@@ -1,8 +1,10 @@
-//  Author:
-//       jjennings <jaredljennings@gmail.com>
+// 
+//  NoteCreator.cs
 //  
-//  Copyright (c) 2012 jjennings
-//  Robert Nordan
+//  Author:
+//       Jared Jennings <jaredljennings@gmail.com>
+//  
+//  Copyright (c) 2012 Jared L Jennings
 // 
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -16,40 +18,41 @@
 // 
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 using System;
-using System.Collections.Generic;
+using System.IO;
 
 namespace Tomboy
 {
 	/// <summary>
-	/// Handles interaction with backend system is used to store notes.
+	/// Note creator.
 	/// </summary>
-	public interface IStorage
+	public class NoteCreator
 	{
-		/// <summary>
-		/// Gets notes.
-		/// </summary>
-		/// <returns>
-		/// A Generic list of Notes
-		/// </returns>
-		Dictionary<string, Note> GetNotes ();
+		public NoteCreator ()
+		{
+		}
 		
-		/// <summary>
-		/// Sets the path to where Notes are located
-		/// </summary>
-		/// <param name='path'>
-		/// Path.
-		/// </param>
-		void SetPath (string path);
+		public static Note NewNote ()
+		{
+			return NewNote (null, null);
+		}
 		
-		/// <summary>
-		/// Saves the note.
-		/// </summary>
-		/// <param name='note'>
-		/// Note.
-		/// </param>
-		void SaveNote (Note note);
+		public static Note NewNote (string title)
+		{
+			return NewNote (title, null);
+		}
+		
+		public static Note NewNote (string title, string body)
+		{
+			Note note = new Note ("tomboy://" + Guid.NewGuid ().ToString ());
+			
+			if (title != null)
+				note.Title = title;
+			
+			if (body != null)
+				note.Text = body;
+			return note;
+		}
 	}
 }
 

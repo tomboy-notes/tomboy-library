@@ -41,6 +41,24 @@ namespace Tomboy
 		{
 			return "note://tomboy/" + Path.GetFileNameWithoutExtension (filepath);
 		}
+		
+		/// <summary>
+		/// Gets the note file name from URI.
+		/// </summary>
+		/// <returns>
+		/// The note file name from URI.
+		/// </returns>
+		/// <param name='note'>
+		/// Note.
+		/// </param>
+		public static string GetNoteFileNameFromURI (Note note)
+		{
+			string name = "";
+			int begin = note.Uri.LastIndexOf ("/");
+			begin++;
+			name = note.Uri.Substring (begin,(note.Uri.Length - begin));
+			return name;
+		}
 	
 	}
 }

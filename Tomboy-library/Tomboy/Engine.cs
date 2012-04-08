@@ -40,6 +40,8 @@ namespace Tomboy
 		public Engine (IStorage storage)
 		{
 			this.storage = storage;
+			if (notes == null)
+				notes = new Dictionary<string, Note> ();
 		}
 		
 		/* holds the current notes
@@ -54,9 +56,37 @@ namespace Tomboy
 		/// </returns>
 		public Dictionary<string, Note> GetNotes ()
 		{
-			if (this.notes == null)
-				this.notes = this.storage.GetNotes ();
+			this.notes = this.storage.GetNotes ();
 			return this.notes;
+		}
+		
+		/// <summary>
+		/// Generates a New Note instance
+		/// </summary>
+		/// <returns>
+		/// The note.
+		/// </returns>
+		public Note NewNote ()
+		{
+			Note note = NoteCreator.NewNote ();
+			notes.Add (note.Uri, note);
+			return note;
+		}
+		
+		/// <summary>
+		/// Saves the note.
+		/// </summary>
+		/// <param name='note'>
+		/// Note.
+		/// </param>
+		public void SaveNote (Note note)
+		{
+			/* Update the dictionary of notes */
+			if (notes.ContainsKey (note.Uri))
+				notes.Remove (note.Uri);
+			notes.Add (note.Uri, note);
+			/* Save Note to Storage */
+			this.storage.SaveNote (note);
 		}
 	}
 }
