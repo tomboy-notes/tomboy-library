@@ -48,10 +48,10 @@ namespace Tomboy
 		
 		[Test()]
 		public void DiskStorageWriteNote ()
-		{
-			
+		{	
 			DiskStorage.Write ("../../tests/test_notes/90d8eb70-989d-4b26-97bc-ba4b9442e51d.note", TesterNote.GetTesterNote ());
-			
+			Assert.IsTrue (System.IO.File.Exists ("../../tests/test_notes/90d8eb70-989d-4b26-97bc-ba4b9442e51d.note"));
+			System.IO.File.Delete ("../../tests/test_notes/90d8eb70-989d-4b26-97bc-ba4b9442e51d.note"); //Clear up test for next time
 		}
 		
 		[Test()]

@@ -30,10 +30,11 @@ namespace Tomboy
 		
 		public static Note GetTesterNote ()
 		{
+			SetUpNote ();
 			return note;
 		}
 		
-		private static void Note ()
+		private static void SetUpNote ()
 		{
 			
 			string changeDateString = "2012-04-05T22:51:54.2191587+02:00";
