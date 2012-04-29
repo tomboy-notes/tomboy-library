@@ -32,7 +32,8 @@ namespace Tomboy
 		Engine engine;
 		[TestFixtureSetUp] public void Init()
 		{
-			DiskStorage.Instance.SetPath ("../../test_notes");
+			//TODO: The storage instance needs swapping with a stub/mock!
+			DiskStorage.Instance.SetPath ("../../test_notes/proper_notes");
 			engine = new Engine (DiskStorage.Instance);
 		}
 		
@@ -46,6 +47,7 @@ namespace Tomboy
 		[Test()]
 		public void Engine_New_Note ()
 		{
+			//TODO: Needs fixing
 			Note note = engine.NewNote ();
 			note.Title = "Unit Test Note";
 			note.Text = "Unit test note by NewNote() method";

@@ -33,16 +33,16 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="EngineTests.cs" />
-    <Compile Include="StorageTests.cs" />
     <Compile Include="TesterNote.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="test_notes\90d8eb70-989d-4b26-97bc-ba4b9442e51f.note" />
+    <Compile Include="DiskStorageTests.cs" />
+    <Compile Include="ReaderTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
-    <Reference Include="nunit.framework" />
+    <Reference Include="nunit.framework">
+      <Package>mono-nunit</Package>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Tomboy-library.csproj">
