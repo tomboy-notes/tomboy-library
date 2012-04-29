@@ -3,12 +3,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{040AA912-9738-438A-A7FD-5BB02C40C30A}</ProjectGuid>
+    <ProjectGuid>{216746A7-D297-4108-933A-1E926EB9B167}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Tomboy</RootNamespace>
-    <AssemblyName>Tomboy-library</AssemblyName>
+    <RootNamespace>Tomboylibrarytests</RootNamespace>
+    <AssemblyName>Tomboy-library-tests</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,26 +32,25 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Reference Include="System.Xml" />
+    <Compile Include="EngineTests.cs" />
+    <Compile Include="StorageTests.cs" />
+    <Compile Include="TesterNote.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="test_notes\90d8eb70-989d-4b26-97bc-ba4b9442e51f.note" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.5.10.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+      <Private>False</Private>
+      <Package>mono-nunit</Package>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Tomboy\" />
-    <Folder Include="Tomboy\Storage\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Tomboy\Note.cs" />
-    <Compile Include="Tomboy\Tag.cs" />
-    <Compile Include="Tomboy\Engine.cs" />
-    <Compile Include="Tomboy\Storage\IStorage.cs" />
-    <Compile Include="Tomboy\Storage\DiskStorage.cs" />
-    <Compile Include="Tomboy\TomboyException.cs" />
-    <Compile Include="Tomboy\Utils.cs" />
-    <Compile Include="Tomboy\XmlEncoder.cs" />
-    <Compile Include="Tomboy\XmlDecoder.cs" />
-    <Compile Include="Tomboy\Reader.cs" />
-    <Compile Include="Tomboy\Writer.cs" />
-    <Compile Include="Tomboy\Deleter.cs" />
-    <Compile Include="Tomboy\NoteCreator.cs" />
+    <ProjectReference Include="..\Tomboy-library.csproj">
+      <Project>{040AA912-9738-438A-A7FD-5BB02C40C30A}</Project>
+      <Name>Tomboy-library</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

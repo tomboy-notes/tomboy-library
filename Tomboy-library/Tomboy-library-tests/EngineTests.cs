@@ -32,7 +32,7 @@ namespace Tomboy
 		Engine engine;
 		[TestFixtureSetUp] public void Init()
 		{
-			DiskStorage.Instance.SetPath ("../../tests/test_notes");
+			DiskStorage.Instance.SetPath ("../../test_notes");
 			engine = new Engine (DiskStorage.Instance);
 		}
 		
@@ -58,7 +58,7 @@ namespace Tomboy
 			Console.WriteLine ("Note2 URI '" + note2.Uri + "'");
 			Assert.IsTrue (engine.GetNotes ().ContainsKey (note.Uri));
 						
-			//string StartHereNotePath = "../../tests/test_notes/" + Utils.GetNoteFileNameFromURI (note) + ".note";
+			//string StartHereNotePath = "../../test_notes/" + Utils.GetNoteFileNameFromURI (note) + ".note";
 			//using (var xml = new XmlTextReader (new StreamReader (StartHereNotePath, System.Text.Encoding.UTF8)) {Namespaces = false})
 			//	Console.WriteLine (xml);
 		}

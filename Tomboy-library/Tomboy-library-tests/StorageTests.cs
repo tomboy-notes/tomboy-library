@@ -31,7 +31,7 @@ namespace Tomboy
 		[Test()]
 		public void DiskStorageReadTitle ()
 		{
-			string StartHereNotePath = "../../tests/test_notes/90d8eb70-989d-4b26-97bc-ba4b9442e51f.note";
+			string StartHereNotePath = "../../test_notes/90d8eb70-989d-4b26-97bc-ba4b9442e51f.note";
 			Note StartHere =  DiskStorage.Read (StartHereNotePath, "tomboy://90d8eb70-989d-4b26-97bc-ba4b9442e51f");
 			Assert.AreEqual (StartHere.Title, "Start Here");
 		}
@@ -40,7 +40,7 @@ namespace Tomboy
 		public void Test_GetNotes ()
 		{
 			IStorage storage = DiskStorage.Instance;
-			storage.SetPath ("../../tests/test_notes");
+			storage.SetPath ("../../test_notes");
 			Dictionary<string, Note> notes = storage.GetNotes ();
 			Assert.IsNotNull (notes);
 			Assert.IsTrue (notes.Count > 0);			
@@ -49,16 +49,16 @@ namespace Tomboy
 		[Test()]
 		public void DiskStorageWriteNote ()
 		{	
-			DiskStorage.Write ("../../tests/test_notes/90d8eb70-989d-4b26-97bc-ba4b9442e51d.note", TesterNote.GetTesterNote ());
-			Assert.IsTrue (System.IO.File.Exists ("../../tests/test_notes/90d8eb70-989d-4b26-97bc-ba4b9442e51d.note"));
-			System.IO.File.Delete ("../../tests/test_notes/90d8eb70-989d-4b26-97bc-ba4b9442e51d.note"); //Clear up test for next time
+			DiskStorage.Write ("../../test_notes/90d8eb70-989d-4b26-97bc-ba4b9442e51d.note", TesterNote.GetTesterNote ());
+			Assert.IsTrue (System.IO.File.Exists ("../../test_notes/90d8eb70-989d-4b26-97bc-ba4b9442e51d.note"));
+			System.IO.File.Delete ("../../test_notes/90d8eb70-989d-4b26-97bc-ba4b9442e51d.note"); //Clear up test for next time
 		}
 		
 		[Test()]
 		public void DiskStorage_ByKeyName ()
 		{			
 			IStorage storage = DiskStorage.Instance;
-			storage.SetPath ("../../tests/test_notes");
+			storage.SetPath ("../../test_notes");
 			Dictionary<string, Note> notes = storage.GetNotes ();
 			Assert.IsTrue (notes.ContainsKey ("note://tomboy/90d8eb70-989d-4b26-97bc-ba4b9442e51f"));
 		}
