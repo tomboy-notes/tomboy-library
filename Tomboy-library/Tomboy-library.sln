@@ -1,7 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tomboy-library", "Tomboy-library.csproj", "{040AA912-9738-438A-A7FD-5BB02C40C30A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tomboy-library-tests", "Tomboy-library-tests\Tomboy-library-tests.csproj", "{216746A7-D297-4108-933A-1E926EB9B167}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,6 +15,10 @@ Global
 		{040AA912-9738-438A-A7FD-5BB02C40C30A}.Debug|x86.Build.0 = Debug|x86
 		{040AA912-9738-438A-A7FD-5BB02C40C30A}.Release|x86.ActiveCfg = Release|x86
 		{040AA912-9738-438A-A7FD-5BB02C40C30A}.Release|x86.Build.0 = Release|x86
+		{216746A7-D297-4108-933A-1E926EB9B167}.Debug|x86.ActiveCfg = Debug|x86
+		{216746A7-D297-4108-933A-1E926EB9B167}.Debug|x86.Build.0 = Debug|x86
+		{216746A7-D297-4108-933A-1E926EB9B167}.Release|x86.ActiveCfg = Release|x86
+		{216746A7-D297-4108-933A-1E926EB9B167}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Tomboy-library.csproj
@@ -33,7 +39,7 @@ Global
 		$4.inheritsScope = text/x-csharp
 		$4.scope = text/x-csharp
 		$0.StandardHeader = $5
-		$5.Text = @\n ${FileName}\n \n Author:\n      ${AuthorName} <${AuthorEmail}>\n \n Copyright (c) ${Year} ${CopyrightHolder}\n\n This program is free software: you can redistribute it and/or modify\n it under the terms of the GNU Lesser General Public License as published by\n the Free Software Foundation, either version 3 of the License, or\n (at your option) any later version.\n\n This program is distributed in the hope that it will be useful,\n but WITHOUT ANY WARRANTY; without even the implied warranty of\n MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n GNU Lesser General Public License for more details.\n\n You should have received a copy of the GNU Lesser General Public License\n along with this program.  If not, see <http://www.gnu.org/licenses/>.
+		$5.Text = @\n ${FileName}\n \n Author:\n      ${AuthorName} <${AuthorEmail}>\n\n Copyright (c) ${Year} ${CopyrightHolder}\n\n This library is free software; you can redistribute it and/or modify\n it under the terms of the GNU Lesser General Public License as\n published by the Free Software Foundation; either version 2.1 of the\n License, or (at your option) any later version.\n\n This library is distributed in the hope that it will be useful, but\n WITHOUT ANY WARRANTY; without even the implied warranty of\n MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU\n Lesser General Public License for more details.\n\n You should have received a copy of the GNU Lesser General Public\n License along with this library; if not, write to the Free Software\n Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 		$5.IncludeInNewFiles = True
 		$0.VersionControlPolicy = $6
 		$6.inheritsSet = Mono

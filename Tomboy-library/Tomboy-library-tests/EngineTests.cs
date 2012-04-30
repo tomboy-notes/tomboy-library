@@ -8,7 +8,7 @@
 // 
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
+//  the Free Software Foundation, either version 2.1 of the License, or
 //  (at your option) any later version.
 // 
 //  This program is distributed in the hope that it will be useful,
@@ -32,7 +32,8 @@ namespace Tomboy
 		Engine engine;
 		[TestFixtureSetUp] public void Init()
 		{
-			DiskStorage.Instance.SetPath ("../../tests/test_notes");
+			//TODO: The storage instance needs swapping with a stub/mock!
+			DiskStorage.Instance.SetPath ("../../test_notes/proper_notes");
 			engine = new Engine (DiskStorage.Instance);
 		}
 		
@@ -46,6 +47,7 @@ namespace Tomboy
 		[Test()]
 		public void Engine_New_Note ()
 		{
+			//TODO: Needs fixing
 			Note note = engine.NewNote ();
 			note.Title = "Unit Test Note";
 			note.Text = "Unit test note by NewNote() method";
@@ -58,7 +60,7 @@ namespace Tomboy
 			Console.WriteLine ("Note2 URI '" + note2.Uri + "'");
 			Assert.IsTrue (engine.GetNotes ().ContainsKey (note.Uri));
 						
-			//string StartHereNotePath = "../../tests/test_notes/" + Utils.GetNoteFileNameFromURI (note) + ".note";
+			//string StartHereNotePath = "../../test_notes/" + Utils.GetNoteFileNameFromURI (note) + ".note";
 			//using (var xml = new XmlTextReader (new StreamReader (StartHereNotePath, System.Text.Encoding.UTF8)) {Namespaces = false})
 			//	Console.WriteLine (xml);
 		}
