@@ -29,14 +29,14 @@ namespace Tomboy
 	/// </summary>
 	public class Note
 	{
-		readonly string uri;
-		string title;
-		string text;
-		DateTime create_date;
-		DateTime change_date;
-		DateTime metadata_change_date;
-		int x, y;
-		Dictionary<string, Tag> tags;
+		private readonly string uri;
+		private string title;
+		private string text;
+		private DateTime create_date;
+		private DateTime change_date;
+		private DateTime metadata_change_date;
+		private int x, y;
+		private Dictionary<string, Tag> tags;
 
 		public Note (string uri)
 		{

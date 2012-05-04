@@ -54,7 +54,7 @@ namespace Tomboy
 			engine.SaveNote (note);
 						
 			Console.WriteLine ("Note URI '" + note.Uri + "'");
-			Note note2 = null;
+			Note note2;
 			Dictionary<string, Note> notes = engine.GetNotes ();
 			notes.TryGetValue (note.Uri, out note2);
 			Console.WriteLine ("Note2 URI '" + note2.Uri + "'");

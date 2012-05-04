@@ -17,7 +17,6 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-
 using System;
 using System.Xml;
 using System.IO;
@@ -29,7 +28,7 @@ namespace Tomboy
 	{
 		
 		private static DiskStorage instance = null;
-		private static readonly object lock_ = new object();
+		private static readonly object lock_ = new object ();
 		
 		/// <summary>
 		/// The path_to_notes.
@@ -41,20 +40,16 @@ namespace Tomboy
 		{
 		}
 
-		public static DiskStorage Instance
-		{
-			get
-			{
-				lock (lock_)
-				{
+		public static DiskStorage Instance {
+			get {
+				lock (lock_) {
 					if (instance == null)
 						instance = new DiskStorage ();
 					return instance;
 				}
 			}
 			set {
-				lock (lock_)
-				{
+				lock (lock_) {
 					instance = value;
 				}
 			}
@@ -73,7 +68,10 @@ namespace Tomboy
 		
 		public void SaveNote (Note note)
 		{
-			Console.WriteLine ("Saving Note " + note.Title);
+			string file = Path.Combine (path_to_notes, Utils.GetNoteFileNameFromURI (note));
+			file += ".note"; // set the file extension.
+			Console.WriteLine ("Saving Note {0}, FileName: {1}", note.Title, file);
+			Write (file, note);
 		}
 		
 		/// <summary>
@@ -135,6 +133,9 @@ namespace Tomboy
 			 * this could be changed in the implementing class to retreive whatever notes
 			 */
 			string [] files = Directory.GetFiles (path_to_notes, "*.note");
+			if (files.Length == 0)
+				Console.WriteLine ("no notes found");
+			
 			foreach (string file_path in files) {
 				try {
 					Note note = Read (file_path, Utils.GetURI (file_path));
@@ -162,6 +163,7 @@ namespace Tomboy
 		/// </param>
 		public static Note Read (string read_file, string uri)
 		{
+			Console.WriteLine ("Reading Note {0}", read_file);
 			return ReadFile (read_file, uri);
 		}
 
