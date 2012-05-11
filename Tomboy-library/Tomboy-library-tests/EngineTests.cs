@@ -59,7 +59,10 @@ namespace Tomboy
 			notes.TryGetValue (note.Uri, out note2);
 			Console.WriteLine ("Note2 URI '" + note2.Uri + "'");
 			Assert.IsTrue (engine.GetNotes ().ContainsKey (note.Uri));
-						
+			string NOTE_PATH = Path.Combine ("../../test_notes/proper_notes", Utils.GetNoteFileNameFromURI (note) + ".note");
+			// make sure the note exists
+			Assert.IsTrue (System.IO.File.Exists (NOTE_PATH));
+			System.IO.File.Delete (NOTE_PATH); //Clear up test for next time
 			//string StartHereNotePath = "../../test_notes/" + Utils.GetNoteFileNameFromURI (note) + ".note";
 			//using (var xml = new XmlTextReader (new StreamReader (StartHereNotePath, System.Text.Encoding.UTF8)) {Namespaces = false})
 			//	Console.WriteLine (xml);
