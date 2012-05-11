@@ -51,6 +51,14 @@ namespace Tomboy
 		/// Note.
 		/// </param>
 		void SaveNote (Note note);
+
+		/// <summary>
+		/// Deletes the note.
+		/// </summary>
+		/// <param name='note'>
+		/// Note.
+		/// </param>
+		void DeleteNote (Note note);
 	}
 }
 

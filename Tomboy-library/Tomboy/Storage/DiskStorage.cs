@@ -35,6 +35,7 @@ namespace Tomboy
 		/// </summary>
 		/// <description>/home/user/.local/share/tomboy</description>
 		private static string path_to_notes = null;
+		private static string backup_path_notes = null;
 
 		protected DiskStorage ()
 		{
@@ -64,12 +65,13 @@ namespace Tomboy
 		public void SetPath (string path)
 		{
 			path_to_notes = path;
+			// where notes are backed up too.
+			backup_path_notes = Path.Combine (path_to_notes, "Backup");
 		}
 		
 		public void SaveNote (Note note)
 		{
 			string file = Path.Combine (path_to_notes, Utils.GetNoteFileNameFromURI (note));
-			file += ".note"; // set the file extension.
 			Console.WriteLine ("Saving Note {0}, FileName: {1}", note.Title, file);
 			Write (file, note);
 		}
@@ -177,6 +179,23 @@ namespace Tomboy
 				note = Reader.Read (xml, uri);
 
 			return note;
+		}
+
+		public void DeleteNote (Note note)
+		{
+			string file_path = Path.Combine (path_to_notes, Utils.GetNoteFileNameFromURI (note));
+			string file_backup_path = Path.Combine (backup_path_notes, Utils.GetNoteFileNameFromURI (note));
+
+			// not for sure why the note would NOT exist. This is from old code. jlj
+			if (File.Exists (file_path)) {
+				if (File.Exists (file_backup_path))
+					File.Delete (file_backup_path);
+				File.Move (file_path, file_backup_path);
+			} else {
+				if (!Directory.Exists (backup_path_notes))
+					Directory.CreateDirectory (backup_path_notes);
+				File.Move (file_path, file_backup_path);
+			}
 		}
 	}
 }

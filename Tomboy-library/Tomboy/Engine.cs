@@ -89,6 +89,19 @@ namespace Tomboy
 			/* Save Note to Storage */
 			this.storage.SaveNote (note);
 		}
+
+		/// <summary>
+		/// Deletes the note.
+		/// </summary>
+		/// <param name='note'>
+		/// Note.
+		/// </param>
+		public void DeleteNote (Note note)
+		{
+			if (notes.ContainsKey (note.Uri))
+				notes.Remove (note.Uri);
+			this.storage.DeleteNote (note);
+		}
 	}
 }
 

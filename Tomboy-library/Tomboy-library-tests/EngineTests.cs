@@ -59,13 +59,42 @@ namespace Tomboy
 			notes.TryGetValue (note.Uri, out note2);
 			Console.WriteLine ("Note2 URI '" + note2.Uri + "'");
 			Assert.IsTrue (engine.GetNotes ().ContainsKey (note.Uri));
-			string NOTE_PATH = Path.Combine ("../../test_notes/proper_notes", Utils.GetNoteFileNameFromURI (note) + ".note");
+			string NOTE_PATH = Path.Combine ("../../test_notes/proper_notes", Utils.GetNoteFileNameFromURI (note));
 			// make sure the note exists
 			Assert.IsTrue (System.IO.File.Exists (NOTE_PATH));
 			System.IO.File.Delete (NOTE_PATH); //Clear up test for next time
-			//string StartHereNotePath = "../../test_notes/" + Utils.GetNoteFileNameFromURI (note) + ".note";
-			//using (var xml = new XmlTextReader (new StreamReader (StartHereNotePath, System.Text.Encoding.UTF8)) {Namespaces = false})
-			//	Console.WriteLine (xml);
+		}
+
+		[Test()]
+		public void Engine_Save_Note_Success ()
+		{
+			Note note = engine.NewNote ();
+			note.Title = "Unit Test Note";
+			note.Text = "Unit test note by NewNote() method";
+			engine.SaveNote (note);
+			note.Text = "Unit test note by NewNote() method \\n Added text";
+			engine.SaveNote (note);
+			string NOTE_PATH = Path.Combine ("../../test_notes/proper_notes", Utils.GetNoteFileNameFromURI (note));
+			string noteContents = System.IO.File.ReadAllText (NOTE_PATH);
+			Assert.IsTrue (noteContents.Contains ("Added text"));
+			System.IO.File.Delete (NOTE_PATH); //Clear up test for next time
+
+		}
+				
+		[Test()]
+		public void Engine_Delete_Note_Success ()
+		{
+			Note note = engine.NewNote ();
+			note.Title = "Unit Test Note";
+			note.Text = "Unit test note by NewNote() method";
+			engine.SaveNote (note);
+			string NOTE_PATH = Path.Combine ("../../test_notes/proper_notes", Utils.GetNoteFileNameFromURI (note));
+			Assert.IsTrue (System.IO.File.Exists (NOTE_PATH));
+			engine.DeleteNote (note);
+			Assert.IsFalse (System.IO.File.Exists (NOTE_PATH));
+			string BACKUP_NOTE = Path.Combine ("../../test_notes/proper_notes/Backup", Utils.GetNoteFileNameFromURI (note));
+			Assert.IsTrue (System.IO.File.Exists (BACKUP_NOTE));
+			File.Delete (BACKUP_NOTE);
 		}
 	}
 }

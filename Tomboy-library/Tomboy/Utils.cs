@@ -59,6 +59,7 @@ namespace Tomboy
 			int begin = note.Uri.LastIndexOf ("/");
 			begin++;
 			name = note.Uri.Substring (begin,(note.Uri.Length - begin));
+			name += ".note";
 			return name;
 		}
 	
