@@ -96,6 +96,23 @@ namespace Tomboy
 			Assert.IsTrue (System.IO.File.Exists (BACKUP_NOTE));
 			File.Delete (BACKUP_NOTE);
 		}
+
+		[Test()]
+		public void Engine_Save_MidifiedTime_Success ()
+		{
+			Note note = engine.NewNote ();
+			note.Title = "Unit Test Note";
+			note.Text = "Unit test note by NewNote() method";
+			engine.SaveNote (note);
+			DateTime time = note.ChangeDate;
+			note.Text = "Modified Text Body";
+			// make sure the ChangeDate is different since we modified the note.
+			engine.SaveNote (note);
+			Assert.AreNotSame (time, note.ChangeDate);
+			/* clean-up */
+			string NOTE_PATH = Path.Combine ("../../test_notes/proper_notes", Utils.GetNoteFileNameFromURI (note));
+			engine.DeleteNote (note);
+		}
 	}
 }
 

@@ -82,6 +82,12 @@ namespace Tomboy
 		/// </param>
 		public void SaveNote (Note note)
 		{
+			/* jjennings
+			 * Setting the save time of the note. I'm not for sure is this is the best method at this point.
+			 * it is possible that maybe the UI will want to control this. */
+			DateTime saveUtcNow = DateTime.UtcNow;
+			note.ChangeDate = saveUtcNow;
+
 			/* Update the dictionary of notes */
 			if (notes.ContainsKey (note.Uri))
 				notes.Remove (note.Uri);
