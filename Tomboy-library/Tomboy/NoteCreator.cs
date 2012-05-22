@@ -47,7 +47,8 @@ namespace Tomboy
 		public static Note NewNote (string title, string body)
 		{
 			Note note = new Note ("note://tomboy/" + Guid.NewGuid ().ToString ());
-			
+			note.CreateDate = DateTime.UtcNow;
+
 			if (title != null)
 				note.Title = title;
 			
