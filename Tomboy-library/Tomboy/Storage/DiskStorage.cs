@@ -185,15 +185,15 @@ namespace Tomboy
 		{
 			string file_path = Path.Combine (path_to_notes, Utils.GetNoteFileNameFromURI (note));
 			string file_backup_path = Path.Combine (backup_path_notes, Utils.GetNoteFileNameFromURI (note));
-
-			// not for sure why the note would NOT exist. This is from old code. jlj
+		
+			if (!Directory.Exists (backup_path_notes))
+				Directory.CreateDirectory (backup_path_notes);
+			// not for sure why the note would NOT exist. This is from old code. jlj	
 			if (File.Exists (file_path)) {
 				if (File.Exists (file_backup_path))
 					File.Delete (file_backup_path);
 				File.Move (file_path, file_backup_path);
 			} else {
-				if (!Directory.Exists (backup_path_notes))
-					Directory.CreateDirectory (backup_path_notes);
 				File.Move (file_path, file_backup_path);
 			}
 		}

@@ -30,11 +30,17 @@ namespace Tomboy
 	public class EngineTests
 	{
 		Engine engine;
+		Note note;
 		[TestFixtureSetUp] public void Init()
 		{
 			//TODO: The storage instance needs swapping with a stub/mock!
 			DiskStorage.Instance.SetPath ("../../test_notes/proper_notes");
 			engine = new Engine (DiskStorage.Instance);
+			// get a new note instance
+			note = engine.NewNote ();
+			note.Title = "Unit Test Note";
+			note.Text = "Unit test note by NewNote() method";
+			engine.SaveNote (note);
 		}
 		
 		[Test()]
@@ -47,13 +53,6 @@ namespace Tomboy
 		[Test()]
 		public void Engine_New_Note ()
 		{
-			//TODO: Needs fixing
-			Note note = engine.NewNote ();
-			note.Title = "Unit Test Note";
-			note.Text = "Unit test note by NewNote() method";
-			engine.SaveNote (note);
-						
-			Console.WriteLine ("Note URI '" + note.Uri + "'");
 			Note note2;
 			Dictionary<string, Note> notes = engine.GetNotes ();
 			notes.TryGetValue (note.Uri, out note2);
@@ -68,10 +67,6 @@ namespace Tomboy
 		[Test()]
 		public void Engine_Save_Note_Success ()
 		{
-			Note note = engine.NewNote ();
-			note.Title = "Unit Test Note";
-			note.Text = "Unit test note by NewNote() method";
-			engine.SaveNote (note);
 			note.Text = "Unit test note by NewNote() method \\n Added text";
 			engine.SaveNote (note);
 			string NOTE_PATH = Path.Combine ("../../test_notes/proper_notes", Utils.GetNoteFileNameFromURI (note));
@@ -84,16 +79,12 @@ namespace Tomboy
 		[Test()]
 		public void Engine_Save_Note_CorrectModifiedTime_Success ()
 		{
-			Note note = engine.NewNote ();
-			note.Title = "Unit Test Note";
-			note.Text = "Unit test note by NewNote() method";
-			engine.SaveNote (note);
 			note.Text = "Unit test note by NewNote() method \\n Added text";
 			engine.SaveNote (note);
 			string NOTE_PATH = Path.Combine ("../../test_notes/proper_notes", Utils.GetNoteFileNameFromURI (note));
 			string noteContents = System.IO.File.ReadAllText (NOTE_PATH);
 			Console.WriteLine (noteContents);
-			Assert.IsTrue (noteContents.Contains ("<last-change-date>0001-01-01T00:00:00.0000000-06:00</last-change-date>"));
+			Assert.IsFalse (noteContents.Contains ("<last-change-date>0001-01-01T00:00:00.0000000-06:00</last-change-date>"));
 			System.IO.File.Delete (NOTE_PATH); //Clear up test for next time
 
 		}
@@ -101,10 +92,6 @@ namespace Tomboy
 		[Test()]
 		public void Engine_Delete_Note_Success ()
 		{
-			Note note = engine.NewNote ();
-			note.Title = "Unit Test Note";
-			note.Text = "Unit test note by NewNote() method";
-			engine.SaveNote (note);
 			string NOTE_PATH = Path.Combine ("../../test_notes/proper_notes", Utils.GetNoteFileNameFromURI (note));
 			Assert.IsTrue (System.IO.File.Exists (NOTE_PATH));
 			engine.DeleteNote (note);
@@ -117,10 +104,6 @@ namespace Tomboy
 		[Test()]
 		public void Engine_Save_MidifiedTime_Success ()
 		{
-			Note note = engine.NewNote ();
-			note.Title = "Unit Test Note";
-			note.Text = "Unit test note by NewNote() method";
-			engine.SaveNote (note);
 			DateTime time = note.ChangeDate;
 			note.Text = "Modified Text Body";
 			// make sure the ChangeDate is different since we modified the note.

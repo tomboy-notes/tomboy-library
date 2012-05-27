@@ -30,6 +30,7 @@ namespace Tomboy
 	{
 		private const string NOTE_FOLDER_PROPER_NOTES = "../../test_notes/proper_notes";
 		private const string NOTE_FOLDER_CORRUPT_NOTES = "../../test_notes/corrupt_notes";
+		private const string NOTE_FOLDER_INVALID = "../../test_notes/invalid_notes";
 		
 		[Test()]
 		public void Read_ProperNoteFile_ReadCorrectly ()
@@ -54,7 +55,7 @@ namespace Tomboy
 		public void GetNotes_NoteFolderDoesNotExist_ReturnsNone ()
 		{
 			IStorage storage = DiskStorage.Instance;
-			storage.SetPath (NOTE_FOLDER_PROPER_NOTES);
+			storage.SetPath (NOTE_FOLDER_INVALID);
 			Dictionary<string, Note> notes = storage.GetNotes ();
 			Assert.IsNotNull (notes);
 			Assert.IsTrue (notes.Count == 0);			
