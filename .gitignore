@@ -5,3 +5,4 @@
 #Ignore build output folders
 bin/
 test-results/
+Tomboy-library/Tomboy-library-tests/test_notes/proper_notes/Backup
