@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="System.Xml" />
     <Reference Include="System" />
+    <Reference Include="Mono.Posix" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tomboy\" />
@@ -53,5 +54,6 @@
     <Compile Include="Tomboy\Writer.cs" />
     <Compile Include="Tomboy\Deleter.cs" />
     <Compile Include="Tomboy\NoteCreator.cs" />
+    <Compile Include="Tomboy\Notebook.cs" />
   </ItemGroup>
 </Project>
