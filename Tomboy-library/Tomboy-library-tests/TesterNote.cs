@@ -17,7 +17,9 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Text;
+using Tomboy.Tags;
 
 namespace Tomboy
 {
@@ -44,7 +46,7 @@ namespace Tomboy
 			string metaDateString = "2012-04-05T22:51:54.2191587+02:00";
 			DateTime metaDate = DateTime.Parse(metaDateString, System.Globalization.CultureInfo.InvariantCulture);
 			note.MetadataChangeDate = metaDate;
-			
+
 			DateTime createDate = DateTime.Parse("2012-04-05T21:51:54.2191587+02:00", System.Globalization.CultureInfo.InvariantCulture);
 			note.CreateDate = createDate;
 			
@@ -53,6 +55,9 @@ namespace Tomboy
 			sb.AppendLine ("Use this \"Start Here\" note to begin organizing your ideas and thoughts.");
 			note.Text = sb.ToString ();
 			note.Title = "Unit Test Note";
+
+			Tag tag = new Tag ("Example Notebook");
+			note.Tags.Add (tag.NormalizedName, tag);
 		}
 	}
 }

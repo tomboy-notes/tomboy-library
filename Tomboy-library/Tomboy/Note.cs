@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections.Generic;
+using Tomboy.Tags;
 
 namespace Tomboy
 {

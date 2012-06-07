@@ -39,10 +39,11 @@
   <ItemGroup>
     <Folder Include="Tomboy\" />
     <Folder Include="Tomboy\Storage\" />
+    <Folder Include="Tomboy\Notebooks\" />
+    <Folder Include="Tomboy\Tags\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Tomboy\Note.cs" />
-    <Compile Include="Tomboy\Tag.cs" />
     <Compile Include="Tomboy\Engine.cs" />
     <Compile Include="Tomboy\Storage\IStorage.cs" />
     <Compile Include="Tomboy\Storage\DiskStorage.cs" />
@@ -54,6 +55,7 @@
     <Compile Include="Tomboy\Writer.cs" />
     <Compile Include="Tomboy\Deleter.cs" />
     <Compile Include="Tomboy\NoteCreator.cs" />
-    <Compile Include="Tomboy\Notebook.cs" />
+    <Compile Include="Tomboy\Notebooks\Notebook.cs" />
+    <Compile Include="Tomboy\Tags\Tag.cs" />
   </ItemGroup>
 </Project>

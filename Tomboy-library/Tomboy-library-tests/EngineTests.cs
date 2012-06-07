@@ -24,6 +24,8 @@ using System.IO;
 using System.Collections.Generic;
 using NUnit.Framework;
 
+using Tomboy.Tags;
+
 namespace Tomboy
 {
 	[TestFixture()]
@@ -31,7 +33,10 @@ namespace Tomboy
 	{
 		Engine engine;
 		Note note;
-		[TestFixtureSetUp] public void Init()
+		string NOTE_PATH = "";
+		const string TAG_NAME_GOOGLE = "Google";
+
+		[SetUp] public void Init()
 		{
 			//TODO: The storage instance needs swapping with a stub/mock!
 			DiskStorage.Instance.SetPath ("../../test_notes/proper_notes");
@@ -41,8 +46,30 @@ namespace Tomboy
 			note.Title = "Unit Test Note";
 			note.Text = "Unit test note by NewNote() method";
 			engine.SaveNote (note);
+			NOTE_PATH = Path.Combine ("../../test_notes/proper_notes", Utils.GetNoteFileNameFromURI (note));
+			engine.AddNoteToTag (TAG_NAME_GOOGLE, note);
 		}
-		
+
+		[TearDown]
+		public void Cleanup ()
+		{
+			try {
+				System.IO.File.Delete (NOTE_PATH); //Clear up test for next time
+			} catch (Exception) {};
+		}
+
+		[Test()]
+		public void Contains_tag_Google ()
+		{
+			Assert.IsNotNull (engine.GetTag (TAG_NAME_GOOGLE));
+		}
+
+		[Test()]
+		public void NOT_Contains_tag ()
+		{
+			Assert.IsNull (engine.GetTag ("A crazy tag Name"));
+		}
+
 		[Test()]
 		public void Engine_Get_Notes ()
 		{
@@ -53,15 +80,7 @@ namespace Tomboy
 		[Test()]
 		public void Engine_New_Note ()
 		{
-			Note note2;
-			Dictionary<string, Note> notes = engine.GetNotes ();
-			notes.TryGetValue (note.Uri, out note2);
-			Console.WriteLine ("Note2 URI '" + note2.Uri + "'");
 			Assert.IsTrue (engine.GetNotes ().ContainsKey (note.Uri));
-			string NOTE_PATH = Path.Combine ("../../test_notes/proper_notes", Utils.GetNoteFileNameFromURI (note));
-			// make sure the note exists
-			Assert.IsTrue (System.IO.File.Exists (NOTE_PATH));
-			System.IO.File.Delete (NOTE_PATH); //Clear up test for next time
 		}
 
 		[Test()]
@@ -69,10 +88,8 @@ namespace Tomboy
 		{
 			note.Text = "Unit test note by NewNote() method \\n Added text";
 			engine.SaveNote (note);
-			string NOTE_PATH = Path.Combine ("../../test_notes/proper_notes", Utils.GetNoteFileNameFromURI (note));
 			string noteContents = System.IO.File.ReadAllText (NOTE_PATH);
 			Assert.IsTrue (noteContents.Contains ("Added text"));
-			System.IO.File.Delete (NOTE_PATH); //Clear up test for next time
 
 		}
 
@@ -81,18 +98,15 @@ namespace Tomboy
 		{
 			note.Text = "Unit test note by NewNote() method \\n Added text";
 			engine.SaveNote (note);
-			string NOTE_PATH = Path.Combine ("../../test_notes/proper_notes", Utils.GetNoteFileNameFromURI (note));
 			string noteContents = System.IO.File.ReadAllText (NOTE_PATH);
 			Console.WriteLine (noteContents);
 			Assert.IsFalse (noteContents.Contains ("<last-change-date>0001-01-01T00:00:00.0000000-06:00</last-change-date>"));
-			System.IO.File.Delete (NOTE_PATH); //Clear up test for next time
 
 		}
 
 		[Test()]
 		public void Engine_Delete_Note_Success ()
 		{
-			string NOTE_PATH = Path.Combine ("../../test_notes/proper_notes", Utils.GetNoteFileNameFromURI (note));
 			Assert.IsTrue (System.IO.File.Exists (NOTE_PATH));
 			engine.DeleteNote (note);
 			Assert.IsFalse (System.IO.File.Exists (NOTE_PATH));
@@ -109,9 +123,6 @@ namespace Tomboy
 			// make sure the ChangeDate is different since we modified the note.
 			engine.SaveNote (note);
 			Assert.AreNotSame (time, note.ChangeDate);
-			/* clean-up */
-			string NOTE_PATH = Path.Combine ("../../test_notes/proper_notes", Utils.GetNoteFileNameFromURI (note));
-			engine.DeleteNote (note);
 		}
 	}
 }

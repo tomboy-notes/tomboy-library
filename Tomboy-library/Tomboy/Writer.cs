@@ -20,6 +20,7 @@
 
 using System;
 using System.Xml;
+using Tomboy.Tags;
 
 namespace Tomboy
 {
