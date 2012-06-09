@@ -29,24 +29,15 @@ namespace Tomboy
 	/// </summary>
 	public class Engine
 	{
-		public delegate void TagAddedEventHandler (Tag tag);
-		public delegate void TagRemovedEventHandler (string tag_name);
-
 		#region private fields
 		/* holds whatever storage interface will be used */
 		private IStorage storage;
 
-		private static object tag_locker = new object ();
-		private static object bookmark_locker = new object ();
+		private static TagManager tagMgr = new TagManager ();
+
 		/* holds the current notes
 		 * This will change as notes are added or removed */
 		private Dictionary<string, Note> notes;
-				
-		/* Contains a list of user-defined tags */
-		private static Dictionary<string, Tag> tags = new Dictionary<string, Tag> ();
-
-		/* Special tags that are used by the Tomboy system */
-		private static Dictionary<string,Tag> internal_tags = new Dictionary<string, Tag> ();
 
 		#endregion
 
@@ -68,157 +59,6 @@ namespace Tomboy
 
 		#region public methods
 
-		public void AddNoteToTag (string tag_name, Note note)
-		{
-			Tag tag = GetOrCreateTag (tag_name);
-			note.Tags.Add (tag.NormalizedName, tag);
-		}
-
-		// <summary>
-		// Return an existing tag for the specified tag name.  If no Tag exists
-		// null will be returned.
-		// </summary>
-		public Tag GetTag (string tag_name)
-		{
-			if (tag_name == null)
-				throw new ArgumentNullException ("TagManager.GetTag () called with a null tag name.");
-
-			string normalized_tag_name = tag_name.Trim ().ToLower ();
-			if (normalized_tag_name == String.Empty)
-				throw new ArgumentException ("TagManager.GetTag () called with an empty tag name.");
-
-			if (normalized_tag_name.StartsWith(Tag.SYSTEM_TAG_PREFIX) || normalized_tag_name.Split(':').Length > 2){
-				lock (tag_locker) {
-				if(internal_tags.ContainsKey(normalized_tag_name))
-					return internal_tags[normalized_tag_name];
-				return null;
-				}
-			}
-
-			Tag tag = null;
-			if (tags.TryGetValue (normalized_tag_name, out tag))
-				return tag;
-
-			return null;
-		}
-
-		// <summary>
-		// Same as GetTag () but will create a new tag if one doesn't already exist.
-		// </summary>
-		public Tag GetOrCreateTag (string tag_name)
-		{
-			Tag t = null;
-			if (tag_name == null)
-				throw new ArgumentNullException ("TagManager.GetOrCreateTag () called with a null tag name.");
-
-			string normalized_tag_name = tag_name.Trim ().ToLower ();
-			if (normalized_tag_name == String.Empty)
-				throw new ArgumentException ("TagManager.GetOrCreateTag () called with an empty tag name.");
-
-			if (normalized_tag_name.StartsWith (Tag.SYSTEM_TAG_PREFIX) || normalized_tag_name.Split (':').Length > 2) {
-				lock (tag_locker) {
-					if (internal_tags.ContainsKey (normalized_tag_name))
-						return internal_tags [normalized_tag_name];
-					else {
-						t = new Tag (normalized_tag_name);
-						internal_tags.Add (normalized_tag_name, t);
-						return t;
-					}
-				}
-			}
-
-			lock (tag_locker) {
-				t = GetTag (tag_name);
-				if (t == null) {
-					t = new Tag (tag_name.Trim ());
-					tags.Add (normalized_tag_name, t);
-				}
-			}
-			return t;
-		}
-
-		/// <summary>
-		/// Same as GetTag(), but for a system tag.
-		/// </summary>
-		/// <param name="tag_name">
-		/// A <see cref="System.String"/>.  This method will handle adding
-		/// any needed "system:" or identifier needed.
-		/// </param>
-		/// <returns>
-		/// A <see cref="Tag"/>
-		/// </returns>
-		public Tag GetSystemTag (string tag_name)
-		{
-			return GetTag (Tag.SYSTEM_TAG_PREFIX + tag_name);
-		}
-		
-		/// <summary>
-		/// Same as <see cref="Tomboy.TagManager.GetSystemTag"/> except that
-		/// a new tag will be created if the specified one doesn't exist.
-		/// </summary>
-		/// <param name="tag_name">
-		/// A <see cref="System.String"/>
-		/// </param>
-		/// <returns>
-		/// A <see cref="Tag"/>
-		/// </returns>
-		public Tag GetOrCreateSystemTag (string tag_name)
-		{
-			return GetOrCreateTag (Tag.SYSTEM_TAG_PREFIX + tag_name);
-		}
-		
-		// <summary>
-		// This will remove the tag from every note that is currently tagged
-		// and from the main list of tags.
-		// </summary>
-		public void RemoveTag (Tag tag)
-		{
-			if (tag == null)
-				throw new ArgumentNullException ("TagManager.RemoveTag () called with a null tag");
-
-			if(tag.IsProperty || tag.IsSystem){
-				lock (tag_locker) {
-					internal_tags.Remove(tag.NormalizedName);
-				}
-			}
-
-			lock (tag_locker) {
-				if (tags.ContainsKey (tag.NormalizedName)) {
-					tags.Remove (tag.NormalizedName);
-					Console.WriteLine ("Tag Removed: {0}", tag.NormalizedName);
-				}
-			}
-		}
-
-		#region Properties
-		public Dictionary<string, Tag> Tags
-		{
-			get {
-				return tags;
-			}
-		}
-		
-		
-		/// <value>
-		/// All tags (including system and property tags)
-		/// </value>
-		public List<Tag> AllTags
-		{
-			get {
-				List<Tag> temp = new List<Tag>();
-				
-				// Add in the system tags first
-				temp.AddRange (internal_tags.Values);
-				
-				// Now all the other tags
-				temp.AddRange (tags.Values);
-				
-				return temp;
-			}
-		}
-		
-		#endregion
-
 		/// <summary>
 		/// Gets the notes.
 		/// </summary>
@@ -232,8 +72,10 @@ namespace Tomboy
 				this.notes = temp_notes;
 			else {
 				foreach (string item in temp_notes.Keys) {
-					if (!this.notes.ContainsKey (item))
+					if (!this.notes.ContainsKey (item)) {
 						this.notes.Add (item, temp_notes[item]);
+						tagMgr.AddTagMap (temp_notes[item]);
+					}
 				}
 			}
 			return this.notes;
@@ -289,9 +131,7 @@ namespace Tomboy
 		#endregion
 
 		#region Events
-		public static event TagAddedEventHandler TagAdded;
-		public static event TagRemovedEventHandler TagRemoved;
+
 		#endregion
 	}
 }
-

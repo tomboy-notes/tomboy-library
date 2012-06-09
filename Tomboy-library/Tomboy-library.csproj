@@ -57,5 +57,6 @@
     <Compile Include="Tomboy\NoteCreator.cs" />
     <Compile Include="Tomboy\Notebooks\Notebook.cs" />
     <Compile Include="Tomboy\Tags\Tag.cs" />
+    <Compile Include="Tomboy\Tags\TagManager.cs" />
   </ItemGroup>
 </Project>

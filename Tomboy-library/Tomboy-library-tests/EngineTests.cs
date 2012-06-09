@@ -34,7 +34,6 @@ namespace Tomboy
 		Engine engine;
 		Note note;
 		string NOTE_PATH = "";
-		const string TAG_NAME_GOOGLE = "Google";
 
 		[SetUp] public void Init()
 		{
@@ -47,7 +46,6 @@ namespace Tomboy
 			note.Text = "Unit test note by NewNote() method";
 			engine.SaveNote (note);
 			NOTE_PATH = Path.Combine ("../../test_notes/proper_notes", Utils.GetNoteFileNameFromURI (note));
-			engine.AddNoteToTag (TAG_NAME_GOOGLE, note);
 		}
 
 		[TearDown]
@@ -56,18 +54,6 @@ namespace Tomboy
 			try {
 				System.IO.File.Delete (NOTE_PATH); //Clear up test for next time
 			} catch (Exception) {};
-		}
-
-		[Test()]
-		public void Contains_tag_Google ()
-		{
-			Assert.IsNotNull (engine.GetTag (TAG_NAME_GOOGLE));
-		}
-
-		[Test()]
-		public void NOT_Contains_tag ()
-		{
-			Assert.IsNull (engine.GetTag ("A crazy tag Name"));
 		}
 
 		[Test()]
