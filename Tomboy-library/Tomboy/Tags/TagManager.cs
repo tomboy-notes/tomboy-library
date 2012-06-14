@@ -50,11 +50,17 @@ namespace Tomboy.Tags
 		/// <summary>
 		/// Special tags that are used by the Tomboy system
 		/// </summary>
+		/// <description>
+		/// The mapping is a Tag to List<Notes> which is a one to many mapping of Tag to Notes.
+		/// </description>
 		private static Dictionary<string, List<Note>> internal_tag_to_notes_mapping = new Dictionary<string, List<Note>> ();
 		/// <summary>
 		/// The master_internal_tags_list.
 		/// </summary>
 
+		/// <summary>
+		/// The internal_tag_list of Tags. This list does not contain what Notes are part fo the Tag, but just a listing of all Internal Tags
+		/// </summary>
 		private Dictionary<string, Tag> internal_tag_list = new Dictionary<string, Tag> ();
 
 		private static object tag_locker = new object ();
@@ -168,6 +174,12 @@ namespace Tomboy.Tags
 			}
 		}
 
+		/// <summary>
+		/// Adds tags from the passed Note.Tags to the Tag_to_Note mapping
+		/// </summary>
+		/// <param name='note'>
+		/// Note.
+		/// </param>
 		public void AddTagMap (Note note)
 		{
 			foreach (string tag in note.Tags.Keys) {
@@ -175,6 +187,15 @@ namespace Tomboy.Tags
 			}
 		}
 
+		/// <summary>
+		/// Gets the notes by tag.
+		/// </summary>
+		/// <returns>
+		/// Returns any notes that are contained by the specified tag_name
+		/// </returns>
+		/// <param name='tag_name'>
+		/// Tag_name.
+		/// </param>
 		public List<Note> GetNotesByTag (string tag_name)
 		{
 			if (tag_to_notes_mapping.ContainsKey (GetNormalizedName (tag_name)))
