@@ -55,7 +55,24 @@ namespace Tomboy
 			if (notes == null)
 				notes = new Dictionary<string, Note> ();
 		}
-		#endregion
+		#endregion Constructors
+
+
+		#region delegate
+
+		public delegate void NoteAddedEventHandler (Note note);
+		public delegate void NoteRemovedEventHandler (Note note);
+		public delegate void NoteUpdatedEventHandler (Note note);
+
+		#endregion delegate
+
+		#region event handlers
+
+		public static event NoteAddedEventHandler NoteAdded;
+		public static event NoteAddedEventHandler NoteRemoved;
+		public static event NoteAddedEventHandler NoteUpdated;
+
+		#endregion event handlers
 
 		#region public methods
 
@@ -91,6 +108,8 @@ namespace Tomboy
 		{
 			Note note = NoteCreator.NewNote ();
 			notes.Add (note.Uri, note);
+			if (NoteAdded != null)
+				NoteAdded (note);
 			return note;
 		}
 		
@@ -115,6 +134,8 @@ namespace Tomboy
 			tagMgr.AddTagMap (note);
 			/* Save Note to Storage */
 			this.storage.SaveNote (note);
+			if (NoteUpdated != null)
+				NoteUpdated (note);
 		}
 
 		/// <summary>
@@ -129,6 +150,8 @@ namespace Tomboy
 				notes.Remove (note.Uri);
 			tagMgr.RemoveNote (note);
 			this.storage.DeleteNote (note);
+			if (NoteRemoved != null)
+				NoteRemoved (note);
 		}
 		#endregion
 

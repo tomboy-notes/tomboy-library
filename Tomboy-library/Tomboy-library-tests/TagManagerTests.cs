@@ -32,14 +32,27 @@ namespace Tomboylibrarytests
 	{
 		private TagManager tagMgr;
 		const string TAG_NAME_GOOGLE = "Google";
+		Tag tag_google;
+		Tag tag_school;
+		Note note;
 
 		[SetUp]
 		public void Init ()
 		{
 			tagMgr = TagManager.Instance;
-			tagMgr.GetOrCreateTag (TAG_NAME_GOOGLE);
+			tag_google = tagMgr.GetOrCreateTag (TAG_NAME_GOOGLE);
+			tag_school = new Tag ("School");
+			note = TesterNote.GetTesterNote ();
+			note.Tags.Add ("School", tag_school);
 		}
 
+		[TearDown]
+		public void Cleanup ()
+		{
+			tagMgr.RemoveTag (tag_google);
+			tagMgr.RemoveTag (tag_school);
+			TesterNote.TearDownNote ();
+		}
 		[Test()]
 		public void Contains_tag_Google ()
 		{
@@ -55,9 +68,7 @@ namespace Tomboylibrarytests
 		[Test()]
 		public void Note_Mapping_Contains_Note ()
 		{
-			Note note = TesterNote.GetTesterNote ();
-			Tag tag = new Tag ("School");
-			note.Tags.Add ("School", tag);
+
 			tagMgr.AddTagMap (note);
 			Assert.IsTrue (tagMgr.GetTag ("School").Name.Equals ( "School"));
 			Assert.IsTrue (tagMgr.GetNotesByTag ("School").Contains (note));
@@ -67,9 +78,6 @@ namespace Tomboylibrarytests
 		[Test ()]
 		public void Get_Tags ()
 		{
-			Note note = TesterNote.GetTesterNote ();
-			Tag tag = new Tag ("School");
-			note.Tags.Add ("School", tag);
 			tagMgr.AddTagMap (note);
 			Assert.IsTrue (tagMgr.GetTags ().ContainsKey ("school"));
 		}
@@ -77,11 +85,8 @@ namespace Tomboylibrarytests
 		[Test ()][ExpectedException ("System.ArgumentException")]
 		public void Remove_Tag ()
 		{
-			Note note = TesterNote.GetTesterNote ();
-			Tag tag = new Tag ("School");
-			note.Tags.Add ("School", tag);
 			tagMgr.AddTagMap (note);
-			tagMgr.RemoveTag (tag);
+			tagMgr.RemoveTag (tag_school);
 			Assert.IsFalse (tagMgr.GetTags ().ContainsKey ("school"));
 			Assert.IsFalse (tagMgr.GetNotesByTag ("School").Contains (note)); // The tag should no longer exist
 		}
@@ -89,9 +94,6 @@ namespace Tomboylibrarytests
 		[Test ()]
 		public void Remove_Note ()
 		{
-			Note note = TesterNote.GetTesterNote ();
-			Tag tag = new Tag ("School");
-			note.Tags.Add ("School", tag);
 			tagMgr.AddTagMap (note);
 			Assert.Contains (note, tagMgr.GetNotesByTag ("School"));
 			tagMgr.RemoveNote (note);
@@ -106,9 +108,7 @@ namespace Tomboylibrarytests
 			TagManager.TagAdded += delegate(Tag addedTag) {
 				addedTags.Add (addedTag.NormalizedName);
 			};
-			Note note = TesterNote.GetTesterNote ();
-			Tag tag = new Tag ("School");
-			note.Tags.Add ("School", tag);
+
 			tagMgr.AddTagMap (note);
 
 			Assert.IsTrue (addedTags.Contains ("school"));
@@ -121,11 +121,9 @@ namespace Tomboylibrarytests
 			TagManager.TagAdded += delegate(Tag addedTag) {
 				removedTags.Add (addedTag.NormalizedName);
 			};
-			Note note = TesterNote.GetTesterNote ();
-			Tag tag = new Tag ("School");
-			note.Tags.Add ("School", tag);
+
 			tagMgr.AddTagMap (note);
-			tagMgr.RemoveTag (tag);
+			tagMgr.RemoveTag (tag_school);
 
 			Assert.IsTrue (removedTags.Contains ("school"));
 		}

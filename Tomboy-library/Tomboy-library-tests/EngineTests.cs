@@ -66,17 +66,29 @@ namespace Tomboy
 		[Test()]
 		public void Engine_New_Note ()
 		{
-			Assert.IsTrue (engine.GetNotes ().ContainsKey (note.Uri));
+			/* holds a list of events (notes) received */
+			List<string> addNotes = new List<string> ();
+			Engine.NoteAdded += delegate(Note addedNote) {
+				addNotes.Add (addedNote.Title);
+			};
+			Note newNote = engine.NewNote ();
+			Assert.IsTrue (engine.GetNotes ().ContainsKey (newNote.Uri));
+			Assert.IsTrue (addNotes.Contains (newNote.Title));
 		}
 
 		[Test()]
 		public void Engine_Save_Note_Success ()
 		{
+			/* holds a list of events (notes) received */
+			List<string> addNotes = new List<string> ();
+			Engine.NoteUpdated += delegate(Note addedNote) {
+				addNotes.Add (addedNote.Title);
+			};
 			note.Text = "Unit test note by NewNote() method \\n Added text";
 			engine.SaveNote (note);
 			string noteContents = System.IO.File.ReadAllText (NOTE_PATH);
 			Assert.IsTrue (noteContents.Contains ("Added text"));
-
+			Assert.IsTrue (addNotes.Contains (note.Title));
 		}
 
 		[Test()]
@@ -93,11 +105,17 @@ namespace Tomboy
 		[Test()]
 		public void Engine_Delete_Note_Success ()
 		{
+			/* holds a list of events (notes) received */
+			List<string> addNotes = new List<string> ();
+			Engine.NoteRemoved += delegate(Note addedNote) {
+				addNotes.Add (addedNote.Title);
+			};
 			Assert.IsTrue (System.IO.File.Exists (NOTE_PATH));
 			engine.DeleteNote (note);
 			Assert.IsFalse (System.IO.File.Exists (NOTE_PATH));
 			string BACKUP_NOTE = Path.Combine ("../../test_notes/proper_notes/Backup", Utils.GetNoteFileNameFromURI (note));
 			Assert.IsTrue (System.IO.File.Exists (BACKUP_NOTE));
+			Assert.IsTrue (addNotes.Contains (note.Title));
 			File.Delete (BACKUP_NOTE);
 		}
 

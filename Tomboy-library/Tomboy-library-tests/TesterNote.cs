@@ -32,13 +32,19 @@ namespace Tomboy
 		
 		public static Note GetTesterNote ()
 		{
+			if (note == null)
+				note = new Note ("tomboy://90d8eb70-989d-4b26-97bc-ba4b9442e51d");
 			SetUpNote ();
 			return note;
+		}
+
+		public static void TearDownNote ()
+		{
+			note = null;
 		}
 		
 		private static void SetUpNote ()
 		{
-			
 			string changeDateString = "2012-04-05T22:51:54.2191587+02:00";
 			DateTime changeDate = DateTime.Parse(changeDateString, System.Globalization.CultureInfo.InvariantCulture);
 			note.ChangeDate = changeDate;
