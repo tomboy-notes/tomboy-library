@@ -214,7 +214,8 @@ namespace Tomboy.Tags
 
 			if(tag.IsProperty || tag.IsSystem){
 				lock (tag_locker) {
-					//TODO: Remove tags from Notese contained within the list of Tags to Notes mapping
+					// TODO: Remove tags from Notese contained within the list of Tags to Notes mapping
+					//FIXME: Really should have this fixed soon
 					internal_tag_list.Remove (tag.NormalizedName);
 					internal_tag_to_notes_mapping.Remove (tag.NormalizedName);
 					Console.WriteLine ("Tag Removed: {0}", tag.NormalizedName);
