@@ -28,15 +28,39 @@ namespace Tomboy.Tags
 	/// <summary>
 	/// Tag manager manages all tags
 	/// </summary>
-	public class TagManager
+	public sealed class TagManager
 	{
 		#region Constructors
-		public TagManager ()
+		private TagManager() {}
+		/// <summary>
+		/// Gets the instance of TagManager
+		/// </summary>
+		/// <value>
+		/// The instance.
+		/// </value>
+		public static TagManager Instance
 		{
+			get 
+			{
+			 if (instance == null) 
+			 {
+			    lock (syncRoot) 
+			    {
+			       if (instance == null) 
+			          instance = new TagManager();
+			    }
+			 }
+			
+			 return instance;
+			}
 		}
 		#endregion
 
 		#region private fields
+		private static volatile TagManager instance;
+		/* for use by the singleton logic */
+		private static object syncRoot = new Object();
+
 		/// <summary>
 		/// The tag_to_notes_mapping holds a list of ALL tags and any notes that may be mapped to that tag.
 		/// </summary>
@@ -72,6 +96,35 @@ namespace Tomboy.Tags
 		#endregion
 
 		#region public methods
+
+		/// <summary>
+		/// Remove the specified note from the Tag map
+		/// </summary>
+		/// <param name='note'>
+		/// Note.
+		/// </param>
+		public void RemoveNote (Note note)
+		{
+			if (note == null)
+				throw new ArgumentNullException ("TagManager.Remove () called without specifying a Note");
+
+			Console.WriteLine ("Attempting to remove Note {0} from Tags", note.Title);
+
+			Dictionary<string, Tag> tags_in_note = note.Tags;
+			if (tags_in_note != null || tags_in_note.Count > 0) {
+
+				Console.WriteLine ("Total tags to look through {0}", tags_in_note.Count);
+
+				foreach (KeyValuePair<string, Tag> pair in tags_in_note) {
+					Tag tag = pair.Value;
+					Console.WriteLine ("Looking at tag {0}", tag.NormalizedName);
+					if (tag.IsSystem)
+						RemoveNoteFromSystemMapping (note, tag);
+					else
+						RemoveNoteFromMapping (note, tag);
+				}
+			}
+		}
 
 		/// <summary>
 		/// Gets all tags except for internal tags
@@ -208,6 +261,25 @@ namespace Tomboy.Tags
 
 		#region private methods
 
+		private void RemoveNoteFromSystemMapping (Note note, Tag tag)
+		{
+			if (internal_tag_to_notes_mapping.ContainsKey (tag.NormalizedName) && internal_tag_to_notes_mapping[tag.NormalizedName].Contains (note)) {
+				internal_tag_to_notes_mapping[tag.NormalizedName].Remove (note);
+				Console.WriteLine ("Removed Note {0} from Tag {1}", note.Title, tag.NormalizedName);
+			} else {
+				Console.WriteLine ("Note {0} not removed from Tag {1}", note.Title, tag.NormalizedName);
+			}
+		}
+
+		private void RemoveNoteFromMapping (Note note, Tag tag)
+		{
+			if (tag_to_notes_mapping.ContainsKey (tag.NormalizedName) && tag_to_notes_mapping[tag.NormalizedName].Contains (note)) {
+				tag_to_notes_mapping[tag.NormalizedName].Remove (note);
+				Console.WriteLine ("Removed Note {0} from Tag {1}", note.Title, tag.NormalizedName);
+			} else {
+				Console.WriteLine ("Note {0} not removed from Tag {1}", note.Title, tag.NormalizedName);
+			}
+		}
 		/// <summary>
 		/// Gets the name of the normalized. <br>
 		/// Returns NULL if param is null or empth.

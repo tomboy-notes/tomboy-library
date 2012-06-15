@@ -29,11 +29,11 @@ namespace Tomboy
 	/// </summary>
 	public class Engine
 	{
+
 		#region private fields
 		/* holds whatever storage interface will be used */
 		private IStorage storage;
-
-		private static TagManager tagMgr = new TagManager ();
+		private static TagManager tagMgr = TagManager.Instance;
 
 		/* holds the current notes
 		 * This will change as notes are added or removed */
@@ -112,6 +112,7 @@ namespace Tomboy
 			if (notes.ContainsKey (note.Uri))
 				notes.Remove (note.Uri);
 			notes.Add (note.Uri, note);
+			tagMgr.AddTagMap (note);
 			/* Save Note to Storage */
 			this.storage.SaveNote (note);
 		}
@@ -126,6 +127,7 @@ namespace Tomboy
 		{
 			if (notes.ContainsKey (note.Uri))
 				notes.Remove (note.Uri);
+			tagMgr.RemoveNote (note);
 			this.storage.DeleteNote (note);
 		}
 		#endregion

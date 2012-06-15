@@ -36,7 +36,7 @@ namespace Tomboylibrarytests
 		[SetUp]
 		public void Init ()
 		{
-			tagMgr = new TagManager ();
+			tagMgr = TagManager.Instance;
 			tagMgr.GetOrCreateTag (TAG_NAME_GOOGLE);
 		}
 
@@ -84,6 +84,18 @@ namespace Tomboylibrarytests
 			tagMgr.RemoveTag (tag);
 			Assert.IsFalse (tagMgr.GetTags ().ContainsKey ("school"));
 			Assert.IsFalse (tagMgr.GetNotesByTag ("School").Contains (note)); // The tag should no longer exist
+		}
+
+		[Test ()]
+		public void Remove_Note ()
+		{
+			Note note = TesterNote.GetTesterNote ();
+			Tag tag = new Tag ("School");
+			note.Tags.Add ("School", tag);
+			tagMgr.AddTagMap (note);
+			Assert.Contains (note, tagMgr.GetNotesByTag ("School"));
+			tagMgr.RemoveNote (note);
+			Assert.IsFalse (tagMgr.GetNotesByTag ("School").Contains (note));
 		}
 	}
 }
