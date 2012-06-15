@@ -92,7 +92,7 @@ namespace Tomboy.Tags
 
 		#region delegate
 		public delegate void TagAddedEventHandler (Tag tag);
-		public delegate void TagRemovedEventHandler (string tag_name);
+		public delegate void TagRemovedEventHandler (Tag tag);
 		#endregion
 
 		#region public methods
@@ -208,23 +208,31 @@ namespace Tomboy.Tags
 		// </summary>
 		public void RemoveTag (Tag tag)
 		{
+			bool tag_removed = false;
 			if (tag == null)
 				throw new ArgumentNullException ("TagManager.RemoveTag () called with a null tag");
 
 			if(tag.IsProperty || tag.IsSystem){
 				lock (tag_locker) {
+					//TODO: Remove tags from Notese contained within the list of Tags to Notes mapping
 					internal_tag_list.Remove (tag.NormalizedName);
 					internal_tag_to_notes_mapping.Remove (tag.NormalizedName);
+					Console.WriteLine ("Tag Removed: {0}", tag.NormalizedName);
+					tag_removed = true;
 				}
 			}
 
 			lock (tag_locker) {
 				if (tag_list.ContainsKey (tag.NormalizedName)) {
+					//TODO: Remove tags from Notese contained within the list of Tags to Notes mapping
 					tag_list.Remove (tag.NormalizedName);
 					tag_to_notes_mapping.Remove (tag.NormalizedName);
+					tag_removed = true;
 					Console.WriteLine ("Tag Removed: {0}", tag.NormalizedName);
 				}
 			}
+			if (tag_removed && TagRemoved != null)
+				TagRemoved (tag);
 		}
 
 		/// <summary>
@@ -301,6 +309,9 @@ namespace Tomboy.Tags
 		private void AddTagMap (string tag_name, Note note)
 		{
 			Tag t = null;
+			/* whether or not a tag was created */
+			bool tag_added = false;
+
 			if (tag_name == null)
 				throw new ArgumentNullException ("TagManager.GetOrCreateTag () called with a null tag name.");
 
@@ -316,6 +327,7 @@ namespace Tomboy.Tags
 					if (!internal_tag_list.ContainsKey (normalized_tag_name)) {
 						t = new Tag (normalized_tag_name);
 						internal_tag_list.Add (normalized_tag_name, t);
+						tag_added = true;
 						AddNoteToInternalTagMapping (normalized_tag_name, note);
 					}
 				}
@@ -326,9 +338,12 @@ namespace Tomboy.Tags
 				if (!tag_list.ContainsKey (normalized_tag_name)) {
 					t = new Tag (tag_name.Trim ());
 					tag_list.Add (normalized_tag_name, t);
+					tag_added = true;
 					AddNoteToTagMapping (normalized_tag_name, note);
 				}
 			}
+			if (tag_added && TagAdded != null)
+				TagAdded (t);
 		}
 
 		/// <summary>
@@ -375,6 +390,8 @@ namespace Tomboy.Tags
 
 		private Tag GetOrCreateTag (string tag_name, Note note)
 		{
+			/* whether or not a tag was created */
+			bool tag_added = false;
 			Tag t = null;
 			if (tag_name == null)
 				throw new ArgumentNullException ("TagManager.GetOrCreateTag () called with a null tag name.");
@@ -393,6 +410,7 @@ namespace Tomboy.Tags
 					else {
 						t = new Tag (normalized_tag_name);
 						internal_tag_list.Add (normalized_tag_name, t);
+						tag_added = true;
 						if (note != null)
 							AddNoteToInternalTagMapping (normalized_tag_name, note);
 						return t;
@@ -405,11 +423,14 @@ namespace Tomboy.Tags
 				if (t == null) {
 					t = new Tag (tag_name.Trim ());
 					tag_list.Add (normalized_tag_name, t);
+					tag_added = true;
 				}
 									
 				if (note != null)
 					AddNoteToTagMapping (normalized_tag_name, note);
 			}
+			if (tag_added && TagAdded != null)
+				TagAdded (t);
 			return t;
 		}
 

@@ -97,5 +97,37 @@ namespace Tomboylibrarytests
 			tagMgr.RemoveNote (note);
 			Assert.IsFalse (tagMgr.GetNotesByTag ("School").Contains (note));
 		}
+
+		[Test ()]
+		public void Tag_Created_Event ()
+		{
+			/* holds a list of events (tags) received */
+			List<string> addedTags = new List<string> ();
+			TagManager.TagAdded += delegate(Tag addedTag) {
+				addedTags.Add (addedTag.NormalizedName);
+			};
+			Note note = TesterNote.GetTesterNote ();
+			Tag tag = new Tag ("School");
+			note.Tags.Add ("School", tag);
+			tagMgr.AddTagMap (note);
+
+			Assert.IsTrue (addedTags.Contains ("school"));
+		}
+		[Test ()]
+		public void Tag_Deleted_Event ()
+		{
+			/* holds a list of events (tags) received */
+			List<string> removedTags = new List<string> ();
+			TagManager.TagAdded += delegate(Tag addedTag) {
+				removedTags.Add (addedTag.NormalizedName);
+			};
+			Note note = TesterNote.GetTesterNote ();
+			Tag tag = new Tag ("School");
+			note.Tags.Add ("School", tag);
+			tagMgr.AddTagMap (note);
+			tagMgr.RemoveTag (tag);
+
+			Assert.IsTrue (removedTags.Contains ("school"));
+		}
 	}
 }
