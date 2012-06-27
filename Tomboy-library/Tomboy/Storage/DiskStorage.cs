@@ -65,6 +65,9 @@ namespace Tomboy
 		public void SetPath (string path)
 		{
 			path_to_notes = path;
+			if (!System.IO.Directory.Exists (path_to_notes)) {
+				System.IO.Directory.CreateDirectory (path_to_notes);
+			}
 			// where notes are backed up too.
 			backup_path_notes = Path.Combine (path_to_notes, "Backup");
 		}
@@ -85,9 +88,9 @@ namespace Tomboy
 		/// <param name='note'>
 		/// Note.
 		/// </param>
-		public static void Write (string write_file, Note note)
+		public static void Write (string filename, Note note)
 		{
-			WriteFile (write_file, note);
+			WriteFile (Path.Combine (path_to_notes, filename), note);
 		}
 		
 		/// <summary>

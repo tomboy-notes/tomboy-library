@@ -20,6 +20,7 @@
 
 using System;
 using System.Text;
+using System.IO;
 using System.Collections.Generic;
 using NUnit.Framework;
 
@@ -31,7 +32,25 @@ namespace Tomboy
 		private const string NOTE_FOLDER_PROPER_NOTES = "../../test_notes/proper_notes";
 		private const string NOTE_FOLDER_CORRUPT_NOTES = "../../test_notes/corrupt_notes";
 		private const string NOTE_FOLDER_INVALID = "../../test_notes/invalid_notes";
-		
+		private const string NOTE_FOLDER_TEMP = "../../test_notes/temp_notes";
+
+		[Test()]
+		public void SetPath_NoteFolderDoesNotExist_CreatesFolder ()
+		{
+
+			try {
+				System.IO.Directory.Delete (NOTE_FOLDER_INVALID);
+			}
+			catch (System.IO.DirectoryNotFoundException) {} //This is expected provided the test passed last time.
+
+			IStorage storage = DiskStorage.Instance;
+			storage.SetPath (NOTE_FOLDER_INVALID);
+
+			Assert.IsTrue (System.IO.Directory.Exists (NOTE_FOLDER_INVALID));
+			System.IO.Directory.Delete (NOTE_FOLDER_INVALID);
+
+		}
+
 		[Test()]
 		public void Read_ProperNoteFile_ReadCorrectly ()
 		{
@@ -82,48 +101,37 @@ namespace Tomboy
 		[Test()]
 		public void WriteNote_NoteFileDoesNotExist_NoteFileIsCreated ()
 		{	
-			const string NOTE_PATH = "../../test_notes/temp_notes/90d8eb70-989d-4b26-97bc-ba4b9442e51d.note";
-			System.IO.File.Delete (NOTE_PATH); //Make sure it doesn't exist from before
-			
-			DiskStorage.Write (NOTE_PATH, TesterNote.GetTesterNote ());
-			Assert.IsTrue (System.IO.File.Exists (NOTE_PATH));
-			
-			System.IO.File.Delete (NOTE_PATH); //Clear up test for next time
-		}
-		
-		[Test()]
-		public void WriteNote_NoteFolderDoesNotExist_FolderAndNoteFileIsCreated ()
-		{	
-			const string NOTE_PATH = "../../nonexistant_folder/90d8eb70-989d-4b26-97bc-ba4b9442e51d.note";
-			const string DIR_PATH = "../../nonexistant_folder";
-			
+			IStorage storage = DiskStorage.Instance;
+			storage.SetPath (NOTE_FOLDER_TEMP);
 
-			try {
-				System.IO.File.Delete (NOTE_PATH);
-				System.IO.Directory.Delete (DIR_PATH);
-			}
-			catch (System.IO.DirectoryNotFoundException) {} //This is expected provided the test passed last time.
+			string note_name = "90d8eb70-989d-4b26-97bc-ba4b9442e51d.note";
+			string note_path = Path.Combine (NOTE_FOLDER_TEMP, note_name);
+			System.IO.File.Delete (note_path); //Make sure it doesn't exist from before
 			
-			DiskStorage.Write (NOTE_PATH, TesterNote.GetTesterNote ());
-			Assert.IsTrue (System.IO.File.Exists (NOTE_PATH));
+			DiskStorage.Write (note_name, TesterNote.GetTesterNote ());
+			Assert.IsTrue (System.IO.File.Exists (note_path));
 			
-			System.IO.File.Delete (NOTE_PATH); //Clear up test for next time
-			System.IO.Directory.Delete (DIR_PATH);
+			System.IO.File.Delete (note_path); //Clear up test for next time
 		}
-		
+
 		[Test()]
 		public void WriteNote_NoteFileExists_NoteFileIsOverwritten ()
 		{	
-			const string NOTE_PATH = "../../test_notes/temp_notes/existing_note.note";
+
+			IStorage storage = DiskStorage.Instance;
+			storage.SetPath (NOTE_FOLDER_TEMP);
 			
-			System.IO.File.WriteAllText (NOTE_PATH, "Test");
+			string note_name = "existing_note.note";
+			string note_path = Path.Combine (NOTE_FOLDER_TEMP, note_name);
+
+			System.IO.File.WriteAllText (note_path, "Test");
 			
-			DiskStorage.Write (NOTE_PATH, TesterNote.GetTesterNote ());
+			DiskStorage.Write (note_name, TesterNote.GetTesterNote ());
 		
-			string noteContents = System.IO.File.ReadAllText (NOTE_PATH);
+			string noteContents = System.IO.File.ReadAllText (note_path);
 			Assert.AreNotEqual (noteContents, "Test", "The pre-existing note has not been overwritten!");
 			
-			System.IO.File.Delete (NOTE_PATH); //Clear up test for next time
+			System.IO.File.Delete (note_path); //Clear up test for next time
 		}
 		
 	}
