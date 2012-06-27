@@ -25,7 +25,7 @@ namespace Tomboy
 {
 	public class TomboyException : Exception
 	{
-		public TomboyException (String exception)
+		public TomboyException (String exception): base(exception)
 		{
 		}
 	}
