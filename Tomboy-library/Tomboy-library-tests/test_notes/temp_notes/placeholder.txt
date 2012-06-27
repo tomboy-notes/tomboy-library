@@ -1,0 +1,1 @@
+This file needs to be here to commit the empty folder to git, but is not used for tests. (But the folder is used for temp notes during tests.)
