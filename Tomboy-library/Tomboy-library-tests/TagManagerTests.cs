@@ -25,7 +25,7 @@ using NUnit.Framework;
 using Tomboy;
 using Tomboy.Tags;
 
-namespace Tomboylibrarytests
+namespace Tomboy
 {
 	[TestFixture()]
 	public class TagManagerTests
