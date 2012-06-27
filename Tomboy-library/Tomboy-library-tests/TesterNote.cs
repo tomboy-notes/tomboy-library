@@ -63,7 +63,8 @@ namespace Tomboy
 			note.Title = "Unit Test Note";
 
 			Tag tag = new Tag ("Example Notebook");
-			note.Tags.Add (tag.NormalizedName, tag);
+			if (!note.Tags.ContainsKey (tag.NormalizedName)) 
+				note.Tags.Add (tag.NormalizedName, tag);
 		}
 	}
 }
