@@ -131,25 +131,29 @@ namespace Tomboy
 			if (path_to_notes == null)
 				throw new TomboyException ("No Notes path has been defined");
 			
-			/* For anyone wanting to implement another / different backend,
-			 * this could be changed in the implementing class to retreive whatever notes
-			 */
-			string [] files = Directory.GetFiles (path_to_notes, "*.note");
-			if (files.Length == 0)
-				Console.WriteLine ("no notes found");
-			
-			foreach (string file_path in files) {
-				try {
-					Note note = Read (file_path, Utils.GetURI (file_path));
-					notes.Add (note.Uri, note);
-				} catch (System.Xml.XmlException e) {
-					Console.WriteLine ("Failed to read Note {0}", file_path); /* so we know what note we cannot read */
-					Console.WriteLine (e);
-				} catch (System.IO.IOException e) {
-					Console.WriteLine (e);
-				} catch (System.UnauthorizedAccessException e) {
-					Console.WriteLine (e);
-				}				
+			try {
+				/* For anyone wanting to implement another / different backend,
+				 * this could be changed in the implementing class to retreive whatever notes
+				 */
+				string [] files = Directory.GetFiles (path_to_notes, "*.note");
+				if (files.Length == 0)
+					Console.WriteLine ("No notes found in note folder.");
+				
+				foreach (string file_path in files) {
+					try {
+						Note note = Read (file_path, Utils.GetURI (file_path));
+						notes.Add (note.Uri, note);
+					} catch (System.Xml.XmlException e) {
+						Console.WriteLine ("Failed to read Note {0}", file_path); /* so we know what note we cannot read */
+						Console.WriteLine (e);
+					} catch (System.IO.IOException e) {
+						Console.WriteLine (e);
+					} catch (System.UnauthorizedAccessException e) {
+						Console.WriteLine (e);
+					}				
+				}
+			} catch (System.IO.DirectoryNotFoundException) {
+				Console.WriteLine ("Note folder does not yet exist.");
 			}
 			return notes;
 		}
