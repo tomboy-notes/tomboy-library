@@ -149,7 +149,7 @@ namespace Tomboy
 
 			Assert.IsTrue (System.IO.File.Exists (config_path));
 			XDocument config = XDocument.Load (config_path);
-			Assert.AreEqual ("testval", config.Root.Element ("testvar").Value); //TODO handle this not being an existing value.
+			Assert.AreEqual ("testval", config.Root.Element ("testvar").Value);
 			
 			System.IO.File.Delete (config_path); //Clear up test for next time
 		}
@@ -157,31 +157,62 @@ namespace Tomboy
 		[Test()]
 		public void SetConfigVariable_ConfigFileExists_CreatesVariable ()
 		{
-			throw new NotImplementedException ();
+			IStorage storage = DiskStorage.Instance;
+			storage.SetPath (NOTE_FOLDER_PROPER_NOTES);
+			string config_name = "config.xml";
+			string config_path = Path.Combine (NOTE_FOLDER_PROPER_NOTES, config_name);
+
+			storage.SetConfigVariable ("testvar2", "testval2");
+
+			XDocument config = XDocument.Load (config_path);
+			Assert.AreEqual ("testval2", config.Root.Element ("testvar2").Value);
+
+			config.Root.Element ("testvar2").Remove (); //Reset
+			config.Save (config_path);
 		}
 		
 		[Test()]
 		public void SetConfigVariable_ConfigFileExists_UpdatesVariable ()
 		{
-			throw new NotImplementedException ();
+			IStorage storage = DiskStorage.Instance;
+			storage.SetPath (NOTE_FOLDER_PROPER_NOTES);
+			string config_name = "config.xml";
+			string config_path = Path.Combine (NOTE_FOLDER_PROPER_NOTES, config_name);
+
+			storage.SetConfigVariable ("testvar", "testval2");
+
+			XDocument config = XDocument.Load (config_path);
+			Assert.AreEqual ("testval2", config.Root.Element ("testvar").Value);
+
+			config.Root.Element ("testvar").Value = "testval"; //Reset
+			config.Save (config_path);
 		}
 		
 		[Test()]
-		public void ReadConfigVariable_ConfigFileExists_ReadsVariable ()
+		public void ReadConfigVariable_ConfigFileExists_ReturnsVariable ()
 		{
-			throw new NotImplementedException ();
+			IStorage storage = DiskStorage.Instance;
+			storage.SetPath (NOTE_FOLDER_PROPER_NOTES);
+
+			Assert.AreEqual ("testval", storage.GetConfigVariable ("testvar"));
 		}
 
 		[Test()]
 		public void ReadConfigVariable_NoConfigFile_ReturnsNull ()
 		{
-			throw new NotImplementedException ();
+			IStorage storage = DiskStorage.Instance;
+			storage.SetPath (NOTE_FOLDER_TEMP);
+
+			Assert.IsNull (storage.GetConfigVariable ("whatever"));
 		}
 
 		[Test()]
-		public void ReadConfigVariable_ConfigFileExists_ReturnsVariable ()
+		public void ReadConfigVariable_NoVariableExists_ReturnsNull ()
 		{
-			throw new NotImplementedException ();
+			IStorage storage = DiskStorage.Instance;
+			storage.SetPath (NOTE_FOLDER_PROPER_NOTES);
+
+			Assert.IsNull (storage.GetConfigVariable ("whatever"));
 		}
 	}
 }

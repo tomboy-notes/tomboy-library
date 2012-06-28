@@ -233,7 +233,12 @@ namespace Tomboy
 				return null;
 			}
 			XDocument config = XDocument.Load (configPath);
-			return config.Root.Element (key).Value; //TODO handle this not being an existing value.
+
+			try {
+				return config.Root.Element (key).Value;
+			} catch (NullReferenceException) {
+				return null;
+			}
 		}
 	}
 }
