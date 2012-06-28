@@ -34,13 +34,14 @@ namespace Tomboy
 
 		public static Dictionary<string, Note>  SearchTitles (string searchTerm, Dictionary<string, Note> searchSource)
 		{
-			return searchSource.Where(d => d.Key.Contains(searchTerm)).ToDictionary(d => d.Key, d => d.Value);
+			return searchSource.Where (d => d.Value.Title.ToLowerInvariant ().Contains (searchTerm)).ToDictionary (d => d.Key, d => d.Value);
+
 
 		}
 
 		public static Dictionary<string, Note>  SearchContent (string searchTerm, Dictionary<string, Note> searchSource)
 		{
-			throw new NotImplementedException ();
+			throw new NotImplementedException (); //TODO
 		}
 	}
 }

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<note version="0.3" xmlns:link="http://beatniksoftware.com/tomboy/link" xmlns:size="http://beatniksoftware.com/tomboy/size" xmlns="http://beatniksoftware.com/tomboy">
+  <title>Notes on Implementation (So meta)</title>
+  <text xml:space="preserve"><note-content version="0.1">Notes on Implementation (So meta)
+
+<list><list-item dir="ltr">Revision numbers are global for the whole collection of notes
+<list><list-item dir="ltr">Must be stored somewhere? (Can't make assumptions though)
+</list-item><list-item dir="ltr">Are reset if the user chooses to eliminate the whole collection of notes.</list-item></list></list-item></list></note-content></text>
+  <last-change-date>2012-06-27T20:04:13.5892490-04:00</last-change-date>
+  <last-metadata-change-date>2012-06-27T20:04:13.5917520-04:00</last-metadata-change-date>
+  <create-date>2012-06-27T20:01:54.8379600-04:00</create-date>
+  <cursor-position>161</cursor-position>
+  <selection-bound-position>161</selection-bound-position>
+  <width>450</width>
+  <height>360</height>
+  <x>0</x>
+  <y>0</y>
+  <open-on-startup>False</open-on-startup>
+</note>

@@ -35,6 +35,15 @@ namespace Tomboy
 			string StartHereNotePath = "../../test_notes/corrupt_notes/nonsense.note";
 			DiskStorage.Read (StartHereNotePath, "tomboy://nonsense");
 		}
+
+		[Test()]
+		public void Read_ProperNoteFile_CorrectTitle ()
+		{
+			string StartHereNotePath = "../../test_notes/proper_notes/90d8eb70-989d-4b26-97bc-ba4b9442e51f.note";
+			Note toCheck = DiskStorage.Read (StartHereNotePath, "tomboy://90d8eb70-989d-4b26-97bc-ba4b9442e51f");
+
+			Assert.AreEqual ("Start Here", toCheck.Title);
+		}
 	}
 }
 

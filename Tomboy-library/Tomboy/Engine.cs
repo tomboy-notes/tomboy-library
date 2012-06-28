@@ -110,7 +110,7 @@ namespace Tomboy
 		public Dictionary<string, Note> GetNotes (string searchTerm, bool searchContent)
 		{
 			Dictionary<string, Note> searchSource = GetNotes ();
-			if (searchContent) {
+			if (!searchContent) {
 				return SearchEngine.SearchTitles (searchTerm, searchSource);
 			} else {
 				return SearchEngine.SearchContent (searchTerm, searchSource);
