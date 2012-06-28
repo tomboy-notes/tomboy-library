@@ -97,6 +97,25 @@ namespace Tomboy
 			}
 			return this.notes;
 		}
+
+		/// <summary>
+		/// Gets the notes that match the search term.
+		/// </summary>
+		/// <param name='searchTerm'>
+		/// Search term.
+		/// </param>
+		/// <param name='searchContent'>
+		/// Decides whether to search only the titles or to search the content as well.
+		/// </param>
+		public Dictionary<string, Note> GetNotes (string searchTerm, bool searchContent)
+		{
+			Dictionary<string, Note> searchSource = GetNotes ();
+			if (searchContent) {
+				return SearchEngine.SearchTitles (searchTerm, searchSource);
+			} else {
+				return SearchEngine.SearchContent (searchTerm, searchSource);
+			}
+		}
 		
 		/// <summary>
 		/// Generates a New Note instance
