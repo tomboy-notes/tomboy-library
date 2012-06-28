@@ -21,6 +21,7 @@
 using System;
 using System.Text;
 using System.IO;
+using System.Xml.Linq;
 using System.Collections.Generic;
 using NUnit.Framework;
 
@@ -133,7 +134,55 @@ namespace Tomboy
 			
 			System.IO.File.Delete (note_path); //Clear up test for next time
 		}
+
+		[Test()]
+		public void SetConfigVariable_NoConfigFile_CreatesFileAndVariable ()
+		{
+			IStorage storage = DiskStorage.Instance;
+			storage.SetPath (NOTE_FOLDER_TEMP);
+
+			string config_name = "config.xml";
+			string config_path = Path.Combine (NOTE_FOLDER_TEMP, config_name);
+			System.IO.File.Delete (config_path); //Make sure it doesn't exist from before
+
+			storage.SetConfigVariable ("testvar", "testval");
+
+			Assert.IsTrue (System.IO.File.Exists (config_path));
+			XDocument config = XDocument.Load (config_path);
+			Assert.AreEqual ("testval", config.Root.Element ("testvar").Value); //TODO handle this not being an existing value.
+			
+			System.IO.File.Delete (config_path); //Clear up test for next time
+		}
+
+		[Test()]
+		public void SetConfigVariable_ConfigFileExists_CreatesVariable ()
+		{
+			throw new NotImplementedException ();
+		}
 		
+		[Test()]
+		public void SetConfigVariable_ConfigFileExists_UpdatesVariable ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[Test()]
+		public void ReadConfigVariable_ConfigFileExists_ReadsVariable ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[Test()]
+		public void ReadConfigVariable_NoConfigFile_ReturnsNull ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[Test()]
+		public void ReadConfigVariable_ConfigFileExists_ReturnsVariable ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
 

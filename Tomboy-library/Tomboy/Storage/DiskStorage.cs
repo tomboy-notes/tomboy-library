@@ -19,6 +19,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 using System;
 using System.Xml;
+using System.Xml.Linq;
 using System.IO;
 using System.Collections.Generic;
 
@@ -36,6 +37,7 @@ namespace Tomboy
 		/// <description>/home/user/.local/share/tomboy</description>
 		private static string path_to_notes = null;
 		private static string backup_path_notes = null;
+		private static string configPath = null;
 
 		protected DiskStorage ()
 		{
@@ -70,6 +72,7 @@ namespace Tomboy
 			}
 			// where notes are backed up too.
 			backup_path_notes = Path.Combine (path_to_notes, "Backup");
+			configPath = Path.Combine (path_to_notes, "config.xml");
 		}
 		
 		public void SaveNote (Note note)
@@ -203,6 +206,34 @@ namespace Tomboy
 			} else {
 				File.Move (file_path, file_backup_path);
 			}
+		}
+
+		public void SetConfigVariable (string key, string value)
+		{
+			XDocument config;
+			if (!File.Exists (configPath)) {
+				config = new XDocument ();
+				config.Add (new XElement ("root"));
+			} else {
+				config = XDocument.Load (configPath);
+			}
+
+			if (config.Root.Element (key) != null) {
+				config.Root.Element (key).Value = value;
+			} else {
+				config.Root.Add (new XElement (key, value));
+			}
+
+			config.Save (configPath);
+		}
+
+		public string GetConfigVariable (string key) 
+		{
+			if (!File.Exists (configPath)) {
+				return null;
+			}
+			XDocument config = XDocument.Load (configPath);
+			return config.Root.Element (key).Value; //TODO handle this not being an existing value.
 		}
 	}
 }

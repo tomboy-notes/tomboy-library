@@ -59,6 +59,16 @@ namespace Tomboy
 		/// Note.
 		/// </param>
 		void DeleteNote (Note note);
+
+		/// <summary>
+		/// Stores arbitrary config variables.
+		/// </summary>
+		void SetConfigVariable (string key, string value);
+
+		/// <summary>
+		/// Retrieves arbitrary config variables, or null if unset.
+		/// </summary>
+		string GetConfigVariable (string key);
 	}
 }
 
