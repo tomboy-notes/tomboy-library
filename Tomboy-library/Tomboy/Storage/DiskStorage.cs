@@ -230,14 +230,14 @@ namespace Tomboy
 		public string GetConfigVariable (string key) 
 		{
 			if (!File.Exists (configPath)) {
-				return null;
+				throw new TomboyException ("Config file does not exist");
 			}
 			XDocument config = XDocument.Load (configPath);
 
 			try {
 				return config.Root.Element (key).Value;
 			} catch (NullReferenceException) {
-				return null;
+				throw new TomboyException ("There is no config variable by that name.");
 			}
 		}
 	}
