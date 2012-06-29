@@ -33,10 +33,19 @@ namespace Tomboy
 		public NoteCreator ()
 		{
 		}
-		
-		public static Note NewNote ()
+
+		/// <summary>
+		/// Creates a default note.
+		/// </summary>
+		/// <returns>
+		/// The note.
+		/// </returns>
+		/// <param name='currentNotecount'>
+		/// Current notecount, used to set the title.
+		/// </param>
+		public static Note NewNote (int currentNotecount)
 		{
-			return NewNote (null, null);
+			return NewNote ("New Note " + currentNotecount++, null);
 		}
 		
 		public static Note NewNote (string title)
@@ -53,7 +62,10 @@ namespace Tomboy
 				note.Title = title;
 			
 			if (body != null)
-				note.Text = body;
+				note.Text = title + "\n\n" + body;
+			else
+				note.Text = title + "\n\n";
+
 			return note;
 		}
 	}
