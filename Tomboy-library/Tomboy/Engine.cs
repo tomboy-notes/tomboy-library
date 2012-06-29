@@ -113,9 +113,9 @@ namespace Tomboy
 				GetNotes ();
 
 			if (!searchContent) {
-				return SearchEngine.SearchTitles (searchTerm, this.notes);
+				return SearchEngine.SearchTitles (searchTerm.ToLowerInvariant (), this.notes);
 			} else {
-				return SearchEngine.SearchContent (searchTerm, this.notes);
+				return SearchEngine.SearchContent (searchTerm.ToLowerInvariant (), this.notes);
 			}
 		}
 		

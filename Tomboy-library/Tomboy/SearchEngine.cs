@@ -35,8 +35,6 @@ namespace Tomboy
 		public static Dictionary<string, Note>  SearchTitles (string searchTerm, Dictionary<string, Note> searchSource)
 		{
 			return searchSource.Where (d => d.Value.Title.ToLowerInvariant ().Contains (searchTerm)).ToDictionary (d => d.Key, d => d.Value);
-
-
 		}
 
 		public static Dictionary<string, Note>  SearchContent (string searchTerm, Dictionary<string, Note> searchSource)
