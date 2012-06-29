@@ -41,7 +41,9 @@ namespace Tomboy
 
 		public static Dictionary<string, Note>  SearchContent (string searchTerm, Dictionary<string, Note> searchSource)
 		{
-			throw new NotImplementedException (); //TODO
+			return searchSource.Where (d => (d.Value.Title.ToLowerInvariant ().Contains (searchTerm)) ||
+			                           (d.Value.Text.ToLowerInvariant ().Contains (searchTerm))
+			                           ).ToDictionary (d => d.Key, d => d.Value);
 		}
 	}
 }

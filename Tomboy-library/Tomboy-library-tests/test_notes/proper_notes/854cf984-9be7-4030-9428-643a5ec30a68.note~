@@ -2,7 +2,7 @@
 <note version="0.3" xmlns:link="http://beatniksoftware.com/tomboy/link" xmlns:size="http://beatniksoftware.com/tomboy/size" xmlns="http://beatniksoftware.com/tomboy">
   <title>Notes on Implementation (So meta)</title>
   <text xml:space="preserve"><note-content version="0.1">Notes on Implementation (So meta)
-notesearchtest
+
 <list><list-item dir="ltr">Revision numbers are global for the whole collection of notes
 <list><list-item dir="ltr">Must be stored somewhere? (Can't make assumptions though)
 </list-item><list-item dir="ltr">Are reset if the user chooses to eliminate the whole collection of notes.</list-item></list></list-item></list></note-content></text>

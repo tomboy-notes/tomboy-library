@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<note version="0.3" xmlns:link="http://beatniksoftware.com/tomboy/link" xmlns:size="http://beatniksoftware.com/tomboy/size" xmlns="http://beatniksoftware.com/tomboy">
+  <title>note is in the title but not the text</title>
+  <text xml:space="preserve"><note-content version="0.1">note is in the title but not the text
+
+Describe your new CENSORED here.</note-content></text>
+  <last-change-date>2012-06-28T20:21:08.4122060-04:00</last-change-date>
+  <last-metadata-change-date>2012-06-28T20:21:08.4122060-04:00</last-metadata-change-date>
+  <create-date>2012-06-28T20:20:28.9481750-04:00</create-date>
+  <cursor-position>20</cursor-position>
+  <selection-bound-position>20</selection-bound-position>
+  <width>450</width>
+  <height>360</height>
+  <x>0</x>
+  <y>0</y>
+  <open-on-startup>False</open-on-startup>
+</note>

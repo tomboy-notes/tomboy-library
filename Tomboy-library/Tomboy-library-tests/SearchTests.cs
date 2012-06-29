@@ -43,7 +43,7 @@ namespace Tomboy
 		{
 			Dictionary<string, Note> result = engine.GetNotes ("note", false);
 
-			Assert.AreEqual (2, result.Count); //We have at least 3 notes in the test collection
+			Assert.AreEqual (3, result.Count); //We have at least 3 notes in the test collection
 		}
 
 		[Test()]
@@ -57,15 +57,26 @@ namespace Tomboy
 		[Test()]
 		public void SearchContent_RelevantNotesExist_AreFound ()
 		{
-			Dictionary<string, Note> result = engine.GetNotes ("notesearchtest", true);
+			Dictionary<string, Note> result = engine.GetNotes ("note", true);
 
-			Assert.AreEqual (2, result.Count);
+			Assert.AreEqual (4, result.Count); //One note has only got "note" in the title, but being in the title also means it's in the content!
 		}
 
 		[Test()]
 		public void SearchContent_NoRelevantNotes_NoneReturned ()
 		{
 			Dictionary<string, Note> result = engine.GetNotes ("slartibartfast", true);
+
+			Assert.AreEqual (0, result.Count);
+		}
+
+		[Test()]
+		[Ignore ("Ideally this should be like this, but implementing it is work which is best put off atm.")]
+		public void SearchContent_SearchXMLTags_NoneReturned ()
+		{
+			//This test searches for strings found in XML tags, which shouldn't be returned be hits
+			//note.text includes internal XML tags, we want a pure text thingy?
+			Dictionary<string, Note> result = engine.GetNotes ("bold", true);
 
 			Assert.AreEqual (0, result.Count);
 		}
