@@ -109,11 +109,13 @@ namespace Tomboy
 		/// </param>
 		public Dictionary<string, Note> GetNotes (string searchTerm, bool searchContent)
 		{
-			Dictionary<string, Note> searchSource = GetNotes ();
+			if (this.notes == null)
+				GetNotes ();
+
 			if (!searchContent) {
-				return SearchEngine.SearchTitles (searchTerm, searchSource);
+				return SearchEngine.SearchTitles (searchTerm, this.notes);
 			} else {
-				return SearchEngine.SearchContent (searchTerm, searchSource);
+				return SearchEngine.SearchContent (searchTerm, this.notes);
 			}
 		}
 		
