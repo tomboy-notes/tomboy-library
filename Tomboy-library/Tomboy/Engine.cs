@@ -127,7 +127,7 @@ namespace Tomboy
 		/// </returns>
 		public Note NewNote ()
 		{
-			Note note = NoteCreator.NewNote (GetNotes ().Count);
+			Note note = NoteCreator.NewNote (this.notes.Count);
 			notes.Add (note.Uri, note);
 			if (NoteAdded != null)
 				NoteAdded (note);
