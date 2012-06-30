@@ -66,7 +66,7 @@ namespace Tomboy
 		void SetConfigVariable (string key, string value);
 
 		/// <summary>
-		/// Retrieves arbitrary config variables, or null if unset.
+		/// Retrieves arbitrary config variables, or an exception if unset.
 		/// </summary>
 		string GetConfigVariable (string key);
 	}
