@@ -29,12 +29,15 @@ namespace Tomboy.Sync
 	{
 		private Engine parent;
 		private OAuthSession session;
+		private IToken requestToken;
+		private IToken accessToken;
+		private string serverRootUrl;
 
 		public WebSyncAgent (Engine parent)
 		{
 			this.parent = parent;
 			//Check if there are details of an existing connection stored and if so, use them
-			// to set up a session TODO: Finish it
+			// to set up a session, and the server root TODO: Finish it
 		}
 	
 		//TODO All of this should be more background thread-like
@@ -46,9 +49,9 @@ namespace Tomboy.Sync
 		/// </param>
 		string StartSettingUpNewConnection (string serverUrl)
 		{
-			serverUrl = serverUrl.TrimEnd ('/') + "/"; //Make sure traling slash is right TODO: Write a test for this
+			serverRootUrl = serverUrl.TrimEnd ('/') + "/"; //Make sure traling slash is right TODO: Write a test for this
 			//Contact the Server to request access endpoints 
-			OAuthEndPoints endpoints = RequestServiceOAuthEndPoints (serverUrl);
+			OAuthEndPoints endpoints = RequestServiceOAuthEndPoints ();
 
 			//Construct the session
 			var consumerContext = new OAuthConsumerContext
@@ -62,21 +65,21 @@ namespace Tomboy.Sync
 			//Set up session and get the request token
 
 			this.session = new OAuthSession (consumerContext, endpoints.requestUrl, endpoints.userAuthorizeUrl, endpoints.accessUrl);
-			IToken requestToken = session.GetRequestToken();
+			this.requestToken = session.GetRequestToken();
 
 			//return the authorisation URL that the user has to go to verify identity
 			return session.GetUserAuthorizationUrlForToken (requestToken);
 		}
 
-		static OAuthEndPoints RequestServiceOAuthEndPoints (string serverUrl)
+		static OAuthEndPoints RequestServiceOAuthEndPoints ()
 		{
 			//throw new NotImplementedException ();
 			//TODO: Actually contact the server, get a response and parse it for  the values
 			//For now, we just assume standard Snowy params.
 			OAuthEndPoints toRet = new OAuthEndPoints ();
-			toRet.requestUrl = serverUrl + "oauth/request_token";
-			toRet.userAuthorizeUrl = serverUrl + "oauth/authorize";
-			toRet.accessUrl = serverUrl + "oauth/access_token";
+			toRet.requestUrl = serverRootUrl + "oauth/request_token";
+			toRet.userAuthorizeUrl = serverRootUrl + "oauth/authorize";
+			toRet.accessUrl = serverRootUrl + "oauth/access_token";
 
 			return toRet;
 		}
@@ -90,6 +93,12 @@ namespace Tomboy.Sync
 		public bool FinishSettingUpConnection ()
 		{
 			//Exchange the request token for access token
+			this.accessToken = session.ExchangeRequestTokenForAccessToken (this.requestToken);
+
+			//Get the username from the authenticated response 
+			//(https://edge.tomboy-online.org/api/1.0/ -> user-ref -> api-ref
+			//the user/api-refs are not available in an unauthenticated answer, so this is an implicit test of 
+			//the connection being successful.
 
 			//Store all the session details
 		}
