@@ -37,12 +37,16 @@
     <Reference Include="Mono.Posix" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Core" />
+    <Reference Include="DevDefined.OAuth">
+      <HintPath>Libs\DevDefined.OAuth.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tomboy\" />
     <Folder Include="Tomboy\Storage\" />
     <Folder Include="Tomboy\Notebooks\" />
     <Folder Include="Tomboy\Tags\" />
+    <Folder Include="Tomboy\Sync\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Tomboy\Note.cs" />
@@ -61,5 +65,8 @@
     <Compile Include="Tomboy\Tags\Tag.cs" />
     <Compile Include="Tomboy\Tags\TagManager.cs" />
     <Compile Include="Tomboy\SearchEngine.cs" />
+    <Compile Include="Tomboy\Sync\ISyncAgent.cs" />
+    <Compile Include="Tomboy\Sync\WebSyncAgent.cs" />
+    <Compile Include="Tomboy\Sync\OAuthEndPoints.cs" />
   </ItemGroup>
 </Project>
