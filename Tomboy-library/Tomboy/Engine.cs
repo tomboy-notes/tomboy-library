@@ -109,7 +109,7 @@ namespace Tomboy
 		/// </param>
 		public Dictionary<string, Note> GetNotes (string searchTerm, bool searchContent)
 		{
-			if (this.notes == null)
+			if (this.notes == null || this.notes.Count == 0)
 				GetNotes ();
 
 			if (!searchContent) {
