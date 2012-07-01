@@ -62,7 +62,7 @@ namespace Tomboy
 			case "title":
 			    note.Title = xml.ReadString ();
 			    break;
-			case "text":
+			case "note-content":
 							// <text> is just a wrapper around <note-content>
 							// NOTE: Use .text here to avoid triggering a save.
 			    note.Text = xml.ReadInnerXml ();
