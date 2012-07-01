@@ -42,28 +42,28 @@ namespace Tomboy.Sync.Snowy
 		}
 
 		[Test()]
-		[ExpectedException (TomboyException)]
+		[ExpectedException (typeof (TomboyException))]
 		public void FetchWebSyncStoredDetails_NoStoredDetails_ThrowsException ()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[Test()]
-		[ExpectedException (TomboyException)]
+		[ExpectedException (typeof (TomboyException))]
 		public void PerformWebSync_NoConnectionSetUp_ThrowsException ()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[Test()]
-		[ExpectedException (TomboyException)]
+		[ExpectedException (typeof (TomboyException))]
 		public void CopyFromLocal_NoConnectionSetUp_ThrowsException ()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[Test()]
-		[ExpectedException (TomboyException)]
+		[ExpectedException (typeof (TomboyException))]
 		public void CopyFromRemote_NoConnectionSetUp_ThrowsException ()
 		{
 			throw new NotImplementedException ();

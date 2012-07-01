@@ -51,6 +51,12 @@ namespace Tomboy.Sync.Snowy
 			get;
 			set;
 		}
+
+		public string UserName {
+			get {
+				return username;
+			}
+		}
 	
 		//TODO All of this should be more background thread-like
 		//TODO: We have like zero error handling for simple stuff like the internet not being available
@@ -92,7 +98,7 @@ namespace Tomboy.Sync.Snowy
 		/// </returns>
 		public bool FinishSettingUpWebSyncConnection ()
 		{
-			//Exchange the request token for access token
+			//Exchange the request token for access token TODO: This needs to be errorproofed for error 401 Unauthorised
 			this.accessToken = session.ExchangeRequestTokenForAccessToken (this.requestToken);
 
 			//Get the username from the authenticated response 
@@ -121,18 +127,6 @@ namespace Tomboy.Sync.Snowy
 
 		protected OAuthEndPoints RequestServiceOAuthEndPoints ()
 		{
-			string response = GetRootNodeResponse ();
-			return JsonParser.ParseRootLevelResponseForOAuthDetails (response);
-		}
-
-		private string GetAuthenticatedUserName ()
-		{
-			string response = GetRootNodeResponse ();
-			return JsonParser.ParseRootLevelResponseForUserName (response);
-		}
-
-		private string GetRootNodeResponse ()
-		{
 			string response = string.Empty;
 			ServicePointManager.CertificatePolicy = new CertificateManager ();
 			HttpWebRequest request = WebRequest.Create (this.serverRootUrl) as HttpWebRequest;
@@ -142,7 +136,13 @@ namespace Tomboy.Sync.Snowy
 				response = responseReader.ReadToEnd ();
 			}
 
-			return response;
+			return JsonParser.ParseRootLevelResponseForOAuthDetails (response);
+		}
+
+		private string GetAuthenticatedUserName ()
+		{
+			string response = session.Request().Get().ForUrl(serverRootUrl).ToString();
+			return JsonParser.ParseRootLevelResponseForUserName (response);
 		}
 
 		void StoreWebSyncDetails ()
@@ -173,7 +173,7 @@ namespace Tomboy.Sync.Snowy
 				throw new TomboyException ("Could not fetch stored details, probably there are no details stored.");
 			}
 
-
+			//TODO! Need to rebuild the session as well
 		}
 
 		/// <summary>

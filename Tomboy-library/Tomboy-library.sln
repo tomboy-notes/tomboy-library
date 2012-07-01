@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tomboy-library", "Tomboy-li
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tomboy-library-tests", "Tomboy-library-tests\Tomboy-library-tests.csproj", "{216746A7-D297-4108-933A-1E926EB9B167}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tomboy-OAuthSetUpTester", "OAuthSetUpTester\Tomboy-OAuthSetUpTester.csproj", "{A64DE79B-F6AC-4737-85AD-1A52D097017F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -19,9 +21,13 @@ Global
 		{216746A7-D297-4108-933A-1E926EB9B167}.Debug|x86.Build.0 = Debug|x86
 		{216746A7-D297-4108-933A-1E926EB9B167}.Release|x86.ActiveCfg = Release|x86
 		{216746A7-D297-4108-933A-1E926EB9B167}.Release|x86.Build.0 = Release|x86
+		{A64DE79B-F6AC-4737-85AD-1A52D097017F}.Debug|x86.ActiveCfg = Debug|x86
+		{A64DE79B-F6AC-4737-85AD-1A52D097017F}.Debug|x86.Build.0 = Debug|x86
+		{A64DE79B-F6AC-4737-85AD-1A52D097017F}.Release|x86.ActiveCfg = Release|x86
+		{A64DE79B-F6AC-4737-85AD-1A52D097017F}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Tomboy-library.csproj
+		StartupItem = OAuthSetUpTester\Tomboy-OAuthSetUpTester.csproj
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
 		$1.DirectoryNamespaceAssociation = None
