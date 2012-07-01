@@ -40,6 +40,10 @@
     <Reference Include="DevDefined.OAuth">
       <HintPath>Libs\DevDefined.OAuth.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Libs\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tomboy\" />
@@ -68,5 +72,6 @@
     <Compile Include="Tomboy\Sync\ISyncAgent.cs" />
     <Compile Include="Tomboy\Sync\WebSyncAgent.cs" />
     <Compile Include="Tomboy\Sync\OAuthEndPoints.cs" />
+    <Compile Include="Tomboy\Sync\JsonParser.cs" />
   </ItemGroup>
 </Project>

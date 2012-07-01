@@ -32,6 +32,7 @@ namespace Tomboy.Sync
 		private IToken requestToken;
 		private IToken accessToken;
 		private string serverRootUrl;
+		private string username;
 
 		public WebSyncAgent (Engine parent)
 		{
@@ -100,15 +101,18 @@ namespace Tomboy.Sync
 			//the user/api-refs are not available in an unauthenticated answer, so this is an implicit test of 
 			//the connection being successful.
 
-			//Store all the session details
+			this.username = GetAuthenticatedUserName ();
+
+			//Store all the session details TODO
 		}
 
+		string GetAuthenticatedUserName ()
+		{
+			throw new NotImplementedException ();
+		}
 		/// <summary>
 		/// Performs the sync operation, with two-way merging.
 		/// </summary>
-		/// <param name='parent'>
-		/// The engine that allows access to notes.
-		/// </param>
 		public void PerformSync ()
 		{
 		}
