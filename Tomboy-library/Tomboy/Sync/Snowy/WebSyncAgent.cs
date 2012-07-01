@@ -109,6 +109,10 @@ namespace Tomboy.Sync.Snowy
 			return true;
 		}
 
+		public void ClearWebSyncDetails ()
+		{
+		}
+
 		protected OAuthEndPoints RequestServiceOAuthEndPoints ()
 		{
 			string response = GetRootNodeResponse ();
@@ -136,6 +140,11 @@ namespace Tomboy.Sync.Snowy
 		}
 
 		void StoreWebSyncDetails ()
+		{
+			ParentEngine.
+		}
+
+		void FetchWebSyncStoredDetails ()
 		{
 			throw new NotImplementedException ();
 		}
