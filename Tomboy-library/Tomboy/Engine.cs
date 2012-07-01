@@ -174,6 +174,17 @@ namespace Tomboy
 			if (NoteRemoved != null)
 				NoteRemoved (note);
 		}
+
+		public void SetConfigVariable (string key, string value) 
+		{
+			storage.SetConfigVariable (key, value);
+		}
+
+		public string GetConfigVariable (string key)
+		{
+			return storage.GetConfigVariable (key);
+		}
+
 		#endregion
 
 		#region Events
