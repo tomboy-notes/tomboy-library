@@ -20,8 +20,10 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 using System;
+using System.Net;
 using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Framework;
+using System.IO;
 
 namespace Tomboy.Sync
 {
@@ -48,7 +50,7 @@ namespace Tomboy.Sync
 		/// <param name='serverUrl'>
 		/// Server URL.
 		/// </param>
-		string StartSettingUpNewConnection (string serverUrl)
+		public string StartSettingUpNewConnection (string serverUrl)
 		{
 			serverRootUrl = serverUrl.TrimEnd ('/') + "/"; //Make sure traling slash is right TODO: Write a test for this
 			//Contact the Server to request access endpoints 
@@ -72,17 +74,27 @@ namespace Tomboy.Sync
 			return session.GetUserAuthorizationUrlForToken (requestToken);
 		}
 
-		static OAuthEndPoints RequestServiceOAuthEndPoints ()
+		private OAuthEndPoints RequestServiceOAuthEndPoints ()
 		{
 			//throw new NotImplementedException ();
 			//TODO: Actually contact the server, get a response and parse it for  the values
-			//For now, we just assume standard Snowy params.
-			OAuthEndPoints toRet = new OAuthEndPoints ();
-			toRet.requestUrl = serverRootUrl + "oauth/request_token";
-			toRet.userAuthorizeUrl = serverRootUrl + "oauth/authorize";
-			toRet.accessUrl = serverRootUrl + "oauth/access_token";
+			string response = string.Empty;
 
-			return toRet;
+			HttpWebRequest request = HttpWebRequest.Create (this.serverRootUrl) as HttpWebRequest;
+			request.Method = "GET";
+			using (var responseReader = new StreamReader (request.GetResponse ().GetResponseStream ())) {
+					response = responseReader.ReadToEnd ();
+				}
+
+
+
+			//For now, we just assume standard Snowy params.
+//			OAuthEndPoints toRet = new OAuthEndPoints ();
+//			toRet.requestUrl = serverRootUrl + "oauth/request_token";
+//			toRet.userAuthorizeUrl = serverRootUrl + "oauth/authorize";
+//			toRet.accessUrl = serverRootUrl + "oauth/access_token";
+
+			return JsonParser.ParseRootLevelResponseForOAuthDetails (response);
 		}
 
 		/// <summary>
@@ -104,9 +116,11 @@ namespace Tomboy.Sync
 			this.username = GetAuthenticatedUserName ();
 
 			//Store all the session details TODO
+
+			return true;
 		}
 
-		string GetAuthenticatedUserName ()
+		private string GetAuthenticatedUserName ()
 		{
 			throw new NotImplementedException ();
 		}

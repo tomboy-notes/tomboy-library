@@ -38,6 +38,7 @@
     <Compile Include="ReaderTests.cs" />
     <Compile Include="TagManagerTests.cs" />
     <Compile Include="SearchTests.cs" />
+    <Compile Include="JsonParserTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

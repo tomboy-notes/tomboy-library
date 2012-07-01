@@ -20,6 +20,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 using System;
+using Newtonsoft.Json.Linq;
 namespace Tomboy.Sync
 {
     public class JsonParser
@@ -28,8 +29,29 @@ namespace Tomboy.Sync
 	{
 	}
 
-		public static OAuthEndPoints ParseRootLevelResponse (string response) 
+		public static OAuthEndPoints ParseRootLevelResponseForOAuthDetails (string response) 
 		{
+			OAuthEndPoints toRet = new OAuthEndPoints ();
+
+			JObject json = JObject.Parse (response);
+
+			toRet.accessUrl = (string)json["oauth_access_token_url"];
+			toRet.requestUrl = (string)json["oauth_request_token_url"];
+			toRet.userAuthorizeUrl = (string)json["oauth_authorize_url"];
+
+			return toRet;
+		}
+
+		public static string ParseRootLevelResponseForUserName (string response) 
+		{
+			JObject json = JObject.Parse (response);
+
+			string user = (string)json["user-ref"]["href"];
+
+			user = user.TrimEnd ('/');
+
+			string[] userArray = user.Split ('/');
+			return userArray[userArray.Length -1];
 		}
     }
 }
