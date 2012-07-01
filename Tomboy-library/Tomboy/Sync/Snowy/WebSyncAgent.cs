@@ -60,7 +60,7 @@ namespace Tomboy.Sync.Snowy
 		/// <param name='serverUrl'>
 		/// Server URL.
 		/// </param>
-		public string StartSettingUpNewConnection (string serverUrl)
+		public string StartSettingUpNewWebSyncConnection (string serverUrl)
 		{
 			serverRootUrl = serverUrl.TrimEnd ('/') + "/api/1.0/"; //Make sure traling slash is right TODO: Write a test for this, make sure it works fo rstuff like U1 Notes
 			//Contact the Server to request access endpoints 
@@ -90,7 +90,7 @@ namespace Tomboy.Sync.Snowy
 		/// <returns>
 		/// True if successful (that is, we've been authorised), otherwise false.
 		/// </returns>
-		public bool FinishSettingUpConnection ()
+		public bool FinishSettingUpWebSyncConnection ()
 		{
 			//Exchange the request token for access token
 			this.accessToken = session.ExchangeRequestTokenForAccessToken (this.requestToken);
@@ -109,8 +109,14 @@ namespace Tomboy.Sync.Snowy
 			return true;
 		}
 
-		public void ClearWebSyncDetails ()
+		public void ClearWebSyncConnectionDetails ()
 		{
+			ParentEngine.SetConfigVariable ("websync_accesstoken_token", string.Empty);
+			ParentEngine.SetConfigVariable ("websync_accesstoken_tokensecret", string.Empty);
+			ParentEngine.SetConfigVariable ("websync_accesstoken_sessionhandle", string.Empty);
+
+			ParentEngine.SetConfigVariable ("websync_username", string.Empty);
+			ParentEngine.SetConfigVariable ("websync_serverrooturl", string.Empty);
 		}
 
 		protected OAuthEndPoints RequestServiceOAuthEndPoints ()
@@ -141,12 +147,33 @@ namespace Tomboy.Sync.Snowy
 
 		void StoreWebSyncDetails ()
 		{
-			ParentEngine.
+			ParentEngine.SetConfigVariable ("websync_accesstoken_token", accessToken.Token);
+			ParentEngine.SetConfigVariable ("websync_accesstoken_tokensecret", accessToken.TokenSecret);
+			ParentEngine.SetConfigVariable ("websync_accesstoken_sessionhandle", accessToken.SessionHandle);
+
+			ParentEngine.SetConfigVariable ("websync_username", username);
+			ParentEngine.SetConfigVariable ("websync_serverrooturl", serverRootUrl);
 		}
 
 		void FetchWebSyncStoredDetails ()
 		{
-			throw new NotImplementedException ();
+			try {
+				IToken newToken = new TokenBase
+				{
+					ConsumerKey = "anyone",
+					Realm = "Snowy",
+					Token = ParentEngine.GetConfigVariable ("websync_accesstoken_token"),
+					TokenSecret = ParentEngine.GetConfigVariable ("websync_accesstoken_tokensecret"),
+					SessionHandle = ParentEngine.GetConfigVariable ("websync_accesstoken_sessionhandle")
+				};
+				accessToken = newToken;
+				username = ParentEngine.GetConfigVariable ("websync_username");
+				serverRootUrl = ParentEngine.GetConfigVariable ("websync_serverrooturl");
+			} catch (TomboyException ex) {
+				throw new TomboyException ("Could not fetch stored details, probably there are no details stored.");
+			}
+
+
 		}
 
 		/// <summary>
