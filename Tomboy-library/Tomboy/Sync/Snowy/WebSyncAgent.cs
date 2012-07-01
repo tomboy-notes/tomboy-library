@@ -33,7 +33,8 @@ namespace Tomboy.Sync.Snowy
 		private OAuthSession session;
 		private IToken requestToken;
 		private IToken accessToken;
-		protected string serverRootUrl;
+		protected string ServerApiRootUrl;
+		protected string ServerUrl;
 		private string username;
 
 		public WebSyncAgent ()
@@ -66,9 +67,12 @@ namespace Tomboy.Sync.Snowy
 		/// <param name='serverUrl'>
 		/// Server URL.
 		/// </param>
-		public string StartSettingUpNewWebSyncConnection (string serverUrl)
+		/// <param name="callbackUrl">
+		/// The Callback that the server should user. You will need to extract a OAuthverifier string from the callback paramaters and use it in FinishSettingUpWebSyncConnection
+		/// </param>
+		public string StartSettingUpNewWebSyncConnection (string serverUrl, string callbackUrl)
 		{
-			serverRootUrl = serverUrl.TrimEnd ('/') + "/api/1.0/"; //Make sure traling slash is right TODO: Write a test for this, make sure it works fo rstuff like U1 Notes
+			ServerApiRootUrl = serverUrl.TrimEnd ('/') + "/api/1.0/"; //Make sure traling slash is right TODO: Write a test for this, make sure it works fo rstuff like U1 Notes
 			//Contact the Server to request access endpoints 
 			OAuthEndPoints endpoints = RequestServiceOAuthEndPoints ();
 
@@ -87,7 +91,7 @@ namespace Tomboy.Sync.Snowy
 			this.requestToken = session.GetRequestToken();
 
 			//return the authorisation URL that the user has to go to verify identity TODO: Error handling would probably be smart here
-			return session.GetUserAuthorizationUrlForToken (requestToken);
+			return session.GetUserAuthorizationUrlForToken (requestToken, callbackUrl);
 		}
 
 		/// <summary>
@@ -96,10 +100,10 @@ namespace Tomboy.Sync.Snowy
 		/// <returns>
 		/// True if successful (that is, we've been authorised), otherwise false.
 		/// </returns>
-		public bool FinishSettingUpWebSyncConnection ()
+		public bool FinishSettingUpWebSyncConnection (string verifier)
 		{
 			//Exchange the request token for access token TODO: This needs to be errorproofed for error 401 Unauthorised
-			this.accessToken = session.ExchangeRequestTokenForAccessToken (this.requestToken);
+			this.accessToken = session.ExchangeRequestTokenForAccessToken (this.requestToken, verifier);
 
 			//Get the username from the authenticated response 
 			//(https://edge.tomboy-online.org/api/1.0/ -> user-ref -> api-ref
@@ -129,7 +133,7 @@ namespace Tomboy.Sync.Snowy
 		{
 			string response = string.Empty;
 			ServicePointManager.CertificatePolicy = new CertificateManager ();
-			HttpWebRequest request = WebRequest.Create (this.serverRootUrl) as HttpWebRequest;
+			HttpWebRequest request = WebRequest.Create (this.ServerApiRootUrl) as HttpWebRequest;
 			request.Method = "GET";
 			request.ServicePoint.Expect100Continue = false;
 			using (var responseReader = new StreamReader (request.GetResponse ().GetResponseStream ())) {
@@ -141,7 +145,7 @@ namespace Tomboy.Sync.Snowy
 
 		private string GetAuthenticatedUserName ()
 		{
-			string response = session.Request().Get().ForUrl(serverRootUrl).ToString();
+			string response = session.Request().Get().ForUrl(ServerApiRootUrl).ToString();
 			return JsonParser.ParseRootLevelResponseForUserName (response);
 		}
 
@@ -152,7 +156,7 @@ namespace Tomboy.Sync.Snowy
 			ParentEngine.SetConfigVariable ("websync_accesstoken_sessionhandle", accessToken.SessionHandle);
 
 			ParentEngine.SetConfigVariable ("websync_username", username);
-			ParentEngine.SetConfigVariable ("websync_serverrooturl", serverRootUrl);
+			ParentEngine.SetConfigVariable ("websync_serverrooturl", ServerApiRootUrl);
 		}
 
 		void FetchWebSyncStoredDetails ()
@@ -168,7 +172,7 @@ namespace Tomboy.Sync.Snowy
 				};
 				accessToken = newToken;
 				username = ParentEngine.GetConfigVariable ("websync_username");
-				serverRootUrl = ParentEngine.GetConfigVariable ("websync_serverrooturl");
+				ServerApiRootUrl = ParentEngine.GetConfigVariable ("websync_serverrooturl");
 			} catch (TomboyException ex) {
 				throw new TomboyException ("Could not fetch stored details, probably there are no details stored.");
 			}

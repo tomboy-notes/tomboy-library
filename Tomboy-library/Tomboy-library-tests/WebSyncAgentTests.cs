@@ -33,7 +33,7 @@ namespace Tomboy.Sync.Snowy
 		{
 				//This test actually is dependant on JsonParser (Which is tested individually), not great form, but the important thing is
 				// checking that it connects correctly.
-				this.serverRootUrl = "https://edge.tomboy-online.org/api/1.0/";
+				this.ServerApiRootUrl = "https://edge.tomboy-online.org/api/1.0/";
 				OAuthEndPoints endPoints =  RequestServiceOAuthEndPoints ();
 	
 				Assert.AreEqual ("https://edge.tomboy-online.org/oauth/access_token/", endPoints.accessUrl);
