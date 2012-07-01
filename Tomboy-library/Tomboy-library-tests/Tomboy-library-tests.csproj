@@ -39,6 +39,7 @@
     <Compile Include="TagManagerTests.cs" />
     <Compile Include="SearchTests.cs" />
     <Compile Include="JsonParserTests.cs" />
+    <Compile Include="WebSyncAgentTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

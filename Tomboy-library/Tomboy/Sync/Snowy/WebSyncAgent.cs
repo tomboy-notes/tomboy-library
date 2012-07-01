@@ -21,29 +21,39 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 using System;
 using System.Net;
+using System.Web;
 using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Framework;
 using System.IO;
 
-namespace Tomboy.Sync
+namespace Tomboy.Sync.Snowy
 {
 	public class WebSyncAgent : ISyncAgent
 	{
-		private Engine parent;
 		private OAuthSession session;
 		private IToken requestToken;
 		private IToken accessToken;
-		private string serverRootUrl;
+		protected string serverRootUrl;
 		private string username;
+
+		public WebSyncAgent ()
+		{
+		}
 
 		public WebSyncAgent (Engine parent)
 		{
-			this.parent = parent;
+			this.ParentEngine = parent;
 			//Check if there are details of an existing connection stored and if so, use them
 			// to set up a session, and the server root TODO: Finish it
 		}
+
+		public Engine ParentEngine {
+			get;
+			set;
+		}
 	
 		//TODO All of this should be more background thread-like
+		//TODO: We have like zero error handling for simple stuff like the internet not being available
 		/// <summary>
 		/// Sets up new connection and starts Oauth autentication, app must call this once when setting up a new sync provider.
 		/// </summary>
@@ -52,7 +62,7 @@ namespace Tomboy.Sync
 		/// </param>
 		public string StartSettingUpNewConnection (string serverUrl)
 		{
-			serverRootUrl = serverUrl.TrimEnd ('/') + "/"; //Make sure traling slash is right TODO: Write a test for this
+			serverRootUrl = serverUrl.TrimEnd ('/') + "/api/1.0/"; //Make sure traling slash is right TODO: Write a test for this, make sure it works fo rstuff like U1 Notes
 			//Contact the Server to request access endpoints 
 			OAuthEndPoints endpoints = RequestServiceOAuthEndPoints ();
 
@@ -70,31 +80,8 @@ namespace Tomboy.Sync
 			this.session = new OAuthSession (consumerContext, endpoints.requestUrl, endpoints.userAuthorizeUrl, endpoints.accessUrl);
 			this.requestToken = session.GetRequestToken();
 
-			//return the authorisation URL that the user has to go to verify identity
+			//return the authorisation URL that the user has to go to verify identity TODO: Error handling would probably be smart here
 			return session.GetUserAuthorizationUrlForToken (requestToken);
-		}
-
-		private OAuthEndPoints RequestServiceOAuthEndPoints ()
-		{
-			//throw new NotImplementedException ();
-			//TODO: Actually contact the server, get a response and parse it for  the values
-			string response = string.Empty;
-
-			HttpWebRequest request = HttpWebRequest.Create (this.serverRootUrl) as HttpWebRequest;
-			request.Method = "GET";
-			using (var responseReader = new StreamReader (request.GetResponse ().GetResponseStream ())) {
-					response = responseReader.ReadToEnd ();
-				}
-
-
-
-			//For now, we just assume standard Snowy params.
-//			OAuthEndPoints toRet = new OAuthEndPoints ();
-//			toRet.requestUrl = serverRootUrl + "oauth/request_token";
-//			toRet.userAuthorizeUrl = serverRootUrl + "oauth/authorize";
-//			toRet.accessUrl = serverRootUrl + "oauth/access_token";
-
-			return JsonParser.ParseRootLevelResponseForOAuthDetails (response);
 		}
 
 		/// <summary>
@@ -117,13 +104,42 @@ namespace Tomboy.Sync
 
 			//Store all the session details TODO
 
+			StoreWebSyncDetails ();
+
 			return true;
+		}
+
+		protected OAuthEndPoints RequestServiceOAuthEndPoints ()
+		{
+			string response = GetRootNodeResponse ();
+			return JsonParser.ParseRootLevelResponseForOAuthDetails (response);
 		}
 
 		private string GetAuthenticatedUserName ()
 		{
+			string response = GetRootNodeResponse ();
+			return JsonParser.ParseRootLevelResponseForUserName (response);
+		}
+
+		private string GetRootNodeResponse ()
+		{
+			string response = string.Empty;
+			ServicePointManager.CertificatePolicy = new CertificateManager ();
+			HttpWebRequest request = WebRequest.Create (this.serverRootUrl) as HttpWebRequest;
+			request.Method = "GET";
+			request.ServicePoint.Expect100Continue = false;
+			using (var responseReader = new StreamReader (request.GetResponse ().GetResponseStream ())) {
+				response = responseReader.ReadToEnd ();
+			}
+
+			return response;
+		}
+
+		void StoreWebSyncDetails ()
+		{
 			throw new NotImplementedException ();
 		}
+
 		/// <summary>
 		/// Performs the sync operation, with two-way merging.
 		/// </summary>

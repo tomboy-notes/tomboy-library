@@ -51,6 +51,7 @@
     <Folder Include="Tomboy\Notebooks\" />
     <Folder Include="Tomboy\Tags\" />
     <Folder Include="Tomboy\Sync\" />
+    <Folder Include="Tomboy\Sync\Snowy\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Tomboy\Note.cs" />
@@ -70,8 +71,9 @@
     <Compile Include="Tomboy\Tags\TagManager.cs" />
     <Compile Include="Tomboy\SearchEngine.cs" />
     <Compile Include="Tomboy\Sync\ISyncAgent.cs" />
-    <Compile Include="Tomboy\Sync\WebSyncAgent.cs" />
-    <Compile Include="Tomboy\Sync\OAuthEndPoints.cs" />
-    <Compile Include="Tomboy\Sync\JsonParser.cs" />
+    <Compile Include="Tomboy\Sync\Snowy\CertificateManager.cs" />
+    <Compile Include="Tomboy\Sync\Snowy\JsonParser.cs" />
+    <Compile Include="Tomboy\Sync\Snowy\OAuthEndPoints.cs" />
+    <Compile Include="Tomboy\Sync\Snowy\WebSyncAgent.cs" />
   </ItemGroup>
 </Project>
