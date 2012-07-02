@@ -34,8 +34,8 @@ namespace Tomboy.Sync.Snowy
 		private IToken requestToken;
 		private IToken accessToken;
 		protected string ServerApiRootUrl;
-		protected string ServerUrl;
 		private string username;
+		private string verifier;
 
 		public WebSyncAgent ()
 		{
@@ -113,7 +113,7 @@ namespace Tomboy.Sync.Snowy
 			this.username = GetAuthenticatedUserName ();
 
 			//Store all the session details TODO
-
+			this.verifier = verifier;
 			StoreWebSyncDetails ();
 
 			return true;
@@ -124,6 +124,7 @@ namespace Tomboy.Sync.Snowy
 			ParentEngine.SetConfigVariable ("websync_accesstoken_token", string.Empty);
 			ParentEngine.SetConfigVariable ("websync_accesstoken_tokensecret", string.Empty);
 			ParentEngine.SetConfigVariable ("websync_accesstoken_sessionhandle", string.Empty);
+			ParentEngine.SetConfigVariable ("websync_accesstoken_verifier", string.Empty);
 
 			ParentEngine.SetConfigVariable ("websync_username", string.Empty);
 			ParentEngine.SetConfigVariable ("websync_serverrooturl", string.Empty);
@@ -154,6 +155,7 @@ namespace Tomboy.Sync.Snowy
 			ParentEngine.SetConfigVariable ("websync_accesstoken_token", accessToken.Token);
 			ParentEngine.SetConfigVariable ("websync_accesstoken_tokensecret", accessToken.TokenSecret);
 			ParentEngine.SetConfigVariable ("websync_accesstoken_sessionhandle", accessToken.SessionHandle);
+			ParentEngine.SetConfigVariable ("websync_accesstoken_verifier", this.verifier);
 
 			ParentEngine.SetConfigVariable ("websync_username", username);
 			ParentEngine.SetConfigVariable ("websync_serverrooturl", ServerApiRootUrl);
@@ -171,6 +173,7 @@ namespace Tomboy.Sync.Snowy
 					SessionHandle = ParentEngine.GetConfigVariable ("websync_accesstoken_sessionhandle")
 				};
 				accessToken = newToken;
+				verifier = ParentEngine.GetConfigVariable ("websync_verifier");
 				username = ParentEngine.GetConfigVariable ("websync_username");
 				ServerApiRootUrl = ParentEngine.GetConfigVariable ("websync_serverrooturl");
 			} catch (TomboyException ex) {

@@ -20,14 +20,15 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 using System;
+using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 namespace Tomboy.Sync.Snowy
 {
-    public class JsonParser
-    {
-	public JsonParser ()
+	public class JsonParser
 	{
-	}
+		public JsonParser ()
+		{
+		}
 
 		public static OAuthEndPoints ParseRootLevelResponseForOAuthDetails (string response) 
 		{
@@ -53,6 +54,12 @@ namespace Tomboy.Sync.Snowy
 			string[] userArray = user.Split ('/');
 			return userArray[userArray.Length -1];
 		}
-    }
+
+		public static Dictionary<string, Note>  ParseNotesResponse (string response)
+		{
+			return new Dictionary<string, Note> (); //TODO
+		}
+
+	}
 }
 
