@@ -72,29 +72,46 @@ namespace Tomboy
 		{
 			string noteresponse = "{"
 						+ "\t\"notes\": ["
-						+ "\t\t{"
-						+ "\t\t\"guid\": \"c70f70f5-f080-4333-8a37-34213fdc8c5e\"," 
-						+ "\t\t\"ref\": {"
-						+ "\t\t\t\"href\": \"https://edge.tomboy-online.org/username/notes/12098/\"," 
-						+ "\t\t\t\"api-ref\": \"https://edge.tomboy-online.org/api/1.0/username/notes/12098/\""
-						+ "\t\t}, "
-						+ "\t\t\"title\": \"A Note\""
-						+ "\t\t}," 
-						+ "\t\t{"
-						+ "\t\t\"guid\": \"c70f70f5-f080-4333-das7-awdwddwwf\"," 
-						+ "\t\t\"ref\": {"
-						+ "\t\t\t\"href\": \"https://edge.tomboy-online.org/username/notes/12099/\"," 
-						+ "\t\t\t\"api-ref\": \"https://edge.tomboy-online.org/api/1.0/username/notes/12099/\""
-						+ "\t\t}, "
-						+ "\t\t\"title\": \"Another Note\""
-						+ "\t\t}	"
+						+ "{"
+						+ "\"note-content\": \"Describe your new note here: this note has some content. I believe.\", "
+						+ "\"open-on-startup\": false, "
+						+ "\"last-metadata-change-date\": \"2012-06-27T20:05:33Z\", "
+						+ "\"title\": \"A Note\", "
+						+ "\"tags\": ["
+						+ "\"system:notebook:Tomboy etc.\""
+						+ "], "
+						+ "\"create-date\": \"2012-06-27T20:04:06Z\", "
+						+ "\"last-sync-revision\": 2, "
+						+ "\"last-change-date\": \"2012-06-27T20:05:33Z\", "
+						+ "\"guid\": \"c70f70f5-f080-4333-8a37-34213fdc8c5e\", "
+						+ "\"pinned\": false"
+						+ "},"
+						+ "{"
+						+ "\"note-content\": \"Tomboy is way cool.\", "
+						+ "\"open-on-startup\": false, "
+						+ "\"last-metadata-change-date\": \"2012-06-27T20:05:33Z\", "
+						+ "\"title\": \"Another Note\", "
+						+ "\"tags\": ["
+						+ "\"system:notebook:Tomboy etc.\""
+						+ "], "
+						+ "\"create-date\": \"2012-06-27T20:06:06Z\", "
+						+ "\"last-sync-revision\": 2, "
+						+ "\"last-change-date\": \"2012-06-27T20:09:33Z\", "
+						+ "\"guid\": \"c70f70f5-f080-4333-8a37-hjfkdskd\", "
+						+ "\"pinned\": false"
+						+ "}"
 						+ "\t], "
 						+ "\t\"latest-sync-revision\": 2"
 						+ "}";
-			Dictionary<string, Note> notes = JsonParser.ParseNotesResponse (noteresponse);
+			Dictionary<string, Note> notes = JsonParser.ParseCompleteNotesResponse (noteresponse);
 
 			Assert.AreEqual (2, notes.Count);
-			Assert.AreEqual ("A Note", notes["c70f70f5-f080-4333-8a37-34213fdc8c5e"].Title);
+
+			Note testNote = notes["note://tomboy/c70f70f5-f080-4333-8a37-34213fdc8c5e"];
+			Assert.AreEqual ("A Note", testNote.Title);
+			Assert.AreEqual ("Describe your new note here: this note has some content. I believe.", testNote.Text);
+			Assert.AreEqual (DateTime.Parse ("2012-06-27T20:05:33Z"), testNote.ChangeDate);
+			Assert.IsTrue (testNote.Tags.ContainsKey ("system:notebook:Tomboy etc."));
 		}
 
 		[Test()]
@@ -102,18 +119,30 @@ namespace Tomboy
 		{
 
 			string userResponse = "{"
-						+ "\t\"user-name\": \"rpvn\"," 
+						+ "\t\"user-name\": \"tomboyusername\"," 
 						+ "\t\"last-name\": \"\"," 
 						+ "\t\"notes-ref\": {"
-						+ "\t\t\"href\": \"https://edge.tomboy-online.org/rpvn/notes/\", "
-						+ "\t\t\"api-ref\": \"https://edge.tomboy-online.org/api/1.0/rpvn/notes/\""
+						+ "\t\t\"href\": \"https://edge.tomboy-online.org/tomboyusername/notes/\", "
+						+ "\t\t\"api-ref\": \"https://edge.tomboy-online.org/api/1.0/tomboyusername/notes/\""
 						+ "\t}," 
 						+ "\t\"current-sync-guid\": \"f87e0381-7492-43e9-a6d7-f5e0e38c6aec\", "
 						+ "\t\"first-name\": \"\", "
 						+ "\t\"latest-sync-revision\": 2"
 						+ "}";
 
-			throw new NotImplementedException ("Need to decide on return object from the tested method, and, erh implement it.");
+			UserInfo parsed = JsonParser.ParseUserInfoResponse (userResponse);
+
+			Assert.AreEqual ("tomboyusername", parsed.username);
+			Assert.AreEqual (2, parsed.latestSyncRevision);
+			Assert.AreEqual ("f87e0381-7492-43e9-a6d7-f5e0e38c6aec", parsed.currentSyncGuid);
+			Assert.AreEqual ("", parsed.firstname);
+			Assert.AreEqual ("", parsed.lastname);
+		}
+
+		[Test()]
+		public void CreateNoteUploadJson_ProperNotesDictionary_ReturnsCorrectJson ()
+		{
+
 		}
 
 	}

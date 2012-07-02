@@ -30,6 +30,7 @@ namespace Tomboy.Sync.Snowy
 		{
 		}
 
+		#region Decoders
 		public static OAuthEndPoints ParseRootLevelResponseForOAuthDetails (string response) 
 		{
 			OAuthEndPoints toRet = new OAuthEndPoints ();
@@ -47,7 +48,7 @@ namespace Tomboy.Sync.Snowy
 		{
 			JObject json = JObject.Parse (response);
 
-			string user = (string)json["user-ref"]["href"];
+			string user = (string) json["user-ref"]["href"];
 
 			user = user.TrimEnd ('/');
 
@@ -55,11 +56,52 @@ namespace Tomboy.Sync.Snowy
 			return userArray[userArray.Length -1];
 		}
 
-		public static Dictionary<string, Note>  ParseNotesResponse (string response)
+		public static Dictionary<string, Note>  ParseCompleteNotesResponse (string response)
 		{
-			return new Dictionary<string, Note> (); //TODO
+			Dictionary<string, Note> toRet = new Dictionary<string, Note> ();
+			JObject json = JObject.Parse (response);
+
+			foreach (var noteJson in json["notes"]) {
+				Note newNote = new Note ("note://tomboy/" + noteJson["guid"]);
+				newNote.ChangeDate = DateTime.Parse ((string) noteJson["last-change-date"]);
+				newNote.CreateDate = DateTime.Parse ((string) noteJson["create-date"]);
+				newNote.MetadataChangeDate = DateTime.Parse ((string) noteJson["last-metadata-change-date"]);
+				newNote.Text = (string) noteJson["note-content"];
+				newNote.Title = (string) noteJson["title"];
+
+				foreach (var tagJson in noteJson["tags"]) {
+					newNote.Tags.Add (tagJson.ToString (), new Tags.Tag (tagJson.ToString ()));
+				}
+				toRet.Add (newNote.Uri, newNote);
+			}
+
+			return toRet;
 		}
 
+		public static UserInfo ParseUserInfoResponse (string response)
+		{
+			UserInfo toRet = new UserInfo ();
+
+			JObject json = JObject.Parse (response);
+
+			toRet.latestSyncRevision = (int) json["latest-sync-revision"];
+			toRet.firstname = (string) json["first-name"];
+			toRet.lastname = (string) json["last-name"];
+			toRet.currentSyncGuid = (string) json["current-sync-guid"];
+			toRet.username = (string) json["user-name"];
+
+			return toRet;
+		}
+		#endregion Decoders
+
+		#region Encoders
+
+		public static string CreateNoteUploadJson (Dictionary<string, Note> notes)
+		{
+			throw new NotImplementedException ();
+		}
+
+		#endregion Encoders
 	}
 }
 
