@@ -38,6 +38,10 @@ namespace Tomboy
 		private DateTime metadata_change_date;
 		private int x, y;
 		private Dictionary<string, Tag> tags;
+		/// <summary>
+		/// The open the Note on startup.
+		/// </summary>
+		private bool openOnStartup = false;
 
 		public Note (string uri)
 		{
@@ -50,12 +54,33 @@ namespace Tomboy
 			metadata_change_date = DateTime.MinValue;
 		}
 
+		/// <summary>
+		/// Gets or sets should the Note open on startup.
+		/// </summary>
+		/// <value>
+		/// The open on startup.
+		/// </value>
+		public string OpenOnStartup {
+			get { 
+				return openOnStartup;
+				}
+			set {
+				openOnStartup = Boolean.Parse (value);
+			}
+		}
+
 		public string Uri {
 			get {
 				return uri;
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the Note title.
+		/// </summary>
+		/// <value>
+		/// The title.
+		/// </value>
 		public string Title {
 			get {
 				return title;
@@ -65,6 +90,12 @@ namespace Tomboy
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the Note text. - this is the same as the Note Content
+		/// </summary>
+		/// <value>
+		/// The text.
+		/// </value>
 		public string Text {
 			get {
 				return text;
@@ -74,6 +105,12 @@ namespace Tomboy
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the create date.
+		/// </summary>
+		/// <value>
+		/// The create date.
+		/// </value>
 		public DateTime CreateDate {
 			get {
 				return create_date;
@@ -110,6 +147,13 @@ namespace Tomboy
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the x.position of the note on the screen
+		/// </summary>
+		/// <description>This is used in the old GTK systems</description>
+		/// <value>
+		/// The x.
+		/// </value>
 		public int X {
 			get {
 				return x;
@@ -119,6 +163,13 @@ namespace Tomboy
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the y.
+		/// </summary>
+		/// <description>This is used in the old GTK systems</description>
+		/// <value>
+		/// The y.
+		/// </value>
 		public int Y {
 			get {
 				return y;
@@ -128,6 +179,13 @@ namespace Tomboy
 			}
 		}
 
+		/// <summary>
+		/// Gets the tags.assigned to this note
+		/// </summary>
+		/// <description>Format: <(string)tag name><(Tag)Tag Object></description>
+		/// <value>
+		/// The tags.
+		/// </value>
 		public Dictionary<string, Tag> Tags {
 			get {
 				return tags;
