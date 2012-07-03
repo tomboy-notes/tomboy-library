@@ -68,7 +68,7 @@ namespace Tomboy
 		}
 
 		[Test()]
-		public void ParseNotesResponse_GoodResponse_ReturnsCorrectNotes ()
+		public void ParseNotesResponse_GoodResponseNoDeletions_ReturnsCorrectNotes ()
 		{
 			string noteresponse = "{"
 						+ "\t\"notes\": ["
@@ -115,6 +115,12 @@ namespace Tomboy
 		}
 
 		[Test()]
+		public void ParseNotesResponse_GoodResponseSomeDeletions_ReturnsCorrectNotes ()
+		{
+			throw new NotImplementedException ("Need to figure out how to transmit deleted notes");
+		}
+
+		[Test()]
 		public void ParseUserInfo_GoodResponse_ReturnsCorrectInfo ()
 		{
 
@@ -140,9 +146,37 @@ namespace Tomboy
 		}
 
 		[Test()]
-		public void CreateNoteUploadJson_ProperNotesDictionary_ReturnsCorrectJson ()
+		public void CreateNoteUploadJson_ProperNotesDictionaryNoneToBeDeleted_ReturnsCorrectJson ()
 		{
+//			string expectedJson = {
+//        "latest-sync-revision": 456,
+//        "note-changes": [{
+//                        "guid": "002e91a2-2e34-4e2d-bf88-21def49a7705",
+//                        "title": "New Note 6",
+//                        "note-content": "Describe your note <b>here</b>.",
+//                        "note-content-version": 0.1,
+//                        "last-change-date": "2009-04-19T21:29:23.2197340-07:00",
+//                        "last-metadata-change-date": "2009-04-19T21:29:23.2197340-07:00",
+//                        "create-date": "2008-03-06T13:44:46.4342680-08:00",
+//                        "open-on-startup": false,
+//                        "pinned": false,
+//                        "tags": ["tag1", "tag2", "tag3", "system:notebook:biology"]
+//                }, {
+//                        ...(another one)...
+//                }, {
+//                        "guid": "0bc7b1ef-264f-4aa9-8746-d0f87e9b0176",
+//                        "command": "delete"
+//                }]                      
+//			}";
 
+			throw new NotImplementedException ();
+
+		}
+
+		[Test()]
+		public void CreateNoteUploadJson_ProperNotesDictionarySomeToBeDeleted_ReturnsCorrectJson ()
+		{
+			throw new NotImplementedException ("Need to figure out deletions");
 		}
 
 	}

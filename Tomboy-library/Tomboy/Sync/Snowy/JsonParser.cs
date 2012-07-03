@@ -58,6 +58,7 @@ namespace Tomboy.Sync.Snowy
 
 		public static Dictionary<string, Note>  ParseCompleteNotesResponse (string response)
 		{
+			//TODO: Need to see how the server transmits deleted notes!
 			Dictionary<string, Note> toRet = new Dictionary<string, Note> ();
 			JObject json = JObject.Parse (response);
 
@@ -96,8 +97,21 @@ namespace Tomboy.Sync.Snowy
 
 		#region Encoders
 
-		public static string CreateNoteUploadJson (Dictionary<string, Note> notes)
+		/// <summary>
+		/// Creates the note upload json.
+		/// </summary>
+		/// <returns>
+		/// The note upload json.
+		/// </returns>
+		/// <param name='changedNotes'>
+		///  A dict of changed notes that are to have their changes uploaded
+		/// </param>
+		/// <param name='deletedNotes'>
+		/// A dict of notes that have been deleted locally and should be removed from the server.
+		/// </param>
+		public static string CreateNoteUploadJson (Dictionary<string, Note> changedNotes, Dictionary<string, Note> deletedNotes)
 		{
+			//TODO: Find out how one finds out which notes are deleted
 			throw new NotImplementedException ();
 		}
 
