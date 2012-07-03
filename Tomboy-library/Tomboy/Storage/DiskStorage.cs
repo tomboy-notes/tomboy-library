@@ -182,12 +182,13 @@ namespace Tomboy
 
 		private static Note ReadFile (string read_file, string uri)
 		{
+			Reader reader = new Reader ();
 			Note note;
 			/* Reader.Read should be called by all storage classes.
 			 * The Reader is responsible for taking the XML data and turning it into a Note object
 			 */
 			XmlTextReader document = new XmlTextReader (new StreamReader (read_file));
-				note = Reader.Read (document, uri);
+				note = reader.Read (document, uri);
 			return note;
 		}
 
