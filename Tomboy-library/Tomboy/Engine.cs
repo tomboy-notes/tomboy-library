@@ -109,7 +109,7 @@ namespace Tomboy
 		/// </param>
 		public Dictionary<string, Note> GetNotes (string searchTerm, bool searchContent)
 		{
-			if (this.notes == null)
+			if (this.notes == null || this.notes.Count == 0)
 				GetNotes ();
 
 			if (!searchContent) {
@@ -127,7 +127,7 @@ namespace Tomboy
 		/// </returns>
 		public Note NewNote ()
 		{
-			Note note = NoteCreator.NewNote (GetNotes ().Count);
+			Note note = NoteCreator.NewNote (this.notes.Count);
 			notes.Add (note.Uri, note);
 			if (NoteAdded != null)
 				NoteAdded (note);
