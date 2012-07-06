@@ -62,7 +62,7 @@ namespace Tomboy
 		/// </value>
 		public string OpenOnStartup {
 			get { 
-				return openOnStartup;
+				return openOnStartup.ToString ();
 				}
 			set {
 				openOnStartup = Boolean.Parse (value);

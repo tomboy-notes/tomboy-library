@@ -17,6 +17,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 using System;
+using System.Linq;
 using System.Xml;
 using System.Xml.Xsl;
 using System.Text;
@@ -24,6 +25,7 @@ using System.IO;
 using System.Xml.XPath;
 using System.Xml.Linq;
 using System.Reflection;
+using System.Collections.Generic;
 
 namespace Tomboy
 {
@@ -37,6 +39,7 @@ namespace Tomboy
 		/// Current XML version
 		/// </summary>
 		public const string CURRENT_VERSION = "0.3";
+		private XNamespace ns = "http://beatniksoftware.com/tomboy";
 		private XslCompiledTransform xslTransform;
 		private Assembly _assembly;
 		private const string _style_sheet_name = "Tomboy.Tomboy.note_stylesheet.xsl";
@@ -128,77 +131,67 @@ namespace Tomboy
 		}
 
 		/// <summary>
-		/// Read the specified xml and uri.
+		/// Parses the string from a Note to the DateTime Value to be stored in the Note class
 		/// </summary>
-		/// <description>XML is the raw Note XML for each note in the system.</description>
-		/// <description>uri is in the format of //tomboy:NoteHash</description>
-		/// <param name='xml'>
-		/// Xml.
+		/// <returns>
+		/// The string.
+		/// </returns>
+		/// <param name='xdoc'>
+		/// Xdoc.
 		/// </param>
-		/// <param name='uri'>
-		/// URI.
+		/// <param name='attributeName'>
+		/// Attribute name.
 		/// </param>
-		public Note Read (XmlTextReader xml, string uri)
+		private DateTime ParseString (XDocument xdoc, string attributeName)
 		{
-			Note note = new Note (uri);
+			if (xdoc.Descendants (ns + attributeName).FirstOrDefault () == null)
+				return DateTime.Now;
+
+			XNode xnode = xdoc.Descendants (ns + attributeName).FirstOrDefault ().FirstNode;
+
 			DateTime date;
-			int num;
-			string version = String.Empty;
-			// used for Note text
-			StringBuilder buffer = new StringBuilder();
-			StringWriter writer = new StringWriter (buffer);
+			if (DateTime.TryParse (xnode.ToString (), out date))
+				return date;
+			else
+				return DateTime.Now;
+		}
 
+		public Note Read (XDocument xdoc, string uri)
+		{
+			StringBuilder sb = new StringBuilder ();
+			StringWriter stringWriter = new StringWriter (sb);
+			XmlTextWriter xmlTextWriter = new XmlTextWriter (stringWriter);
+			Note note = new Note (uri);
+
+			// For debug purposes
+//			IEnumerable<XElement> 
+//			 from el in xdoc.Elements()
+//			select el;
+//			foreach (XElement e in childList)
+//				Console.WriteLine("element {0}", e);
+
+			note.Title = xdoc.Descendants (ns + "title").FirstOrDefault ().FirstNode.ToString ();
+			note.ChangeDate = ParseString (xdoc, "last-change-date");
+			note.MetadataChangeDate = ParseString (xdoc, "last-metadata-change-date");
+			note.CreateDate = ParseString (xdoc, "create-date");
+
+			XmlReader reader = xdoc.CreateReader ();
 			try {
-				while (xml.Read ()) {
-					switch (xml.NodeType) {
+				while (reader.Read ()) {
+					switch (reader.NodeType) {
 					case XmlNodeType.Element:
-						Console.WriteLine ("Element {0}", xml.Name);
-						switch (xml.Name) {
-						case "note":
-							version = xml.GetAttribute ("version");
-							break;
-						case "title":
-							note.Title = xml.ReadString ();
-							break;
-						case "last-change-date":
-							if (DateTime.TryParse (xml.ReadString (), out date))
-								note.ChangeDate = date;
-							else
-								note.ChangeDate = DateTime.Now;
-							break;
-						case "last-metadata-change-date":
-							if (DateTime.TryParse (xml.ReadString (), out date))
-								note.MetadataChangeDate = date;
-							else
-								note.MetadataChangeDate = DateTime.Now;
-							break;
-						case "create-date":
-							if (DateTime.TryParse (xml.ReadString (), out date))
-								note.CreateDate = date;
-							else
-								note.CreateDate = DateTime.Now;
-							break;
-						case "x":
-							if (int.TryParse (xml.ReadString (), out num))
-								note.X = num;
-							break;
-						case "y":
-							if (int.TryParse (xml.ReadString (), out num))
-								note.Y = num;
-							break;
+						Console.WriteLine ("Read Element Name {0}", reader.Name);
+						switch (reader.Name) {
 						case "text":
-							xslTransform.Transform(xml, null,writer);
-							StringReplacements (buffer);
-							note.Text = buffer.ToString ();
-							break;
-
-						case "open-on-startup":
-							note.OpenOnStartup  = xml.ReadString ();
+							xslTransform.Transform(reader, null,xmlTextWriter);
+							note.Text = sb.ToString ();
+							Console.WriteLine ("Note Body :{0}", note.Text);
 							break;
 						}
 						break;
 					}
 				}
+
 			} catch (System.Xml.XmlException e) {
 				//throw new TomboyException ("Note XML is corrupted!");	
 				Console.Write ("exception {0}", e);

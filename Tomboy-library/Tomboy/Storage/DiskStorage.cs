@@ -187,8 +187,8 @@ namespace Tomboy
 			/* Reader.Read should be called by all storage classes.
 			 * The Reader is responsible for taking the XML data and turning it into a Note object
 			 */
-			XmlTextReader document = new XmlTextReader (new StreamReader (read_file));
-				note = reader.Read (document, uri);
+			XDocument xDoc = XDocument.Load (new StreamReader (read_file), LoadOptions.PreserveWhitespace);
+			note = reader.Read (xDoc, uri);
 			return note;
 		}
 
