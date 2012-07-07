@@ -119,18 +119,6 @@ namespace Tomboy
 		}
 
 		/// <summary>
-		/// Strings the replacements which are / will be OS dependent.
-		/// </summary>
-		/// <param name='stringBuilder'>
-		/// String builder.
-		/// </param>
-		private void StringReplacements (StringBuilder stringBuilder)
-		{
-			/* replace NewLines with <br /> to support WebKit# */
-			stringBuilder.Replace (System.Environment.NewLine, "<br />");
-		}
-
-		/// <summary>
 		/// Parses the string from a Note to the DateTime Value to be stored in the Note class
 		/// </summary>
 		/// <returns>
@@ -174,18 +162,16 @@ namespace Tomboy
 			note.ChangeDate = ParseString (xdoc, "last-change-date");
 			note.MetadataChangeDate = ParseString (xdoc, "last-metadata-change-date");
 			note.CreateDate = ParseString (xdoc, "create-date");
-
 			XmlReader reader = xdoc.CreateReader ();
+
 			try {
 				while (reader.Read ()) {
 					switch (reader.NodeType) {
 					case XmlNodeType.Element:
-						Console.WriteLine ("Read Element Name {0}", reader.Name);
 						switch (reader.Name) {
 						case "text":
 							xslTransform.Transform(reader, null,xmlTextWriter);
 							note.Text = sb.ToString ();
-							Console.WriteLine ("Note Body :{0}", note.Text);
 							break;
 						}
 						break;
