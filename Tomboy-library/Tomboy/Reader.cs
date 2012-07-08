@@ -44,14 +44,13 @@ namespace Tomboy
 		private Assembly _assembly;
 		private const string _style_sheet_name = "Tomboy.Tomboy.note_stylesheet.xsl";
 		//TODO: Compile statements for Platform types
-		private string _style_sheet_location = "/Library/Caches/tomboy";
+		private string _style_sheet_location = "";
 
 		public Reader ()
 		{
 			/* The order of the following methods matter */
 			GetAssembly ();
-			//LoadPaths ();
-			CopyXSLT ();
+			LoadPaths ();
 			LoadXSL ();
 			/* end of orderness */
 		}
@@ -61,6 +60,7 @@ namespace Tomboy
 		/// </summary>
 		private void LoadXSL ()
 		{
+			CopyXSLT ();
 			if (xslTransform == null) {
 				Console.WriteLine ("creating Transform");
 				xslTransform = new XslCompiledTransform (true);
@@ -79,7 +79,7 @@ namespace Tomboy
 
 		private void LoadPaths ()
 		{
-			//_style_sheet_location = Path.Combine (Environment.GetEnvironmentVariable ("Caches"), "tomboy");
+			_style_sheet_location = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.Personal), "Library", "Caches", "Tomboy");
 		}
 
 		/// <summary>
