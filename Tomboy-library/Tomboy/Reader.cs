@@ -107,6 +107,9 @@ namespace Tomboy
 		/// </summary>
 		private void CopyXSLT ()
 		{
+			if (!Directory.Exists (_style_sheet_location))
+				Directory.CreateDirectory (_style_sheet_location);
+
 			/* Only copy the file if it doesn't exist
 			 * This allows someone to override the default
 			 * It also allows someone to rebuild if corrupt
