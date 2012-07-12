@@ -18,9 +18,9 @@ exclude-result-prefixes="xsl tomboy link size"
 		<xsl:apply-templates />
 	</xsl:template>
 	
-	<!--xsl:template match="link:internal">
-		<b><em><xsl:value-of select="text()" /></em></b>
-	</xsl:template-->
+	<xsl:template match="link:internal">
+		<b><em><a href="{text()}"><xsl:value-of select="text()" /></a></em></b>
+	</xsl:template>
 	
 	<xsl:template match="size:large">
 		<b><xsl:value-of select="text()" /></b>
@@ -28,7 +28,9 @@ exclude-result-prefixes="xsl tomboy link size"
 	
 	<xsl:template match="link:url">
 		<a href="{text()}"><xsl:value-of select="text()" /></a>
-		<a href="{link:internal}"><xsl:value-of select="link:internal" /></a>
+		<xsl:if test="link:internal">
+			<b><em><a href="{link:internal/text()}"><xsl:value-of select="link:internal/text()" /></a></em></b>
+		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="text()" mode="#all">
