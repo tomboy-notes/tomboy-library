@@ -18,12 +18,17 @@ exclude-result-prefixes="xsl tomboy link size"
 		<xsl:apply-templates />
 	</xsl:template>
 	
-	<xsl:template match="link:internal">
-		<specialthingy><xsl:value-of select="text()" /></specialthingy>
+	<!--xsl:template match="link:internal">
+		<b><em><xsl:value-of select="text()" /></em></b>
+	</xsl:template-->
+	
+	<xsl:template match="size:large">
+		<b><xsl:value-of select="text()" /></b>
 	</xsl:template>
 	
 	<xsl:template match="link:url">
 		<a href="{text()}"><xsl:value-of select="text()" /></a>
+		<a href="{link:internal}"><xsl:value-of select="link:internal" /></a>
 	</xsl:template>
 
 	<xsl:template match="text()" mode="#all">
