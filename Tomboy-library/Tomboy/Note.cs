@@ -202,6 +202,28 @@ namespace Tomboy
 			this.x = x;
 			this.y = y;
 		}
+
+		public int CursorPosition {
+			get;
+			set;
+		}
+
+		public int SelectionBoundPosition {
+			get;
+			set;
+		}
+
+		public int Height {
+			get;
+			set;
+		}		
+
+		public int Width {
+			get;
+			set;
+		}
+
+
 	}
 }
 
