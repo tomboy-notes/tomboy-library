@@ -67,7 +67,11 @@ namespace Tomboy
 			xml.WriteStartElement (null, "text", null);
 			xml.WriteAttributeString ("xml", "space", null, "preserve");
 			// Insert <note-content> blob...
+			xml.WriteStartElement (null, "note-content", null);
+			xml.WriteAttributeString (null, "version", null, "1");
+
 			xml.WriteRaw (note.Text);
+			xml.WriteEndElement ();
 			xml.WriteEndElement ();
 
 			xml.WriteStartElement (null, "last-change-date", null);

@@ -77,4 +77,7 @@
     <Compile Include="Tomboy\Sync\Snowy\WebSyncAgent.cs" />
     <Compile Include="Tomboy\Sync\Snowy\UserInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Tomboy\note_stylesheet.xsl" />
+  </ItemGroup>
 </Project>

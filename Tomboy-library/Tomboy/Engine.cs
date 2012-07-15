@@ -103,6 +103,24 @@ namespace Tomboy
 		}
 
 		/// <summary>
+		/// Gets the specified Note based on Title search
+		/// </summary>
+		/// <returns>
+		/// The note.
+		/// </returns>
+		/// <param name='title'>
+		/// Title.
+		/// </param>
+		public Note GetNote (string title)
+		{
+			foreach (KeyValuePair<string, Note> n in this.notes){
+				if (String.Compare (n.Value.Title, title, StringComparison.InvariantCultureIgnoreCase) == 0)
+				    return n.Value;
+			}
+			return null;
+		}
+
+		/// <summary>
 		/// Gets the notes that match the search term.
 		/// </summary>
 		/// <param name='searchTerm'>

@@ -22,6 +22,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.IO;
 using System.Collections.Generic;
+using System.Xml.XPath;
 
 namespace Tomboy
 {
@@ -30,6 +31,7 @@ namespace Tomboy
 		
 		private static DiskStorage instance = null;
 		private static readonly object lock_ = new object ();
+		private static Reader reader;
 		
 		/// <summary>
 		/// The path_to_notes.
@@ -41,6 +43,7 @@ namespace Tomboy
 
 		protected DiskStorage ()
 		{
+			reader = new Reader ();
 		}
 
 		public static DiskStorage Instance {
@@ -185,9 +188,8 @@ namespace Tomboy
 			/* Reader.Read should be called by all storage classes.
 			 * The Reader is responsible for taking the XML data and turning it into a Note object
 			 */
-			using (var xml = new XmlTextReader (new StreamReader (read_file, System.Text.Encoding.UTF8)) {Namespaces = false})
-				note = Reader.Read (xml, uri);
-
+			XDocument xDoc = XDocument.Load (new StreamReader (read_file), LoadOptions.PreserveWhitespace);
+			note = reader.Read (xDoc, uri);
 			return note;
 		}
 
