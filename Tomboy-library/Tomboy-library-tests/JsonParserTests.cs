@@ -110,7 +110,7 @@ namespace Tomboy
 			Note testNote = notes["note://tomboy/c70f70f5-f080-4333-8a37-34213fdc8c5e"];
 			Assert.AreEqual ("A Note", testNote.Title);
 			Assert.AreEqual ("Describe your new note here: this note has some content. I believe.", testNote.Text);
-			Assert.AreEqual (DateTime.Parse ("2012-06-27T20:05:33Z"), testNote.ChangeDate);
+			Assert.AreEqual (DateTimeOffset.Parse ("2012-06-27T20:05:33Z").DateTime, testNote.ChangeDate);
 			Assert.IsTrue (testNote.Tags.ContainsKey ("system:notebook:Tomboy etc."));
 		}
 

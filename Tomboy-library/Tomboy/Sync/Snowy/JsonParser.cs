@@ -64,9 +64,9 @@ namespace Tomboy.Sync.Snowy
 
 			foreach (var noteJson in json["notes"]) {
 				Note newNote = new Note ("note://tomboy/" + noteJson["guid"]);
-				newNote.ChangeDate = DateTime.Parse ((string) noteJson["last-change-date"]);
-				newNote.CreateDate = DateTime.Parse ((string) noteJson["create-date"]);
-				newNote.MetadataChangeDate = DateTime.Parse ((string) noteJson["last-metadata-change-date"]);
+				newNote.ChangeDate = (DateTime) noteJson["last-change-date"];
+				newNote.CreateDate = (DateTime) noteJson["create-date"];
+				newNote.MetadataChangeDate = (DateTime) noteJson["last-metadata-change-date"];
 				newNote.Text = (string) noteJson["note-content"];
 				newNote.Title = (string) noteJson["title"];
 
