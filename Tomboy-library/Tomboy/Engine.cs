@@ -79,6 +79,9 @@ namespace Tomboy
 		/// <summary>
 		/// Gets the notes.
 		/// </summary>
+		/// <description>
+		/// Dictionary looks like <note://tomboy/44a1a2d6-7ffb-46e0-9b5c-a00260a5bb50, Note>
+		/// </description>
 		/// <returns>
 		/// Dictionary<string, Note>
 		/// </returns>
