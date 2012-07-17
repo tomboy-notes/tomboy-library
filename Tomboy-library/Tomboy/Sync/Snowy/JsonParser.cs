@@ -56,27 +56,37 @@ namespace Tomboy.Sync.Snowy
 			return userArray[userArray.Length -1];
 		}
 
-		public static Dictionary<string, Note>  ParseCompleteNotesResponse (string response)
+		public static NoteChanges  ParseCompleteNotesResponse (string response)
 		{
-			//TODO: Need to see how the server transmits deleted notes!
-			Dictionary<string, Note> toRet = new Dictionary<string, Note> ();
+			Dictionary<string, Note> changed = new Dictionary<string, Note> ();
+			List<string> deleted = new List<string> ();
+
 			JObject json = JObject.Parse (response);
 
 			foreach (var noteJson in json["notes"]) {
-				Note newNote = new Note ("note://tomboy/" + noteJson["guid"]);
-				newNote.ChangeDate = (DateTime) noteJson["last-change-date"];
-				newNote.CreateDate = (DateTime) noteJson["create-date"];
-				newNote.MetadataChangeDate = (DateTime) noteJson["last-metadata-change-date"];
-				newNote.Text = (string) noteJson["note-content"];
-				newNote.Title = (string) noteJson["title"];
-
-				foreach (var tagJson in noteJson["tags"]) {
-					newNote.Tags.Add (tagJson.ToString (), new Tags.Tag (tagJson.ToString ()));
+				if (noteJson["command"] == null) {
+					Note newNote = new Note ("note://tomboy/" + noteJson["guid"]);
+					newNote.ChangeDate = (DateTime) noteJson["last-change-date"];
+					newNote.CreateDate = (DateTime) noteJson["create-date"];
+					newNote.MetadataChangeDate = (DateTime) noteJson["last-metadata-change-date"];
+					newNote.Text = (string) noteJson["note-content"];
+					newNote.Title = (string) noteJson["title"];
+					
+					foreach (var tagJson in noteJson["tags"]) {
+						newNote.Tags.Add (tagJson.ToString (), new Tags.Tag (tagJson.ToString ()));
+					}
+					changed.Add (newNote.Uri, newNote);
+				} else {
+					deleted.Add ((string) noteJson["guid"]);
 				}
-				toRet.Add (newNote.Uri, newNote);
 			}
+			NoteChanges toRet = new NoteChanges ();
 
-			return toRet;
+			toRet.SyncRevision = (int) json["latest-sync-revision"];
+			toRet.ChangedNotes = changed;
+			toRet.DeletedNoteGuids = deleted;
+
+			return toRet; //TODO
 		}
 
 		public static UserInfo ParseUserInfoResponse (string response)

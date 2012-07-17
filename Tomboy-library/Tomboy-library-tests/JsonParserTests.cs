@@ -70,6 +70,8 @@ namespace Tomboy
 		[Test()]
 		public void ParseNotesResponse_GoodResponseNoDeletions_ReturnsCorrectNotes ()
 		{
+			// A typical response if you have for exaple used the paramater since¤455 in your request,
+			// representing the changes since that revision.
 			string noteresponse = "{"
 						+ "\t\"notes\": ["
 						+ "{"
@@ -101,23 +103,82 @@ namespace Tomboy
 						+ "\"pinned\": false"
 						+ "}"
 						+ "\t], "
-						+ "\t\"latest-sync-revision\": 2"
+						+ "\t\"latest-sync-revision\": 456"
 						+ "}";
-			Dictionary<string, Note> notes = JsonParser.ParseCompleteNotesResponse (noteresponse);
+			NoteChanges notes = JsonParser.ParseCompleteNotesResponse (noteresponse);
+			Dictionary<string, Note> changed = notes.ChangedNotes;
 
-			Assert.AreEqual (2, notes.Count);
+			Assert.AreEqual (2, changed.Count);
 
-			Note testNote = notes["note://tomboy/c70f70f5-f080-4333-8a37-34213fdc8c5e"];
+			Note testNote = changed["note://tomboy/c70f70f5-f080-4333-8a37-34213fdc8c5e"];
 			Assert.AreEqual ("A Note", testNote.Title);
 			Assert.AreEqual ("Describe your new note here: this note has some content. I believe.", testNote.Text);
 			Assert.AreEqual (DateTimeOffset.Parse ("2012-06-27T20:05:33Z").DateTime, testNote.ChangeDate);
 			Assert.IsTrue (testNote.Tags.ContainsKey ("system:notebook:Tomboy etc."));
+
+			List<string> deleted = notes.DeletedNoteGuids;
+			Assert.AreEqual (0, deleted.Count);
+
+			Assert.AreEqual (456, notes.SyncRevision);
 		}
 
 		[Test()]
 		public void ParseNotesResponse_GoodResponseSomeDeletions_ReturnsCorrectNotes ()
 		{
-			throw new NotImplementedException ("Need to figure out how to transmit deleted notes");
+			string noteresponse = "{"
+						+ "\t\"notes\": ["
+						+ "{"
+						+ "\"note-content\": \"Describe your new note here: this note has some content. I believe.\", "
+						+ "\"open-on-startup\": false, "
+						+ "\"last-metadata-change-date\": \"2012-06-27T20:05:33Z\", "
+						+ "\"title\": \"A Note\", "
+						+ "\"tags\": ["
+						+ "\"system:notebook:Tomboy etc.\""
+						+ "], "
+						+ "\"create-date\": \"2012-06-27T20:04:06Z\", "
+						+ "\"last-sync-revision\": 2, "
+						+ "\"last-change-date\": \"2012-06-27T20:05:33Z\", "
+						+ "\"guid\": \"c70f70f5-f080-4333-8a37-34213fdc8c5e\", "
+						+ "\"pinned\": false"
+						+ "},"
+						+ "{"
+						+ "\"note-content\": \"Tomboy is way cool.\", "
+						+ "\"open-on-startup\": false, "
+						+ "\"last-metadata-change-date\": \"2012-06-27T20:05:33Z\", "
+						+ "\"title\": \"Another Note\", "
+						+ "\"tags\": ["
+						+ "\"system:notebook:Tomboy etc.\""
+						+ "], "
+						+ "\"create-date\": \"2012-06-27T20:06:06Z\", "
+						+ "\"last-sync-revision\": 2, "
+						+ "\"last-change-date\": \"2012-06-27T20:09:33Z\", "
+						+ "\"guid\": \"c70f70f5-f080-4333-8a37-hjfkdskd\", "
+						+ "\"pinned\": false"
+						+ "},"
+						+ "{"
+                        			+ "\"guid\": \"0bc7b1ef-264f-4aa9-8746-d0f87e9b0176\","
+                        			+ "\"command\": \"delete\""
+                				+ "}"
+						+ "\t], "
+						+ "\t\"latest-sync-revision\": 456"
+						+ "}";
+			NoteChanges notes = JsonParser.ParseCompleteNotesResponse (noteresponse);
+			Dictionary<string, Note> changed = notes.ChangedNotes;
+
+			Assert.AreEqual (2, changed.Count);
+
+			Note testNote = changed["note://tomboy/c70f70f5-f080-4333-8a37-34213fdc8c5e"];
+			Assert.AreEqual ("A Note", testNote.Title);
+			Assert.AreEqual ("Describe your new note here: this note has some content. I believe.", testNote.Text);
+			Assert.AreEqual (DateTimeOffset.Parse ("2012-06-27T20:05:33Z").DateTime, testNote.ChangeDate);
+			Assert.IsTrue (testNote.Tags.ContainsKey ("system:notebook:Tomboy etc."));
+
+			List<string> deleted = notes.DeletedNoteGuids;
+			Assert.AreEqual (1, deleted.Count);
+			string deletedGuid = deleted[0];
+			Assert.AreEqual ("0bc7b1ef-264f-4aa9-8746-d0f87e9b0176", deletedGuid);
+
+			Assert.AreEqual (456, notes.SyncRevision);
 		}
 
 		[Test()]

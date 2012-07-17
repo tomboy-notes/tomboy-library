@@ -76,6 +76,7 @@
     <Compile Include="Tomboy\Sync\Snowy\OAuthEndPoints.cs" />
     <Compile Include="Tomboy\Sync\Snowy\WebSyncAgent.cs" />
     <Compile Include="Tomboy\Sync\Snowy\UserInfo.cs" />
+    <Compile Include="Tomboy\Sync\Snowy\NoteChanges.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Tomboy\note_stylesheet.xsl" />
