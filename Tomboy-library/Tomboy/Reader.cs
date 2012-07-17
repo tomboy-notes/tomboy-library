@@ -147,6 +147,30 @@ namespace Tomboy
 				return DateTime.Now;
 		}
 
+		/// <summary>
+		/// Parses the string value of an XNode to an int
+		/// </summary>
+		/// <returns>
+		/// The int.
+		/// </returns>
+		/// <param name='xdoc'>
+		/// Xdoc.
+		/// </param>
+		/// <param name='attributeName'>
+		/// Attribute name.
+		/// </param>
+		private int ParseInt (XDocument xdoc, string attributeName)
+		{
+			if (xdoc.Descendants (ns + attributeName).FirstOrDefault () == null)
+				return -1;
+			XNode xnode = xdoc.Descendants (ns + attributeName).FirstOrDefault ().FirstNode;
+			int val;
+			if (int.TryParse (xnode.ToString (), out val))
+				return val;
+			else
+				return -1;
+		}
+
 		public Note Read (XDocument xdoc, string uri)
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -165,6 +189,11 @@ namespace Tomboy
 			note.ChangeDate = ParseString (xdoc, "last-change-date");
 			note.MetadataChangeDate = ParseString (xdoc, "last-metadata-change-date");
 			note.CreateDate = ParseString (xdoc, "create-date");
+			note.CursorPosition = ParseInt (xdoc, "selection-bound-position");
+			note.SelectionBoundPosition = ParseInt (xdoc, "cursor-position");
+			note.Height = ParseInt (xdoc, "height");
+			note.Width = ParseInt (xdoc, "width");
+
 			XmlReader reader = xdoc.CreateReader ();
 
 			try {

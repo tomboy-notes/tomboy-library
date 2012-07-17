@@ -30,14 +30,10 @@ namespace Tomboy
 	[TestFixture()]
 	public class DiskStorageTests
 	{
-		private string NOTE_FOLDER_PROPER_NOTES = ".." + Path.DirectorySeparatorChar 
-			+ ".." + Path.DirectorySeparatorChar + "test_notes" + Path.DirectorySeparatorChar + "proper_notes";
-		private string NOTE_FOLDER_CORRUPT_NOTES = ".." + Path.DirectorySeparatorChar 
-			+ ".." + Path.DirectorySeparatorChar + "test_notes" + Path.DirectorySeparatorChar + "corrupt_notes";
-		private string NOTE_FOLDER_INVALID = ".." + Path.DirectorySeparatorChar 
-			+ ".." + Path.DirectorySeparatorChar + "test_notes" + Path.DirectorySeparatorChar + "invalid_notes";
-		private string NOTE_FOLDER_TEMP = ".." + Path.DirectorySeparatorChar 
-			+ ".." + Path.DirectorySeparatorChar + "test_notes" + Path.DirectorySeparatorChar + "temp_notes";
+		private string NOTE_FOLDER_PROPER_NOTES = Path.Combine ("..", "..", "test_notes", "proper_notes");
+		private string NOTE_FOLDER_CORRUPT_NOTES = Path.Combine ("..", "..", "test_notes", "corrupt_notes");
+		private string NOTE_FOLDER_INVALID = Path.Combine ("..", "..", "test_notes", "invalid_notes");
+		private string NOTE_FOLDER_TEMP = Path.Combine ("..", "..", "test_notes", "temp_notes");
 
 		[Test()]
 		public void SetPath_NoteFolderDoesNotExist_CreatesFolder ()
@@ -60,9 +56,7 @@ namespace Tomboy
 		public void Read_ProperNoteFile_ReadCorrectly ()
 		{
 			//TODO: Has a dependence on Reader.Read, how do we break it?
-			string StartHereNotePath = ".." + Path.DirectorySeparatorChar + ".." 
-				+ Path.DirectorySeparatorChar + "test_notes" + Path.DirectorySeparatorChar + "proper_notes" 
-					+ Path.DirectorySeparatorChar + "90d8eb70-989d-4b26-97bc-ba4b9442e51f.note";
+			string StartHereNotePath = Path.Combine ("..", "..", "test_notes", "proper_notes", "90d8eb70-989d-4b26-97bc-ba4b9442e51f.note");
 			Note StartHere =  DiskStorage.Read (StartHereNotePath, "tomboy://90d8eb70-989d-4b26-97bc-ba4b9442e51f");
 			Assert.AreEqual (StartHere.Title, "Start Here");
 		}

@@ -69,6 +69,12 @@ namespace Tomboy
 			}
 		}
 
+		/// <summary>
+		/// Gets the URI or Note ID. Example: "note://tomboy/44a1a2d6-7ffb-46e0-9b5c-a00260a5bb50"
+		/// </summary>
+		/// <value>
+		/// The URI.
+		/// </value>
 		public string Uri {
 			get {
 				return uri;
@@ -202,6 +208,28 @@ namespace Tomboy
 			this.x = x;
 			this.y = y;
 		}
+
+		public int CursorPosition {
+			get;
+			set;
+		}
+
+		public int SelectionBoundPosition {
+			get;
+			set;
+		}
+
+		public int Height {
+			get;
+			set;
+		}		
+
+		public int Width {
+			get;
+			set;
+		}
+
+
 	}
 }
 

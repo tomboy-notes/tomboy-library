@@ -91,6 +91,22 @@ namespace Tomboy
 				xml.WriteEndElement ();
 			}
 
+			xml.WriteStartElement (null, "cursor-position", null);
+			xml.WriteString (note.CursorPosition.ToString ());
+			xml.WriteEndElement ();
+
+			xml.WriteStartElement (null, "selection-bound-position", null);
+			xml.WriteString (note.SelectionBoundPosition.ToString ());
+			xml.WriteEndElement ();
+
+			xml.WriteStartElement (null, "width", null);
+			xml.WriteString (note.Width.ToString ());
+			xml.WriteEndElement ();
+
+			xml.WriteStartElement (null, "height", null);
+			xml.WriteString (note.Height.ToString ());
+			xml.WriteEndElement ();
+
 			xml.WriteStartElement (null, "x", null);
 			xml.WriteString (note.X.ToString ());
 			xml.WriteEndElement ();
