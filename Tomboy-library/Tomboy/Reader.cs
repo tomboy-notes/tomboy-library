@@ -62,7 +62,6 @@ namespace Tomboy
 		{
 			CopyXSLT ();
 			if (xslTransform == null) {
-				Console.WriteLine ("creating Transform");
 				xslTransform = new XslCompiledTransform (true);
 				xslTransform.Load (Path.Combine (_style_sheet_location, _style_sheet_name));
 			}
@@ -115,6 +114,7 @@ namespace Tomboy
 			 * It also allows someone to rebuild if corrupt
 			 */
 			if (!File.Exists (Path.Combine (_style_sheet_location, _style_sheet_name))) {
+				Console.WriteLine ("deploying default Transform");
 				using (Stream input = _assembly.GetManifestResourceStream(_style_sheet_name))
 				using (Stream output = File.Create(Path.Combine (_style_sheet_location, _style_sheet_name)))
 					CopyStream (input, output);

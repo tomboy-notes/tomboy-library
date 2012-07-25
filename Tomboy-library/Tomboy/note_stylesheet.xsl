@@ -26,6 +26,14 @@ exclude-result-prefixes="xsl tomboy link size"
 		<b><xsl:value-of select="text()" /></b>
 	</xsl:template>
 	
+	<xsl:template match="tomboy:note-content/tomboy:list">
+		<xsl:for-each select="tomboy:list-item">
+			<ul>
+				<li><xsl:value-of select="text()"/></li>
+			</ul>
+		</xsl:for-each>
+	</xsl:template>
+	
 	<xsl:template match="link:url">
 		<a href="{text()}"><xsl:value-of select="text()" /></a>
 		<xsl:if test="link:internal">
