@@ -236,9 +236,9 @@ namespace Tomboy
 			Note note1 = new Note ("note://002e91a2-2e34-4e2d-bf88-21def49a770");
 			note1.Title = "New Note 6";
 			note1.Text = "Describe your note <b>here</b>.";
-			note1.ChangeDate = DateTimeOffset.Parse ("2009-04-19T21:29:23.2197340-07:00").DateTime;
-			note1.MetadataChangeDate = DateTimeOffset.Parse ("2009-04-19T21:29:23.2197340-07:0").DateTime;
-			note1.CreateDate = DateTimeOffset.Parse ("2008-03-06T13:44:46.4342680-08:00").DateTime;
+			note1.ChangeDate = DateTime.Parse ("2009-04-19T21:29:23.2197340-07:00");
+			note1.MetadataChangeDate = DateTime.Parse ("2009-04-19T21:29:23.2197340-07:00");
+			note1.CreateDate = DateTime.Parse ("2008-03-06T13:44:46.4342680-08:00");
 			note1.OpenOnStartup = "false";
 			note1.Tags.Add ("tag1", new Tags.Tag ("tag1"));
 			note1.Tags.Add ("tag2", new Tags.Tag ("tag2"));
@@ -252,9 +252,9 @@ namespace Tomboy
 			Note note2 = new Note ("note://0bc7b1ef-264f-4aa9-8746-d0f87e9b0176");
 			note2.Title = "New Note 6";
 			note2.Text = "Describe your note <b>here</b>.";
-			note2.ChangeDate = DateTimeOffset.Parse ("2009-04-19T21:29:23.2197340-07:00").DateTime;
-			note2.MetadataChangeDate = DateTimeOffset.Parse ("2009-04-19T21:29:23.2197340-07:0").DateTime;
-			note2.CreateDate = DateTimeOffset.Parse ("2008-03-06T13:44:46.4342680-08:00").DateTime;
+			note2.ChangeDate = DateTime.Parse ("2009-04-19T21:29:23.2197340-07:00");
+			note2.MetadataChangeDate = DateTime.Parse ("2009-04-19T21:29:23.2197340-07:00");
+			note2.CreateDate = DateTime.Parse ("2008-03-06T13:44:46.4342680-08:00");
 			note2.OpenOnStartup = "false";
 			note2.Tags.Add ("tag1", new Tags.Tag ("tag1"));
 			note2.Tags.Add ("tag2", new Tags.Tag ("tag2"));
@@ -262,41 +262,35 @@ namespace Tomboy
 
 			toDelete.Add (note2.Uri, note2);
 
-			string result = JsonParser.CreateNoteUploadJson (toUpload, toDelete);
+			string result = JsonParser.CreateNoteUploadJson (toUpload, toDelete, 456);
 
 			//Slightly iffy to use the same kind of lib for verifying as we do for decomposing from server?
 			JObject json = JObject.Parse (result);
 
-			JObject notes = (JObject) json["note-changes"];
+			Assert.AreEqual (456, (int) json["latest-sync-revision"]);
+
+			JArray notes = (JArray) json["note-changes"];
 			Assert.IsNotNull (notes);
-			Assert.Equals (notes.Count, 2);
+			Assert.AreEqual (2, notes.Count);
 
 			JObject deletedNote = (from JObject note in notes
 				where (string) note["guid"] == "0bc7b1ef-264f-4aa9-8746-d0f87e9b0176"
 				select note).First ();
 
-			Assert.Equals ((string)deletedNote["command"], "delete");
-			Assert.AreNotEqual((string)deletedNote["title"], "New Note 6");
+			Assert.AreEqual ("delete", (string) deletedNote["command"]);
+			Assert.AreNotEqual("New Note 6", (string) deletedNote["title"]);
 
 			JObject updatedNote = (from JObject note in notes
 				where (string) note["guid"] == "002e91a2-2e34-4e2d-bf88-21def49a770"
 				select note).First ();
 
-			Assert.Equals ((string) updatedNote["title"], "New Note 6");
-			Assert.Equals ((string) updatedNote["note-content"], "Describe your note <b>here</b>.");
-			Assert.Equals ((string) updatedNote["create-date"], "008-03-06T13:44:46.4342680-08:00");
-			Assert.Equals ((string) updatedNote["last-metadata-change-date"], "2009-04-19T21:29:23.2197340-07:0");
+			Assert.AreEqual ("New Note 6", (string) updatedNote["title"]);
+			Assert.AreEqual ("Describe your note <b>here</b>.", (string) updatedNote["note-content"]);
+			Assert.AreEqual (note1.CreateDate, (DateTime) updatedNote["create-date"]);
+			Assert.AreEqual (note1.ChangeDate, (DateTime) updatedNote["last-change-date"]);
+			Assert.AreEqual (note1.MetadataChangeDate, (DateTime) updatedNote["last-metadata-change-date"]);
 
 		}
-
-		[Test()]
-		public void CreateNoteUploadJson_ProperNotesDictionaryNoneToBeDeleted_ReturnsCorrectJson ()
-		{
-			throw new NotImplementedException ("Need to figure out deletions");
-		}
-
-		//TODO: Should add some tests for mangled and malformed json!
-
 	}
 }
 

@@ -26,6 +26,11 @@ namespace Tomboy.Sync.Snowy
 {
 	public class JsonParser
 	{
+		// From original Tomboy.NoteArchiver
+		// NOTE: If this changes from a standard format, make sure to update
+		//       XML parsing to have a DateTime.TryParseExact
+		private const string DATE_TIME_FORMAT = "yyyy-MM-ddTHH:mm:ss.fffffffzzz";
+
 		public JsonParser ()
 		{
 		}
@@ -119,10 +124,38 @@ namespace Tomboy.Sync.Snowy
 		/// <param name='deletedNotes'>
 		/// A dict of notes that have been deleted locally and should be removed from the server.
 		/// </param>
-		public static string CreateNoteUploadJson (Dictionary<string, Note> changedNotes, Dictionary<string, Note> deletedNotes)
+		public static string CreateNoteUploadJson (Dictionary<string, Note> changedNotes, Dictionary<string, Note> deletedNotes, int revision)
 		{
-			//TODO: Find out how one finds out which notes are deleted
-			throw new NotImplementedException ();
+			JObject json = new JObject ();
+			json.Add ("latest-sync-revision", revision);
+			json.Add ("note-changes", new JArray ());
+
+			foreach (Note note in changedNotes.Values) {
+				JObject noteJson = new JObject ();
+				noteJson.Add ("title", note.Title);
+				noteJson.Add ("guid", note.Uri.Replace ("note://", ""));
+				noteJson.Add ("note-content", note.Text);
+				noteJson.Add ("last-change-date", note.ChangeDate.ToString (DATE_TIME_FORMAT));
+				noteJson.Add ("last-metadata-change-date", note.MetadataChangeDate.ToString (DATE_TIME_FORMAT));
+				noteJson.Add ("create-date", note.CreateDate.ToString (DATE_TIME_FORMAT));
+
+				noteJson.Add ("tags", new JArray ());
+				foreach (Tags.Tag tag in note.Tags.Values) {
+					((JArray) noteJson["tags"]).Add (tag.NormalizedName);
+				}
+
+
+				((JArray) json["note-changes"]).Add (noteJson);
+			}
+
+			foreach (Note note in deletedNotes.Values) {
+				JObject noteJson = new JObject ();
+				noteJson.Add ("guid", note.Uri.Replace ("note://", ""));
+				noteJson.Add ("command", "delete");
+				((JArray) json["note-changes"]).Add (noteJson);
+			}
+
+			return json.ToString ();
 		}
 
 		#endregion Encoders
