@@ -58,6 +58,18 @@ namespace Tomboy.Sync.Snowy
 				return username;
 			}
 		}
+
+		/// <summary>
+		/// Gets a value indicating whether this <see cref="Tomboy.Sync.Snowy.WebSyncAgent"/> is ready to sync.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if is ready; otherwise, <c>false</c>.
+		/// </value>
+		public bool IsReady {
+			get {
+				return accessToken != null;
+			}
+		}
 	
 		//TODO All of this should be more background thread-like
 		//TODO: We have like zero error handling for simple stuff like the internet not being available
@@ -188,6 +200,7 @@ namespace Tomboy.Sync.Snowy
 		/// </summary>
 		public void PerformSync ()
 		{
+			throw new NotImplementedException ();
 		}
 	
 		/// <summary>
@@ -195,13 +208,29 @@ namespace Tomboy.Sync.Snowy
 		/// </summary>
 		public void CopyFromLocal ()
 		{
+			throw new NotImplementedException ();
 		}
 	
 		/// <summary>
-		/// Performs a one-way sync, overwriting all local notes with notes from the server.
+		/// Performs a one-way sync, overwriting all local notes with notes from the server. Make sure to check IsReady before trying sync.
 		/// </summary>
 		public void CopyFromRemote ()
 		{
+			string response = session.Request().Get().ForUrl(ServerApiRootUrl + username + "/notes?include_notes=true").ToString();
+			NoteChanges changes = JsonParser.ParseCompleteNotesResponse (response);
+
+			//Empty out all old notes
+			foreach (var note in ParentEngine.GetNotes ().Values) {
+				ParentEngine.DeleteNote (note);
+			}
+
+			//Put in our new ones
+			ParentEngine.AddNotes (changes.ChangedNotes);
+
+			//Save the new ones
+			foreach (var note in ParentEngine.GetNotes ().Values) {
+				ParentEngine.SaveNote (note);
+			}
 		}
 	}
 }

@@ -53,6 +53,14 @@ namespace OAuthSetUpTester
 			else
 				Console.WriteLine ("Failure! Something went wrong.");
 
+			Console.WriteLine ("Next up: downloading all remote notes");
+			agent.CopyFromRemote ();
+
+			foreach (var note in engine.GetNotes ().Values) {
+				Console.WriteLine(note.Title);
+			}
+			Console.WriteLine ("If you saw lots of titles you should be good!");
+
 			Console.WriteLine ("Press return to finish");
 
 			Console.ReadLine ();

@@ -200,6 +200,19 @@ namespace Tomboy
 				NoteRemoved (note);
 		}
 
+		/// <summary>
+		/// Adds existing notes, to be used by for example sync agents
+		/// </summary>
+		/// <param name='note'>
+		/// Note.
+		/// </param>
+		public void AddNotes (Dictionary<string, Note> newNotes)
+		{
+			foreach (string guid in newNotes.Keys) {
+				notes.Add (guid, newNotes[guid]);
+			}
+		}
+
 		public void SetConfigVariable (string key, string value) 
 		{
 			storage.SetConfigVariable (key, value);
