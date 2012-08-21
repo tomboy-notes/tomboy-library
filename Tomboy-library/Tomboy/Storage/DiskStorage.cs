@@ -151,7 +151,8 @@ namespace Tomboy
 				foreach (string file_path in files) {
 					try {
 						Note note = Read (file_path, Utils.GetURI (file_path));
-						notes.Add (note.Uri, note);
+						if (note != null)
+							notes.Add (note.Uri, note);
 					} catch (System.Xml.XmlException e) {
 						Console.WriteLine ("Failed to read Note {0}", file_path); /* so we know what note we cannot read */
 						Console.WriteLine (e);
@@ -188,8 +189,9 @@ namespace Tomboy
 			/* Reader.Read should be called by all storage classes.
 			 * The Reader is responsible for taking the XML data and turning it into a Note object
 			 */
-			XDocument xDoc = XDocument.Load (new StreamReader (read_file), LoadOptions.PreserveWhitespace);
-			note = reader.Read (xDoc, uri);
+			using (var xml = new XmlTextReader (new StreamReader (read_file, System.Text.Encoding.UTF8)) {Namespaces = false})
+				note = Reader.Read (xml, uri);
+
 			return note;
 		}
 

@@ -62,7 +62,4 @@
     <Compile Include="Tomboy\Tags\TagManager.cs" />
     <Compile Include="Tomboy\SearchEngine.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Tomboy\note_stylesheet.xsl" />
-  </ItemGroup>
 </Project>
