@@ -77,6 +77,11 @@ namespace Tomboy
 			backup_path_notes = Path.Combine (path_to_notes, "Backup");
 			configPath = Path.Combine (path_to_notes, "config.xml");
 		}
+
+		public void SetBackupPath (string path)
+		{
+			backup_path_notes = path;
+		}
 		
 		public void SaveNote (Note note)
 		{
@@ -243,6 +248,25 @@ namespace Tomboy
 			} catch (NullReferenceException) {
 				throw new TomboyException ("There is no config variable by that name.");
 			}
+		}
+
+		public string Backup ()
+		{
+			string msg = "";
+			if (!Directory.Exists (backup_path_notes))
+				Directory.CreateDirectory (backup_path_notes);
+			string[] files = Directory.GetFiles (path_to_notes, "*.note", SearchOption.TopDirectoryOnly);
+			if (files.Length == 0) {
+				msg += "No files were found to backup";
+			} else {
+				int count = 0;
+				foreach (var item in files) {
+					File.Copy (item, Path.Combine (backup_path_notes, Path.GetFileName (item)));
+					count ++;
+				}
+				msg += "A total of " + count + " files were backed up";
+			}
+			return msg;
 		}
 	}
 }

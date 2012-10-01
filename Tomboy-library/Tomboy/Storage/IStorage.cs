@@ -43,6 +43,12 @@ namespace Tomboy
 		/// Path.
 		/// </param>
 		void SetPath (string path);
+
+		/// <summary>
+		/// Sets the backup path.
+		/// By default the storage implementor sets the path unless otherwise specified by this method.
+		/// </summary>
+		void SetBackupPath (string path);
 		
 		/// <summary>
 		/// Saves the note.
@@ -69,6 +75,11 @@ namespace Tomboy
 		/// Retrieves arbitrary config variables, or an exception if unset.
 		/// </summary>
 		string GetConfigVariable (string key);
+
+		/// <summary>
+		/// Performs a backup of Notes
+		/// </summary>
+		string Backup ();
 	}
 }
 
