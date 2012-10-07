@@ -206,10 +206,10 @@ namespace Tomboy
 		/// <param name='note'>
 		/// Note.
 		/// </param>
-		public void AddNotes (Dictionary<string, Note> newNotes)
+		public void AddAndSaveNotes (Dictionary<string, Note> newNotes)
 		{
 			foreach (string guid in newNotes.Keys) {
-				notes.Add (guid, newNotes[guid]);
+				SaveNote (newNotes[guid]);
 			}
 		}
 

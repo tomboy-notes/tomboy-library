@@ -208,7 +208,12 @@ namespace Tomboy.Sync.Snowy
 		/// </summary>
 		public void CopyFromLocal ()
 		{
-			throw new NotImplementedException ();
+			string changeJson = JsonParser.CreateNoteUploadJson (ParentEngine.GetNotes(), null, 0);
+
+			string response = session.Request().Put().ForUrl(ServerApiRootUrl + username + "/notes").WithRawContentType("application/json").WithBody(changeJson).ToString();
+
+			//DEbug
+			Console.WriteLine (response);
 		}
 	
 		/// <summary>
@@ -224,13 +229,9 @@ namespace Tomboy.Sync.Snowy
 				ParentEngine.DeleteNote (note);
 			}
 
-			//Put in our new ones
-			ParentEngine.AddNotes (changes.ChangedNotes);
+			//Put in and save our new ones
+			ParentEngine.AddAndSaveNotes (changes.ChangedNotes);
 
-			//Save the new ones
-			foreach (var note in ParentEngine.GetNotes ().Values) {
-				ParentEngine.SaveNote (note);
-			}
 		}
 	}
 }

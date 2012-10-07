@@ -130,29 +130,33 @@ namespace Tomboy.Sync.Snowy
 			json.Add ("latest-sync-revision", revision);
 			json.Add ("note-changes", new JArray ());
 
-			foreach (Note note in changedNotes.Values) {
-				JObject noteJson = new JObject ();
-				noteJson.Add ("title", note.Title);
-				noteJson.Add ("guid", note.Uri.Replace ("note://", ""));
-				noteJson.Add ("note-content", note.Text);
-				noteJson.Add ("last-change-date", note.ChangeDate.ToString (DATE_TIME_FORMAT));
-				noteJson.Add ("last-metadata-change-date", note.MetadataChangeDate.ToString (DATE_TIME_FORMAT));
-				noteJson.Add ("create-date", note.CreateDate.ToString (DATE_TIME_FORMAT));
-
-				noteJson.Add ("tags", new JArray ());
-				foreach (Tags.Tag tag in note.Tags.Values) {
-					((JArray) noteJson["tags"]).Add (tag.NormalizedName);
+			if (changedNotes != null) {
+				foreach (Note note in changedNotes.Values) {
+					JObject noteJson = new JObject ();
+					noteJson.Add ("title", note.Title);
+					noteJson.Add ("guid", note.Uri.Replace ("note://", ""));
+					noteJson.Add ("note-content", note.Text);
+					noteJson.Add ("last-change-date", note.ChangeDate.ToString (DATE_TIME_FORMAT));
+					noteJson.Add ("last-metadata-change-date", note.MetadataChangeDate.ToString (DATE_TIME_FORMAT));
+					noteJson.Add ("create-date", note.CreateDate.ToString (DATE_TIME_FORMAT));
+				
+					noteJson.Add ("tags", new JArray ());
+					foreach (Tags.Tag tag in note.Tags.Values) {
+						((JArray) noteJson["tags"]).Add (tag.NormalizedName);
+					}
+				
+				
+					((JArray) json["note-changes"]).Add (noteJson);
 				}
-
-
-				((JArray) json["note-changes"]).Add (noteJson);
 			}
 
-			foreach (Note note in deletedNotes.Values) {
-				JObject noteJson = new JObject ();
-				noteJson.Add ("guid", note.Uri.Replace ("note://", ""));
-				noteJson.Add ("command", "delete");
-				((JArray) json["note-changes"]).Add (noteJson);
+			if (deletedNotes != null) {
+				foreach (Note note in deletedNotes.Values) {
+					JObject noteJson = new JObject ();
+					noteJson.Add ("guid", note.Uri.Replace ("note://", ""));
+					noteJson.Add ("command", "delete");
+					((JArray) json["note-changes"]).Add (noteJson);
+				}
 			}
 
 			return json.ToString ();
