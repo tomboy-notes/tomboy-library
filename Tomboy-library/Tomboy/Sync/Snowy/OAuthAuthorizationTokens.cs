@@ -1,5 +1,5 @@
 // 
-//  ApiRootResponse.cs
+//  JsonParser.cs
 //  
 //  Author:
 //       Robert Nordan <rpvn@robpvn.net>
@@ -20,20 +20,14 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 using System;
+using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
+
 namespace Tomboy.Sync.Snowy
 {
-    public struct OAuthEndPoints
-    {
-		public string requestUrl;
-		/// <summary>
-		/// The user authorize URL.
-		/// </summary>
-		/// <description>User Authorises Access
-		/// At this point, the user needs to agree to provide your web site access to their data. 
-		/// This is achieved by redirecting the user to the User Authorization URL end point with the request token included in the URL
-		/// </description>
-		public string userAuthorizeUrl;
-		public string accessUrl;
-    }
+	public static class OAuthAuthorizationTokens
+	{
+	}
+
 }
 

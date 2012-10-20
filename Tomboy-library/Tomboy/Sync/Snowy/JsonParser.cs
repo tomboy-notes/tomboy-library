@@ -36,6 +36,7 @@ namespace Tomboy.Sync.Snowy
 		}
 
 		#region Decoders
+
 		public static OAuthEndPoints ParseRootLevelResponseForOAuthDetails (string response) 
 		{
 			OAuthEndPoints toRet = new OAuthEndPoints ();
