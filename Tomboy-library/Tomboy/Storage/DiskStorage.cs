@@ -41,7 +41,7 @@ namespace Tomboy
 		private static string backup_path_notes = null;
 		private static string configPath = null;
 
-		protected DiskStorage ()
+		public DiskStorage ()
 		{
 			reader = new Reader ();
 		}
