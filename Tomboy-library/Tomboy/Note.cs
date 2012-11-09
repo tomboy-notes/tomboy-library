@@ -33,25 +33,25 @@ namespace Tomboy
 		private readonly string uri;
 		private string title;
 		private string text;
-		private DateTime create_date;
-		private DateTime change_date;
-		private DateTime metadata_change_date;
+		private DateTime create_date = DateTime.MinValue;
+		private DateTime change_date = DateTime.MinValue;
+		private DateTime metadata_change_date = DateTime.MinValue;
 		private int x, y;
-		private Dictionary<string, Tag> tags;
+		private Dictionary<string, Tag> tags = new Dictionary<string, Tag> ();
 		/// <summary>
 		/// The open the Note on startup.
 		/// </summary>
 		private bool openOnStartup = false;
 
-		public Note (string uri)
+		public Note ()
+		{
+			this.Guid = System.Guid.NewGuid ().ToString ();
+			this.uri = "note://tomboy/" + this.Guid;
+		}
+		public Note (string uri) : this ()
 		{
 			this.uri = uri;
-			this.text = "";
-			tags = new Dictionary<string, Tag> ();
-
-			create_date = DateTime.MinValue;
-			change_date = DateTime.MinValue;
-			metadata_change_date = DateTime.MinValue;
+			this.Guid = uri.Replace ("note://tomboy/", "").Replace (".note","");
 		}
 
 		/// <summary>
@@ -228,8 +228,10 @@ namespace Tomboy
 			get;
 			set;
 		}
-
-
+		public string Guid {
+			get;
+			set;
+		}
 	}
 }
 
