@@ -65,7 +65,4 @@
     <Compile Include="Tomboy\Sync\Interfaces.cs" />
     <Compile Include="Tomboy\Sync\Sync.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Tomboy\Sync\TomboySyncClient.cs" />
-  </ItemGroup>
 </Project>
