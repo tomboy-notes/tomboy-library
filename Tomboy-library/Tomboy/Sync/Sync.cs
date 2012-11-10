@@ -31,7 +31,7 @@ namespace Tomboy.Sync
 	{
 		private DateTime last_sync_date = DateTime.MinValue;
 		private int last_sync_rev = -1;
-		private string server_id;
+		private string server_id = Guid.NewGuid ().ToString ();
 		private IDictionary<string, int> note_revisions = new Dictionary<string, int> ();
 		private IDictionary<string, string> note_deletions = new Dictionary<string, string> ();
 
@@ -260,9 +260,9 @@ namespace Tomboy.Sync
 		{
 			bool revisionsAreEqual = client.LastSynchronizedRevision == server.LatestRevision;
 			bool clientSyncedBefore = client.LastSynchronizedRevision > -1;
+			bool clientWantsNotesDeleted = client.NotesForDeletion.Count > 0;
 
-			if (revisionsAreEqual && clientSyncedBefore)
-				// the notes are on the same revision and thus in sync
+			if (revisionsAreEqual && clientSyncedBefore && !clientWantsNotesDeleted)
 				return false;
 			else
 				return true;
@@ -312,7 +312,9 @@ namespace Tomboy.Sync
 					client.DeletedNotes.Add (note);
 				}
 			}
-
+			// update our internal clientNotes list since notes might have been deleted now
+			// TODO when introducing transactions, is this necessary / right?
+			clientNotes = client.Storage.GetNotes ().Values.ToList ();
 		}
 
 		/// <summary>
@@ -363,6 +365,9 @@ namespace Tomboy.Sync
 			}
 		}
 
+		/// <summary>
+		/// Performs the main syncing process. Here is where the magic happens.
+		/// </summary>
 		public void DoSync ()
 		{
 			// perform backups of either storage before doing anything
@@ -373,6 +378,8 @@ namespace Tomboy.Sync
 
 			if (!NeedSyncing ())
 				return;
+
+			server.BeginSyncTransaction ();
 
 			IList<Note> serverUpdatedNotes = server.GetNoteUpdatesSince (client.LastSynchronizedRevision);
 			AssertClientNotesAreSaved (serverUpdatedNotes);
@@ -386,8 +393,6 @@ namespace Tomboy.Sync
 
 			// delete notes that present in the client store but not on the server anymore
 			DeleteClientNotesDeletedByServer (serverNotes);
-			// update our internal clientNotes list since notes might have been deleted now
-			clientNotes = client.Storage.GetNotes ().Values.ToList ();
 
 			// Look through all the notes modified on the client...
 			List<Note> newOrModifiedNotes = FindLocallyModifiedNotes ();
@@ -403,10 +408,11 @@ namespace Tomboy.Sync
 			// should be deleted from the server
 			DeleteServerNotesNotPresentOnClient (serverNotes);
 
+			server.CommitSyncTransaction ();
+
 			// set revisions to new state
 			client.LastSynchronizedRevision = newRevision;
 			client.LastSyncDate = DateTime.Now;
-
 		}
 	}
 	public class SyncException : Exception

@@ -37,14 +37,35 @@ namespace Tomboylibrarytests
 		{
 			this.storage = storage;
 			this.manifest = manifest;
-			this.Id = Guid.NewGuid ().ToString ();
+			this.UploadedNotes = new List<Note> ();
+			this.DeletedServerNotes = new List<Note> ();
 		}
 
 		#region ISyncServer implementation
-		public IList<Note> GetAllNotes (bool includeNoteContent)
+
+		public bool BeginSyncTransaction ()
+		{
+			// TODO
+			return true;
+		}
+
+		public bool CommitSyncTransaction ()
+		{
+			// TODO
+			this.LatestRevision++;
+			return true;
+		}
+
+		public bool CancelSyncTransaction ()
+		{
+			// TODO
+			return true;
+		}
+
+		public IList<Note> GetAllNotes (bool include_note_content)
 		{
 			var notes = storage.GetNotes ().Select (kvp => kvp.Value).ToList ();
-			if (!includeNoteContent) {
+			if (!include_note_content) {
 				notes.ForEach (note => note.Text = "");
 			}
 			return notes;
@@ -72,8 +93,13 @@ namespace Tomboylibrarytests
 		{
 			notes.ToList ().ForEach (note => {
 				storage.SaveNote (note);
+				UploadedNotes.Add (note);
 			});
+			// whenever note uploading takes place, we advance our 
+			// revision one step further
 		}
+
+		public IList<Note> UploadedNotes { get; private set; }
 
 		public bool UpdatesAvailableSince (int revision)
 		{
@@ -88,71 +114,21 @@ namespace Tomboylibrarytests
 			get {
 				return manifest.LastSyncRevision;
 			}
+			private set {
+				manifest.LastSyncRevision = value;
+			}
 		}
 
 		public string Id {
-			get; private set;
+			get {
+				return manifest.ServerId;
+			}
+			private set {
+				manifest.ServerId = value;
+			}
 		}
-
 		#endregion
 	}
 
-	[TestFixture]
-	public class SyncServerTests
-	{
-		private TestSyncServer syncServer;
-		private TomboySyncClient syncClient;
-		private IStorage serverStorage;
-		private SyncManifest serverManifest;
-		private IStorage clientStorage;
-
-		[SetUp]
-		public void SetUp ()
-		{
-			// setup a sample server
-			serverStorage = new DiskStorage ();
-			serverStorage.SetPath ("../../syncserver/");
-			serverManifest = new SyncManifest ();
-
-			// setup a sample client
-			clientStorage = new DiskStorage ();
-			clientStorage.SetPath ("../../syncclient/");
-
-			// add some notes to the store
-			clientStorage.SaveNote (new Note () {
-				Text = "This is some sample note text.",
-				Title = "Sample Note 1",
-			});
-			clientStorage.SaveNote (new Note () {
-				Text = "This is some sample note text.",
-				Title = "Sample Note 2",
-			});
-			clientStorage.SaveNote (new Note () {
-				Text = "This is some sample note text.",
-				Title = "Sample Note 3",
-			});
-
-			syncServer = new TestSyncServer (serverStorage, serverManifest);
-			syncClient = new TomboySyncClient ("../../syncclient/", clientStorage);
-
-		}
-		[TearDown]
-		private void TearDown ()
-		{
-			return;
-			// delete the test storage
-			if (Directory.Exists ("../../syncserver/"))
-				Directory.Delete ("../../syncserver");
-			if (Directory.Exists ("../../syncclient/"))
-				Directory.Delete ("../../syncclient");
-		}
-
-		[Test]
-		public void FirstSyncForBothSides ()
-		{
-			SyncManager syncManager = new SyncManager (this.syncClient, this.syncServer);
-			syncManager.DoSync ();
-		}
-	}
 }
 

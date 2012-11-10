@@ -39,10 +39,11 @@ namespace Tomboy.Sync
 
 	public interface ISyncServer
 	{
-		// we dont have transaction in the DiskStorage yet
-		//bool BeginSyncTransaction ();
-		//bool CommitSyncTransaction ();
-		//bool CancelSyncTransaction ();
+		// TODO we dont have transaction in the DiskStorage yet
+		// make those actually usedful
+		bool BeginSyncTransaction ();
+		bool CommitSyncTransaction ();
+		bool CancelSyncTransaction ();
 
 		// gets all notes on the server. implementation may chose to
 		// not include the full note body (i.e. when transferred over the
@@ -67,6 +68,10 @@ namespace Tomboy.Sync
 
 		// uploads a list of notes to the server for updating
 		void UploadNotes (IList<Note> notes);
+
+		// notes that were uploaded by the client because the client
+		// had the newer version of the note
+		IList<Note> UploadedNotes { get; }
 
 		// the global sync revision the server is on
 		int LatestRevision { get; } // NOTE: Only reliable during a transaction
@@ -102,8 +107,14 @@ namespace Tomboy.Sync
 		// identified by its Guid
 		void SetRevision (Note note, int revision);
 
-		// notes that were deleted after sync
+		// notes that should be deleted in the sync, because the client
+		// deleted them since last sync
+		IDictionary<string, string> NotesForDeletion { get; }
+
+		// notes that have been deleted after the sync, because the server
+		// did not have a copy of those
 		IList<Note> DeletedNotes { get; }
+
 
 		// unassociate a client and a server, reseting
 		// all sync information between the two
