@@ -9,7 +9,6 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Tomboy</RootNamespace>
     <AssemblyName>Tomboy-library</AssemblyName>
-    <ReleaseVersion>0.3</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
@@ -44,6 +43,7 @@
     <Folder Include="Tomboy\Storage\" />
     <Folder Include="Tomboy\Notebooks\" />
     <Folder Include="Tomboy\Tags\" />
+    <Folder Include="Tomboy\Sync\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Tomboy\Note.cs" />
@@ -62,5 +62,10 @@
     <Compile Include="Tomboy\Tags\Tag.cs" />
     <Compile Include="Tomboy\Tags\TagManager.cs" />
     <Compile Include="Tomboy\SearchEngine.cs" />
+    <Compile Include="Tomboy\Sync\Interfaces.cs" />
+    <Compile Include="Tomboy\Sync\Sync.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Tomboy\Sync\TomboySyncClient.cs" />
   </ItemGroup>
 </Project>

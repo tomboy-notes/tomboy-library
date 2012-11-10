@@ -102,14 +102,14 @@ namespace Tomboy
 		[Test()]
 		public void WriteNote_NoteFileDoesNotExist_NoteFileIsCreated ()
 		{	
-			IStorage storage = DiskStorage.Instance;
+			DiskStorage storage = DiskStorage.Instance;
 			storage.SetPath (NOTE_FOLDER_TEMP);
 
 			string note_name = "90d8eb70-989d-4b26-97bc-ba4b9442e51d.note";
 			string note_path = Path.Combine (NOTE_FOLDER_TEMP, note_name);
 			System.IO.File.Delete (note_path); //Make sure it doesn't exist from before
 			
-			DiskStorage.Write (note_name, TesterNote.GetTesterNote ());
+			storage.Write (note_name, TesterNote.GetTesterNote ());
 			Assert.IsTrue (System.IO.File.Exists (note_path));
 			
 			System.IO.File.Delete (note_path); //Clear up test for next time
@@ -119,7 +119,7 @@ namespace Tomboy
 		public void WriteNote_NoteFileExists_NoteFileIsOverwritten ()
 		{	
 
-			IStorage storage = DiskStorage.Instance;
+			DiskStorage storage = DiskStorage.Instance;
 			storage.SetPath (NOTE_FOLDER_TEMP);
 			
 			string note_name = "existing_note.note";
@@ -127,7 +127,7 @@ namespace Tomboy
 
 			System.IO.File.WriteAllText (note_path, "Test");
 			
-			DiskStorage.Write (note_name, TesterNote.GetTesterNote ());
+			storage.Write (note_name, TesterNote.GetTesterNote ());
 		
 			string noteContents = System.IO.File.ReadAllText (note_path);
 			Assert.AreNotEqual (noteContents, "Test", "The pre-existing note has not been overwritten!");
