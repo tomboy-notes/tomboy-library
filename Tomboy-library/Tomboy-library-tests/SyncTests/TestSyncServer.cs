@@ -33,10 +33,15 @@ namespace Tomboylibrarytests
 	{
 		private IStorage storage;
 		public SyncManifest manifest;
+		private int newRevision;
 		public TestSyncServer (IStorage storage, SyncManifest manifest)
 		{
 			this.storage = storage;
 			this.manifest = manifest;
+
+			// will only be written back on successfull sync transcation complete
+			newRevision = this.manifest.LastSyncRevision + 1;
+
 			this.UploadedNotes = new List<Note> ();
 			this.DeletedServerNotes = new List<Note> ();
 		}
@@ -52,7 +57,7 @@ namespace Tomboylibrarytests
 		public bool CommitSyncTransaction ()
 		{
 			// TODO
-			this.LatestRevision++;
+			this.LatestRevision = newRevision;
 			return true;
 		}
 
@@ -94,9 +99,9 @@ namespace Tomboylibrarytests
 			notes.ToList ().ForEach (note => {
 				storage.SaveNote (note);
 				UploadedNotes.Add (note);
+				// set the note to the new revision
+				manifest.NoteRevisions [note.Guid] = newRevision;
 			});
-			// whenever note uploading takes place, we advance our 
-			// revision one step further
 		}
 
 		public IList<Note> UploadedNotes { get; private set; }

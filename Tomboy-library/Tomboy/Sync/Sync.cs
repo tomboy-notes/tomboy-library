@@ -391,7 +391,7 @@ namespace Tomboy.Sync
 
 			// TODO transaction begin
 
-			// delete notes that present in the client store but not on the server anymore
+			// delete notes that are present in the client store but not on the server anymore
 			DeleteClientNotesDeletedByServer (serverNotes);
 
 			// Look through all the notes modified on the client...

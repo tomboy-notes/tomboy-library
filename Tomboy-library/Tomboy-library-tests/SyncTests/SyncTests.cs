@@ -36,6 +36,7 @@ namespace Tomboylibrarytests
 	{
 		private TestSyncServer syncServer;
 		private TestSyncClient syncClient;
+		private TestSyncClient secondSyncClient;
 
 		private IStorage serverStorage;
 		private SyncManifest serverManifest;
@@ -43,8 +44,12 @@ namespace Tomboylibrarytests
 		private IStorage clientStorage;
 		private SyncManifest clientManifest;
 
+		private IStorage secondClientStorage;
+		private SyncManifest secondClientManifest;
+
 		private string serverStorageDir;
 		private string clientStorageDir;
+		private string secondClientStorageDir;
 
 		[SetUp]
 		public void SetUp ()
@@ -52,10 +57,12 @@ namespace Tomboylibrarytests
 			var current_dir = Directory.GetCurrentDirectory ();
 			serverStorageDir = Path.Combine (current_dir, "../../syncserver/");
 			clientStorageDir = Path.Combine (current_dir, "../../syncclient/");
+			secondClientStorageDir = Path.Combine (current_dir, "../../syncclient_two/");
 
 			// make sure we start from empty data store directories
 			CleanupClientDirectory ();
 			CleanupServerDirectory ();
+			CleanupSecondClientDirectory ();
 
 			// setup a sample server
 			serverStorage = new DiskStorage ();
@@ -66,6 +73,12 @@ namespace Tomboylibrarytests
 			clientStorage = new DiskStorage ();
 			clientStorage.SetPath (clientStorageDir);
 			clientManifest = new SyncManifest ();
+
+			// create a third client that synchronizes
+			secondClientManifest = new SyncManifest ();
+			secondClientStorage = new DiskStorage ();
+			secondClientStorage.SetPath (secondClientStorageDir);
+			secondSyncClient = new TestSyncClient (secondClientStorage, secondClientManifest);
 
 			// add some notes to the store
 			clientStorage.SaveNote (new Note () {
@@ -89,6 +102,7 @@ namespace Tomboylibrarytests
 		public void TearDown ()
 		{
 			CleanupClientDirectory ();
+			CleanupSecondClientDirectory ();
 			CleanupServerDirectory ();
 		}
 		private void CleanupServerDirectory ()
@@ -101,6 +115,11 @@ namespace Tomboylibrarytests
 		{
 			if (Directory.Exists (clientStorageDir))
 				Directory.Delete (clientStorageDir, true);
+		}
+		private void CleanupSecondClientDirectory ()
+		{
+			if (Directory.Exists (secondClientStorageDir))
+				Directory.Delete (secondClientStorageDir, true);
 		}
 
 		[Test]
@@ -238,6 +257,80 @@ namespace Tomboylibrarytests
 
 			Assert.AreEqual (0, syncServer.UploadedNotes.Count);
 			Assert.AreEqual (0, syncServer.DeletedServerNotes.Count);
+		}
+
+		[Test]
+		public void TwoWaySyncBasic ()
+		{
+			// initial sync
+			FirstSyncForBothSides ();
+
+			Assert.That (string.IsNullOrEmpty (secondSyncClient.AssociatedServerId));
+
+			// sync with another client
+			var syncManager = new SyncManager (secondSyncClient, syncServer);
+			syncManager.DoSync ();
+
+			// the client should be on the same level as the server
+			// TODO is it really correct that a sync between an empty client and the server
+			// advances the LatestSyncRevision? If not, this should be 0 here
+			Assert.AreEqual (1, secondSyncClient.LastSynchronizedRevision);
+
+			Assert.AreEqual (3, secondClientStorage.GetNotes ().Count);
+
+			// notes should be equal to the first client
+			var client1_notes = clientStorage.GetNotes ();
+			var client2_notes = secondClientStorage.GetNotes ();
+
+			foreach (var kvp in client1_notes) {
+				Assert.Contains (kvp.Key, client2_notes.Keys);
+			}
+		}
+		[Test]
+		public void TwoWaySyncDeletion ()
+		{
+			// initial sync
+			FirstSyncForBothSides ();
+
+			// sync with second client
+			new SyncManager (secondSyncClient, syncServer).DoSync ();
+
+			// delete a note on the first client
+			var deleted_note = clientStorage.GetNotes ().First ().Value;
+			clientStorage.DeleteNote (deleted_note);
+			clientManifest.NoteDeletions.Add (deleted_note.Guid, deleted_note.Title);
+
+			// delete another note on the second cient
+			var second_deleted_note = clientStorage.GetNotes ().Last ().Value;
+			secondClientStorage.DeleteNote (second_deleted_note);
+			secondClientManifest.NoteDeletions.Add (second_deleted_note.Guid, second_deleted_note.Title);
+
+			// sync the first client again
+			syncServer = new TestSyncServer (serverStorage, serverManifest);
+			new SyncManager (syncClient, syncServer).DoSync ();
+
+			// server should now hold two notes (because we deleted one)
+			// first client should hold two notes
+			// second client should hold two notes
+
+			// now sync the second client again
+			syncServer = new TestSyncServer (serverStorage, serverManifest);
+			new SyncManager (secondSyncClient, syncServer).DoSync ();
+
+			// the server should now only have one note
+			Assert.AreEqual (1, serverStorage.GetNotes ().Count);
+
+			// check that the server does not hold any of the deleted notes
+			Assert.AreNotEqual (serverStorage.GetNotes ().Values.First (), deleted_note);
+			Assert.AreNotEqual (serverStorage.GetNotes ().Values.First (), second_deleted_note);
+
+			// the second client should also hold only one note
+			Assert.AreEqual (1, serverStorage.GetNotes ().Count);
+			// which should be the same as the note on client2
+			Assert.AreEqual (serverStorage.GetNotes ().Values.First (), secondClientStorage.GetNotes ().Values.First ());
+
+
+
 		}
 	}
 }
