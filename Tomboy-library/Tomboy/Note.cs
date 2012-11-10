@@ -232,6 +232,11 @@ namespace Tomboy
 			get;
 			set;
 		}
+		public override bool Equals (object obj)
+		{
+			// two notes are considered equal if the use the same Guid
+			return (obj is Note && Guid == ((Note)obj).Guid);
+		}
 	}
 }
 
