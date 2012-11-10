@@ -125,13 +125,13 @@ namespace Tomboylibrarytests
 		[Test]
 		public void FirstSyncForBothSides ()
 		{
-			SyncManager syncManager = new SyncManager (this.syncClient, this.syncServer);
+			SyncManager sync_manager = new SyncManager (this.syncClient, this.syncServer);
 
 			// before the sync, the client should have an empty AssociatedServerId
 			Assert.That (string.IsNullOrEmpty (syncClient.AssociatedServerId));
 			Assert.That (string.IsNullOrEmpty (clientManifest.ServerId));
 
-			syncManager.DoSync ();
+			sync_manager.DoSync ();
 
 			// afterwards, the server storage should consist of three notes
 			Assert.AreEqual (3, serverStorage.GetNotes ().Count);
@@ -171,9 +171,9 @@ namespace Tomboylibrarytests
 			serverManifest = new SyncManifest ();
 			syncServer = new TestSyncServer (serverStorage, serverManifest);
 
-			var syncManager = new SyncManager (syncClient, syncServer);
+			var sync_manager = new SyncManager (syncClient, syncServer);
 
-			syncManager.DoSync ();
+			sync_manager.DoSync ();
 
 			// three notes should have been uploaded
 			Assert.AreEqual (3, syncServer.UploadedNotes.Count);
@@ -268,8 +268,8 @@ namespace Tomboylibrarytests
 			Assert.That (string.IsNullOrEmpty (secondSyncClient.AssociatedServerId));
 
 			// sync with another client
-			var syncManager = new SyncManager (secondSyncClient, syncServer);
-			syncManager.DoSync ();
+			var sync_manager = new SyncManager (secondSyncClient, syncServer);
+			sync_manager.DoSync ();
 
 			// the client should be on the same level as the server
 			// TODO is it really correct that a sync between an empty client and the server

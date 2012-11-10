@@ -29,7 +29,7 @@ using System.IO;
 namespace Tomboylibrarytests
 {
 	[TestFixture()]
-	public class SyncTests
+	public class SyncManifestTests
 	{
 		SyncManifest sampleManifest;
 		[SetUp]

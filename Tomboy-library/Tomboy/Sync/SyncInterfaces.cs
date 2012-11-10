@@ -53,7 +53,7 @@ namespace Tomboy.Sync
 		// necessary in most cases as the
 		/// <see cref='GetNoteUpdatesSince'/> can be used to only get
 		// those notes, that needs to be updated.
-		IList<Note> GetAllNotes (bool includeNoteContent);
+		IList<Note> GetAllNotes (bool include_note_content);
 
 		// get notes that have changed since a specific revision
 		// always includes the full note with its content.
@@ -114,7 +114,6 @@ namespace Tomboy.Sync
 		// notes that have been deleted after the sync, because the server
 		// did not have a copy of those
 		IList<Note> DeletedNotes { get; }
-
 
 		// unassociate a client and a server, reseting
 		// all sync information between the two

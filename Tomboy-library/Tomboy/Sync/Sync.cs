@@ -27,181 +27,6 @@ using System.IO;
 
 namespace Tomboy.Sync
 {
-	public class SyncManifest
-	{
-		private DateTime last_sync_date = DateTime.MinValue;
-		private int last_sync_rev = -1;
-		private string server_id = Guid.NewGuid ().ToString ();
-		private IDictionary<string, int> note_revisions = new Dictionary<string, int> ();
-		private IDictionary<string, string> note_deletions = new Dictionary<string, string> ();
-
-		public DateTime LastSyncDate {
-			get {
-				return last_sync_date;
-			}
-			set {
-				last_sync_date = value;
-			}
-		}
-
-		public int LastSyncRevision {
-			get {
-				return last_sync_rev;
-			}
-			set {
-				last_sync_rev = value;
-			}
-		}
-
-		public string ServerId {
-			get {
-				return server_id;
-			}
-			set {
-				server_id = value;
-			}
-		}
-
-		public IDictionary<string, int> NoteRevisions {
-			get {
-				return note_revisions;
-			}
-		}
-
-		public IDictionary<string, string> NoteDeletions {
-			get {
-				return note_deletions;
-			}
-		}
-
-		public SyncManifest ()
-		{
-		}
-
-		public void Reset ()
-		{
-			note_revisions = new Dictionary<string, int> ();
-			note_deletions = new Dictionary<string, string> ();
-			server_id = String.Empty;
-			last_sync_date = DateTime.MinValue;
-			last_sync_rev = -1;
-		}
-		#region Xml serialization
-		private const string CURRENT_VERSION = "0.3";
-		/// <summary>
-		/// Write the specified manifest to an XmlWriter.
-		/// </summary>
-		public static void Write (XmlWriter xml, SyncManifest manifest)
-		{
-			xml.WriteStartDocument ();
-			xml.WriteStartElement (null, "manifest", "http://beatniksoftware.com/tomboy");
-			xml.WriteAttributeString (null,
-			                         "version",
-			                         null,
-			                         CURRENT_VERSION);
-
-			if (manifest.LastSyncDate > DateTime.MinValue) {
-				xml.WriteStartElement (null, "last-sync-date", null);
-				xml.WriteString (
-					XmlConvert.ToString (manifest.LastSyncDate, Writer.DATE_TIME_FORMAT));
-				xml.WriteEndElement ();
-			}
-
-			xml.WriteStartElement (null, "last-sync-rev", null);
-			xml.WriteString (manifest.LastSyncRevision.ToString ());
-			xml.WriteEndElement ();
-
-			xml.WriteStartElement (null, "server-id", null);
-			xml.WriteString (manifest.ServerId);
-			xml.WriteEndElement ();
-
-			WriteNoteRevisions (xml, manifest);
-			WriteNoteDeletions (xml, manifest);
-
-			xml.WriteEndDocument ();
-		}
-		private static void WriteNoteRevisions (XmlWriter xml, SyncManifest manifest)
-		{
-			xml.WriteStartElement (null, "note-revisions", null);
-			foreach (var revision in manifest.NoteRevisions) {
-				xml.WriteStartElement (null, "note", null);
-				xml.WriteAttributeString ("guid", revision.Key);
-				xml.WriteAttributeString ("latest-revision", revision.Value.ToString ());
-				xml.WriteEndElement ();
-			}
-			xml.WriteEndElement ();
-		}
-		private static void WriteNoteDeletions (XmlWriter xml, SyncManifest manifest)
-		{
-			xml.WriteStartElement (null, "note-deletions", null);
-			foreach (var deletion in manifest.NoteDeletions) {
-				xml.WriteStartElement (null, "note", null);
-				xml.WriteAttributeString ("guid", deletion.Key);
-				xml.WriteAttributeString ("title", deletion.Value);
-				xml.WriteEndElement ();
-			}
-			xml.WriteEndElement ();
-		}
-		public static SyncManifest Read (XmlTextReader xml)
-		{
-			SyncManifest manifest = new SyncManifest ();
-			string version = String.Empty;
-			
-			try {
-				while (xml.Read ()) {
-					switch (xml.NodeType) {
-					case XmlNodeType.Element:
-						switch (xml.Name) {
-						case "manifest":
-							version = xml.GetAttribute ("version");
-							break;
-						case "server-id":
-							// <text> is just a wrapper around <note-content>
-							// NOTE: Use .text here to avoid triggering a save.
-							manifest.ServerId = xml.ReadString ();
-							break;
-						case "last-sync-date":
-							DateTime date;
-							if (DateTime.TryParse (xml.ReadString (), out date))
-								manifest.LastSyncDate = date;
-							else
-								manifest.LastSyncDate = DateTime.Now;
-							break;
-						case "last-sync-rev":
-							int num;
-							if (int.TryParse (xml.ReadString (), out num))
-								manifest.LastSyncRevision = num;
-							break;
-						case "note-revisions":
-							xml.ReadToDescendant ("note");
-							do {
-								var guid = xml.GetAttribute ("guid");
-								int rev = int.Parse (xml.GetAttribute ("latest-revision"));
-								manifest.NoteRevisions.Add (guid, rev);
-							} while (xml.ReadToNextSibling ("note"));
-							break;
-						case "note-deletions":
-							xml.ReadToDescendant ("note");
-							do {
-								var guid = xml.GetAttribute ("guid");
-								string title = xml.GetAttribute ("title");
-								manifest.NoteDeletions.Add (guid, title);
-							} while (xml.ReadToNextSibling ("note"));
-							break;
-						}
-						break;
-	
-							
-					}
-				}
-			} catch (XmlException) {
-				//TODO: Log the error
-				return null;
-			}
-			return manifest;
-		}
-		#endregion Xml serialization
-	}
 
 	public class SyncManager
 	{
@@ -241,11 +66,11 @@ namespace Tomboy.Sync
 		/// List of notes that are affected by the synchronization process and might change
 		/// or be deleted.
 		/// </param>
-		private void AssertClientNotesAreSaved (IList<Note> affectedNotes)
+		private void AssertClientNotesAreSaved (IList<Note> affected_notes)
 		{
 			// all notes that are affected by the sync must be saved before the sync
 			// else the user might lose changes of an unsaved note
-			foreach (Note note in affectedNotes) {
+			foreach (Note note in affected_notes) {
 				client.Storage.SaveNote (note);
 			}
 		}
@@ -268,9 +93,9 @@ namespace Tomboy.Sync
 				return true;
 		}
 
-		private void UpdateLocalNotesNewOrModifiedByServer (List<Note> newOrModifiedNotes)
+		private void UpdateLocalNotesNewOrModifiedByServer (List<Note> new_or_modified_notes)
 		{
-			foreach (Note note in newOrModifiedNotes) {
+			foreach (Note note in new_or_modified_notes) {
 				bool noteAlreadyExistsLocally = clientNotes.Contains (note);
 
 				bool noteUnchangedSinceLastSync = false;
@@ -301,11 +126,11 @@ namespace Tomboy.Sync
 		/// List of Guid's of notes that the server has deleted and thus should be deleted
 		/// by the client, too.
 		/// </param>
-		private void DeleteClientNotesDeletedByServer (IList<Note> serverNotes)
+		private void DeleteClientNotesDeletedByServer (IList<Note> server_notes)
 		{
 			foreach (Note note in clientNotes) {
 				bool noteHasNoLocalChanges = client.GetRevision (note) > -1;
-				bool serverWantsNoteDeleted = !serverNotes.Contains (note);
+				bool serverWantsNoteDeleted = !server_notes.Contains (note);
 
 				if (noteHasNoLocalChanges && serverWantsNoteDeleted) {
 					client.Storage.DeleteNote (note);
@@ -320,11 +145,11 @@ namespace Tomboy.Sync
 		/// <summary>
 		/// Deletes the notes on the server which are not present on the the client.
 		/// </summary>
-		private void DeleteServerNotesNotPresentOnClient (IList<Note> serverNotes)
+		private void DeleteServerNotesNotPresentOnClient (IList<Note> server_notes)
 		{
 			List<Note> serverDeleteNotes = new List<Note> ();
 			
-			foreach (Note note in serverNotes) {
+			foreach (Note note in server_notes) {
 				if (!clientNotes.Contains (note)) {
 					serverDeleteNotes.Add (note);
 				}
@@ -352,15 +177,15 @@ namespace Tomboy.Sync
 			return newOrModifiedNotes;
 		}
 
-		private void UploadNewOrModifiedNotesToServer (List<Note> newOrModifiedNotes)
+		private void UploadNewOrModifiedNotesToServer (List<Note> new_or_modified_notes)
 		{
-			if (newOrModifiedNotes.Count > 0) {
-				server.UploadNotes (newOrModifiedNotes);
+			if (new_or_modified_notes.Count > 0) {
+				server.UploadNotes (new_or_modified_notes);
 			}
 		}
-		private void SetNotesToNewRevision (List<Note> newOrModifiedNotes, int revision)
+		private void SetNotesToNewRevision (List<Note> new_or_modified_notes, int revision)
 		{
-			foreach (Note note in newOrModifiedNotes) {
+			foreach (Note note in new_or_modified_notes) {
 				client.SetRevision (note, revision);
 			}
 		}
@@ -384,41 +209,35 @@ namespace Tomboy.Sync
 			IList<Note> serverUpdatedNotes = server.GetNoteUpdatesSince (client.LastSynchronizedRevision);
 			AssertClientNotesAreSaved (serverUpdatedNotes);
 
-			var newRevision = server.LatestRevision + 1;
+			var new_revision = server.LatestRevision + 1;
 
 			// get all notes, but without the content 
-			IList<Note> serverNotes = server.GetAllNotes (false);
+			IList<Note> server_notes = server.GetAllNotes (false);
 
 			// TODO transaction begin
 
 			// delete notes that are present in the client store but not on the server anymore
-			DeleteClientNotesDeletedByServer (serverNotes);
+			DeleteClientNotesDeletedByServer (server_notes);
 
 			// Look through all the notes modified on the client...
-			List<Note> newOrModifiedNotes = FindLocallyModifiedNotes ();
+			List<Note> new_or_modified_notes = FindLocallyModifiedNotes ();
 
 			// ...and upload the modified notes to the server
-			UploadNewOrModifiedNotesToServer (newOrModifiedNotes);
+			UploadNewOrModifiedNotesToServer (new_or_modified_notes);
 
 			// TODO transaction commit
 
-			SetNotesToNewRevision (newOrModifiedNotes, newRevision);
+			SetNotesToNewRevision (new_or_modified_notes, new_revision);
 
 			// every server note, that does not exist on the client
 			// should be deleted from the server
-			DeleteServerNotesNotPresentOnClient (serverNotes);
+			DeleteServerNotesNotPresentOnClient (server_notes);
 
 			server.CommitSyncTransaction ();
 
 			// set revisions to new state
-			client.LastSynchronizedRevision = newRevision;
+			client.LastSynchronizedRevision = new_revision;
 			client.LastSyncDate = DateTime.Now;
-		}
-	}
-	public class SyncException : Exception
-	{
-		public SyncException (string message) : base (message)
-		{
 		}
 	}
 }

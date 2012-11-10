@@ -70,7 +70,6 @@
     <Compile Include="Tomboy\Tags\Tag.cs" />
     <Compile Include="Tomboy\Tags\TagManager.cs" />
     <Compile Include="Tomboy\SearchEngine.cs" />
-    <Compile Include="Tomboy\Sync\Interfaces.cs" />
     <Compile Include="Tomboy\Sync\Sync.cs" />
     <Compile Include="Tomboy\Sync\ISyncAgent.cs" />
     <Compile Include="Tomboy\Sync\Snowy\CertificateManager.cs" />
@@ -81,6 +80,8 @@
     <Compile Include="Tomboy\Sync\Snowy\NoteChanges.cs" />
     <Compile Include="Tomboy\Sync\Snowy\WebRequestMethod.cs" />
     <Compile Include="Tomboy\Sync\Snowy\OAuthAuthorizationTokens.cs" />
+    <Compile Include="Tomboy\Sync\SyncInterfaces.cs" />
+    <Compile Include="Tomboy\Sync\SyncManifest.cs" />
   </ItemGroup>
   <ItemGroup>
 &gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/sync_from_scratch
