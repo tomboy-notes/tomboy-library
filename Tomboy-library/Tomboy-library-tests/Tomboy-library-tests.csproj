@@ -42,6 +42,9 @@
     <Compile Include="SyncTests\TestSyncClient.cs" />
     <Compile Include="SyncTests\SyncTests.cs" />
     <Compile Include="SyncTests\TestSyncServer.cs" />
+    <Compile Include="JsonParserTests.cs" />
+    <Compile Include="WebSyncAgentTests.cs" />
+    <Compile Include="Dummies\DummyStorage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -52,6 +55,9 @@
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Core" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\Libs\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Tomboy-library.csproj">
@@ -61,5 +67,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="SyncTests\" />
+    <Folder Include="Dummies\" />
   </ItemGroup>
 </Project>

@@ -37,6 +37,13 @@
     <Reference Include="Mono.Posix" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Core" />
+    <Reference Include="DevDefined.OAuth">
+      <HintPath>Libs\DevDefined.OAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Libs\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tomboy\" />
@@ -44,6 +51,7 @@
     <Folder Include="Tomboy\Notebooks\" />
     <Folder Include="Tomboy\Tags\" />
     <Folder Include="Tomboy\Sync\" />
+    <Folder Include="Tomboy\Sync\Snowy\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Tomboy\Note.cs" />
@@ -64,5 +72,18 @@
     <Compile Include="Tomboy\SearchEngine.cs" />
     <Compile Include="Tomboy\Sync\Interfaces.cs" />
     <Compile Include="Tomboy\Sync\Sync.cs" />
+    <Compile Include="Tomboy\Sync\ISyncAgent.cs" />
+    <Compile Include="Tomboy\Sync\Snowy\CertificateManager.cs" />
+    <Compile Include="Tomboy\Sync\Snowy\JsonParser.cs" />
+    <Compile Include="Tomboy\Sync\Snowy\OAuthEndPoints.cs" />
+    <Compile Include="Tomboy\Sync\Snowy\WebSyncAgent.cs" />
+    <Compile Include="Tomboy\Sync\Snowy\UserInfo.cs" />
+    <Compile Include="Tomboy\Sync\Snowy\NoteChanges.cs" />
+    <Compile Include="Tomboy\Sync\Snowy\WebRequestMethod.cs" />
+    <Compile Include="Tomboy\Sync\Snowy\OAuthAuthorizationTokens.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Tomboy\note_stylesheet.xsl" />
+>>>>>>> origin/sync_from_scratch
   </ItemGroup>
 </Project>

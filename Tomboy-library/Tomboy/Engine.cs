@@ -57,6 +57,10 @@ namespace Tomboy
 		}
 		#endregion Constructors
 
+		public Sync.ISyncAgent SyncAgent {
+			get;
+			set;
+		}
 
 		#region delegate
 
@@ -195,6 +199,30 @@ namespace Tomboy
 			if (NoteRemoved != null)
 				NoteRemoved (note);
 		}
+
+		/// <summary>
+		/// Adds existing notes, to be used by for example sync agents
+		/// </summary>
+		/// <param name='note'>
+		/// Note.
+		/// </param>
+		public void AddAndSaveNotes (Dictionary<string, Note> newNotes)
+		{
+			foreach (string guid in newNotes.Keys) {
+				SaveNote (newNotes[guid]);
+			}
+		}
+
+		public void SetConfigVariable (string key, string value) 
+		{
+			storage.SetConfigVariable (key, value);
+		}
+
+		public string GetConfigVariable (string key)
+		{
+			return storage.GetConfigVariable (key);
+		}
+
 		#endregion
 
 		#region Events
