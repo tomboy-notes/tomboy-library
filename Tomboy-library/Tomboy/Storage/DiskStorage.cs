@@ -37,9 +37,9 @@ namespace Tomboy
 		/// The path_to_notes.
 		/// </summary>
 		/// <description>/home/user/.local/share/tomboy</description>
-		private static string path_to_notes = null;
-		private static string backup_path_notes = null;
-		private static string configPath = null;
+		private string path_to_notes = null;
+		private string backup_path_notes = null;
+		private string configPath = null;
 
 		public DiskStorage ()
 		{
@@ -99,7 +99,7 @@ namespace Tomboy
 		/// <param name='note'>
 		/// Note.
 		/// </param>
-		public static void Write (string filename, Note note)
+		public void Write (string filename, Note note)
 		{
 			WriteFile (Path.Combine (path_to_notes, filename), note);
 		}
@@ -113,7 +113,7 @@ namespace Tomboy
 		/// <param name='note'>
 		/// Note.
 		/// </param>
-		private static void WriteFile (string write_file, Note note)
+		private void WriteFile (string write_file, Note note)
 		{
 			string tmp_file = write_file + ".tmp";
 
