@@ -83,7 +83,6 @@
     <Compile Include="Tomboy\Sync\Snowy\OAuthAuthorizationTokens.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Tomboy\note_stylesheet.xsl" />
->>>>>>> origin/sync_from_scratch
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/sync_from_scratch
   </ItemGroup>
 </Project>

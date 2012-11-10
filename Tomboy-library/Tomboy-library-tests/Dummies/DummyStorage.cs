@@ -38,6 +38,15 @@ namespace Tomboy
 		{
 		}
 
+		public void SetBackupPath (string path)
+		{
+		}
+
+		public string Backup ()
+		{
+			throw new NotImplementedException ();
+		}
+
 		public void SaveNote (Note note)
 		{
 		}
