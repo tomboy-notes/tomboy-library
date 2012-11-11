@@ -208,12 +208,14 @@ namespace Tomboy.Sync.Snowy
 		/// </summary>
 		public void CopyFromLocal ()
 		{
+			/* TODO: Need to work around the problem with Devdefined.Ouath not handling put properly.
+
 			string changeJson = JsonParser.CreateNoteUploadJson (ParentEngine.GetNotes(), null, 0);
 
 			string response = session.Request().Put().ForUrl(ServerApiRootUrl + username + "/notes").WithRawContentType("application/json").WithBody(changeJson).ToString();
-
-			//DEbug
-			Console.WriteLine (response);
+			*/
+			//Debug
+			//Console.WriteLine (response);
 		}
 	
 		/// <summary>
