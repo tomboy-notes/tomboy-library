@@ -39,9 +39,7 @@
     <Compile Include="TagManagerTests.cs" />
     <Compile Include="SearchTests.cs" />
     <Compile Include="SyncTests\ManifestTests.cs" />
-    <Compile Include="SyncTests\TestSyncClient.cs" />
     <Compile Include="SyncTests\SyncTests.cs" />
-    <Compile Include="SyncTests\TestSyncServer.cs" />
     <Compile Include="JsonParserTests.cs" />
     <Compile Include="WebSyncAgentTests.cs" />
     <Compile Include="Dummies\DummyStorage.cs" />

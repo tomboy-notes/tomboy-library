@@ -1,7 +1,4 @@
 //
-//  SyncServer.cs
-//
-//
 //  Copyright (c) Sandy Armstrong and others
 //  File contents partially taken from Tomboy source
 //	at http://git.gnome.org/browse/tomboy/tree/Tomboy/Synchronization/SyncManager.cs 
@@ -25,18 +22,6 @@ using System.Collections.Generic;
 
 namespace Tomboy.Sync
 {
-	public class SyncParticipant
-	{
-		public IStorage Store;
-		public SyncManifest Manifest;
-
-		public SyncParticipant (IStorage storage, SyncManifest manifest)
-		{
-			Store = storage;
-			Manifest = manifest;
-		}
-	}
-
 	public interface ISyncServer
 	{
 		// TODO we dont have transaction in the DiskStorage yet

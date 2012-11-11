@@ -1,6 +1,4 @@
 //
-//  SyncTests.cs
-//
 //  Author:
 //       Timo Dörr <timo@latecrew.de>
 //
@@ -26,7 +24,7 @@ using Tomboy.Sync;
 using System.Text;
 using System.IO;
 
-namespace Tomboylibrarytests
+namespace Tomboy.Sync
 {
 	[TestFixture()]
 	public class SyncManifestTests

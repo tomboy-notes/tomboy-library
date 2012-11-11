@@ -1,6 +1,4 @@
 //
-//  Sync.cs
-//
 //  Author:
 //       Timo Dörr <timo@latecrew.de>
 //
@@ -20,14 +18,12 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 using System;
-using System.Xml;
 using System.Collections.Generic;
 using System.Linq;
-using System.IO;
 
 namespace Tomboy.Sync
 {
-
+	// TODO maybe have this a static class?
 	public class SyncManager
 	{
 		private ISyncClient client;
@@ -96,18 +92,19 @@ namespace Tomboy.Sync
 		private void UpdateLocalNotesNewOrModifiedByServer (List<Note> new_or_modified_notes)
 		{
 			foreach (Note note in new_or_modified_notes) {
-				bool noteAlreadyExistsLocally = clientNotes.Contains (note);
 
-				bool noteUnchangedSinceLastSync = false;
-				if (noteAlreadyExistsLocally) {
-					Note localNote = clientNotes.Where (n => note.Guid == n.Guid).First ();
-					noteUnchangedSinceLastSync = localNote.MetadataChangeDate <= client.LastSyncDate;
+				bool note_already_exists_locally = clientNotes.Contains (note);
+
+				bool note_unchanged_since_last_sync = false;
+				if (note_already_exists_locally) {
+					Note local_note = clientNotes.Where (n => note.Guid == n.Guid).First ();
+					note_unchanged_since_last_sync = local_note.MetadataChangeDate <= client.LastSyncDate;
 				}
 
-				if (!noteAlreadyExistsLocally) {
+				if (!note_already_exists_locally) {
 					// note does not exist on the client, import it
 					client.Storage.SaveNote (note);
-				} else if (noteUnchangedSinceLastSync) {
+				} else if (note_unchanged_since_last_sync) {
 					// note has not been changed locally since the last  sync,
 					// but is newer on the server - so update it with the server version
 					client.Storage.SaveNote (note);
@@ -123,16 +120,18 @@ namespace Tomboy.Sync
 		/// has local changes and the server wants it deleted, we don't delete it.
 		/// </summary>
 		/// <param name='serverDeletedNotes'>
-		/// List of Guid's of notes that the server has deleted and thus should be deleted
+		/// List of notes that the server has deleted and thus should be deleted
 		/// by the client, too.
 		/// </param>
 		private void DeleteClientNotesDeletedByServer (IList<Note> server_notes)
 		{
 			foreach (Note note in clientNotes) {
-				bool noteHasNoLocalChanges = client.GetRevision (note) > -1;
-				bool serverWantsNoteDeleted = !server_notes.Contains (note);
+				bool notes_has_local_changes = client.GetRevision (note) > -1;
+				bool server_wants_notes_deleted = !server_notes.Contains (note);
 
-				if (noteHasNoLocalChanges && serverWantsNoteDeleted) {
+				// TODO this makes not much sense ?! if the note has local changes
+				// don't delete it!
+				if (notes_has_local_changes && server_wants_notes_deleted) {
 					client.Storage.DeleteNote (note);
 					client.DeletedNotes.Add (note);
 				}
@@ -147,34 +146,34 @@ namespace Tomboy.Sync
 		/// </summary>
 		private void DeleteServerNotesNotPresentOnClient (IList<Note> server_notes)
 		{
-			List<Note> serverDeleteNotes = new List<Note> ();
+			List<Note> server_delete_notes = new List<Note> ();
 			
 			foreach (Note note in server_notes) {
 				if (!clientNotes.Contains (note)) {
-					serverDeleteNotes.Add (note);
+					server_delete_notes.Add (note);
 				}
 			}
-			server.DeleteNotes (serverDeleteNotes);
+			server.DeleteNotes (server_delete_notes);
 		}
 
 		private List<Note> FindLocallyModifiedNotes ()
 		{
-			List<Note> newOrModifiedNotes = new List<Note> ();
+			List<Note> new_or_modified_notes = new List<Note> ();
 			foreach (Note note in clientNotes) {
 
-				bool noteIsNewNote = client.GetRevision (note) == -1;
+				bool notes_is_new = client.GetRevision (note) == -1;
 
 				// note was already on server, but got modified on the client since
 				// last sync
-				bool localNoteChangedSinceLastSync =
+				bool local_note_changed_since_last_sync =
 					client.GetRevision (note) <= client.LastSynchronizedRevision
 					&& note.MetadataChangeDate > client.LastSyncDate;
 
-				if (noteIsNewNote || localNoteChangedSinceLastSync) {
-					newOrModifiedNotes.Add (note);
+				if (notes_is_new || local_note_changed_since_last_sync) {
+					new_or_modified_notes.Add (note);
 				}
 			}
-			return newOrModifiedNotes;
+			return new_or_modified_notes;
 		}
 
 		private void UploadNewOrModifiedNotesToServer (List<Note> new_or_modified_notes)

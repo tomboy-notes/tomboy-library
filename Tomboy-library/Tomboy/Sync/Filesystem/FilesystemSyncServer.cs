@@ -1,6 +1,4 @@
 //
-//  TestSyncServer.cs
-//
 //  Author:
 //       Timo Dörr <timo@latecrew.de>
 //
@@ -19,22 +17,25 @@
 //  You should have received a copy of the GNU Lesser General Public
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using Tomboy;
 using Tomboy.Sync;
-using System.Linq;
-using NUnit.Framework;
-using System.IO;
 
-namespace Tomboylibrarytests
+namespace Tomboy.Sync.Filesystem
 {
-	public class TestSyncServer : ISyncServer
+	/// <summary>
+	/// Filesystem sync server. In a classic usecase where one would like to backup/sync
+	/// notes from Tomboy to another folder (i.e. a USB stick), then the FilesystemSyncServer
+	/// represents the sync target (i.e. a folder on that particular USB stick).
+	/// </summary>
+	public class FilesystemSyncServer : ISyncServer
 	{
 		private IStorage storage;
-		public SyncManifest manifest;
+		private SyncManifest manifest;
 		private int newRevision;
-		public TestSyncServer (IStorage storage, SyncManifest manifest)
+
+		public FilesystemSyncServer (IStorage storage, SyncManifest manifest)
 		{
 			this.storage = storage;
 			this.manifest = manifest;
@@ -134,6 +135,4 @@ namespace Tomboylibrarytests
 		}
 		#endregion
 	}
-
 }
-

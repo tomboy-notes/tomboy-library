@@ -1,6 +1,4 @@
 //
-//  TestSyncClient.cs
-//
 //  (C) 2012 Timo Dörr <timo@latecrew.de>
 //
 //  This library is free software; you can redistribute it and/or modify
@@ -18,18 +16,37 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 using System;
+using System.Collections.Generic;
 using Tomboy;
 using Tomboy.Sync;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Tomboylibrarytests
+namespace Tomboy.Sync.Filesystem
 {
-	public class TestSyncClient : ISyncClient
+	/// <summary>
+	/// Filesystem sync client. In a classic usecase, where one wants to sync the
+	/// Tomboy notes to another directory on the filesystem, Tomboy would play the
+	/// part of the FilesystemSyncClient (using its core IStorage).
+	/// </summary>
+	public class FilesystemSyncClient : ISyncClient
 	{
 		private SyncManifest manifest;
 
-		public TestSyncClient (IStorage storage, SyncManifest manifest)
+		/// <summary>
+		/// Will create a new sync client, that uses the main Tomboy data storage 
+		/// as source. Note that since the main DiskStorage is static, only one
+		/// FilesystemSyncClient using static storage may exist at a time, else
+		/// expect race canditions.
+		/// </summary>
+		public FilesystemSyncClient (SyncManifest manifest) : this (DiskStorage.Instance, manifest)
+		{
+		}
+
+		/// <summary>
+		/// Will create a new sync client using a custom IStorage as data backend.
+		/// When using different IStorage backend, multiple instances of ISyncClient
+		/// are allowed to exist simultaneously.
+		/// </summary>
+		public FilesystemSyncClient (IStorage storage, SyncManifest manifest)
 		{
 			this.manifest = manifest;
 			this.Storage = storage;

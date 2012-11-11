@@ -1,6 +1,4 @@
 //
-//  SyncServerTests.cs
-//
 //  Author:
 //       Timo Dörr <timo@latecrew.de>
 //
@@ -28,15 +26,14 @@ using System.Linq;
 using NUnit.Framework;
 using System.IO;
 
-namespace Tomboylibrarytests
+namespace Tomboy.Sync.Filesystem
 {
-
 	[TestFixture]
-	public class SyncServerTests
+	public class SyncingTests
 	{
-		private TestSyncServer syncServer;
-		private TestSyncClient syncClient;
-		private TestSyncClient secondSyncClient;
+		private ISyncServer syncServer;
+		private ISyncClient syncClient;
+		private ISyncClient secondSyncClient;
 
 		private IStorage serverStorage;
 		private SyncManifest serverManifest;
@@ -78,7 +75,7 @@ namespace Tomboylibrarytests
 			secondClientManifest = new SyncManifest ();
 			secondClientStorage = new DiskStorage ();
 			secondClientStorage.SetPath (secondClientStorageDir);
-			secondSyncClient = new TestSyncClient (secondClientStorage, secondClientManifest);
+			secondSyncClient = new FilesystemSyncClient (secondClientStorage, secondClientManifest);
 
 			// add some notes to the store
 			clientStorage.SaveNote (new Note () {
@@ -94,8 +91,8 @@ namespace Tomboylibrarytests
 				Title = "Sample Note 3",
 			});
 
-			syncServer = new TestSyncServer (serverStorage, serverManifest);
-			syncClient = new TestSyncClient (clientStorage, clientManifest);
+			syncServer = new FilesystemSyncServer (serverStorage, serverManifest);
+			syncClient = new FilesystemSyncClient (clientStorage, clientManifest);
 
 		}
 		[TearDown]
@@ -169,7 +166,7 @@ namespace Tomboylibrarytests
 			serverStorage.SetPath (serverStorageDir);
 
 			serverManifest = new SyncManifest ();
-			syncServer = new TestSyncServer (serverStorage, serverManifest);
+			syncServer = new FilesystemSyncServer (serverStorage, serverManifest);
 
 			var sync_manager = new SyncManager (syncClient, syncServer);
 
@@ -239,7 +236,7 @@ namespace Tomboylibrarytests
 			var server_id = syncClient.AssociatedServerId;
 
 			// new instance of the server needed (to simulate a new connection)
-			syncServer = new TestSyncServer (serverStorage, serverManifest);
+			syncServer = new FilesystemSyncServer (serverStorage, serverManifest);
 
 			// now that we are synced, there should not happen anything when syncing again
 			SyncManager sync_manager = new SyncManager (syncClient, syncServer);
@@ -306,7 +303,7 @@ namespace Tomboylibrarytests
 			secondClientManifest.NoteDeletions.Add (second_deleted_note.Guid, second_deleted_note.Title);
 
 			// sync the first client again
-			syncServer = new TestSyncServer (serverStorage, serverManifest);
+			syncServer = new FilesystemSyncServer (serverStorage, serverManifest);
 			new SyncManager (syncClient, syncServer).DoSync ();
 
 			// server should now hold two notes (because we deleted one)
@@ -314,7 +311,7 @@ namespace Tomboylibrarytests
 			// second client should hold two notes
 
 			// now sync the second client again
-			syncServer = new TestSyncServer (serverStorage, serverManifest);
+			syncServer = new FilesystemSyncServer (serverStorage, serverManifest);
 			new SyncManager (secondSyncClient, syncServer).DoSync ();
 
 			// the server should now only have one note
