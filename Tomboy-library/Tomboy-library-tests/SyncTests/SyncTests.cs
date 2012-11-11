@@ -153,6 +153,17 @@ namespace Tomboy.Sync.Filesystem
 			Assert.AreEqual (0, syncServer.LatestRevision);
 			Assert.AreEqual (0, serverManifest.LastSyncRevision);
 		}
+		[Test]
+		public void NoteDatesAfterSync ()
+		{
+			FirstSyncForBothSides ();
+
+			// now make sure, the metadata change date is smaller or equal to the last
+			// sync date
+			foreach (var note in clientStorage.GetNotes ().Values) {
+				Assert.LessOrEqual (note.MetadataChangeDate, clientManifest.LastSyncDate);
+			}
+		}
 
 		[Test]
 		public void ClientSyncsToNewServer()
@@ -178,9 +189,8 @@ namespace Tomboy.Sync.Filesystem
 			// zero notes should have been deleted from Server
 			Assert.AreEqual (0, syncServer.DeletedServerNotes.Count);
 
-			// TODO DeleteNotes is not yet implemented
 			// zero notes should have been deleted from client
-			//Assert.AreEqual (0, syncClient.DeletedNotes.Count);
+			Assert.AreEqual (0, syncClient.DeletedNotes.Count);
 
 			// make sure the client and the server notes are equal
 			var local_notes = clientStorage.GetNotes ();
@@ -238,6 +248,7 @@ namespace Tomboy.Sync.Filesystem
 			// new instance of the server needed (to simulate a new connection)
 			syncServer = new FilesystemSyncServer (serverStorage, serverManifest);
 
+
 			// now that we are synced, there should not happen anything when syncing again
 			SyncManager sync_manager = new SyncManager (syncClient, syncServer);
 			sync_manager.DoSync ();
@@ -247,10 +258,6 @@ namespace Tomboy.Sync.Filesystem
 			Assert.AreEqual (server_id, syncServer.Id);
 
 			// no notes should have been transfered or deleted
-
-			// TODO not yet implemented
-			//Assert.AreEqual (0, syncClient.DeletedNotes.Count);
-			//Assert.AreEqual (0, syncClient.UploadedNotes.Count);
 
 			Assert.AreEqual (0, syncServer.UploadedNotes.Count);
 			Assert.AreEqual (0, syncServer.DeletedServerNotes.Count);
@@ -270,7 +277,7 @@ namespace Tomboy.Sync.Filesystem
 
 			// the client should be on the same level as the server
 			// TODO is it really correct that a sync between an empty client and the server
-			// advances the LatestSyncRevision? If not, this should be 0 here
+			// advances the LatestSyncRevision on the server? If not, this should be 0 here
 			Assert.AreEqual (1, secondSyncClient.LastSynchronizedRevision);
 
 			Assert.AreEqual (3, secondClientStorage.GetNotes ().Count);
@@ -314,6 +321,10 @@ namespace Tomboy.Sync.Filesystem
 			syncServer = new FilesystemSyncServer (serverStorage, serverManifest);
 			new SyncManager (secondSyncClient, syncServer).DoSync ();
 
+			// the second client should have deleted one note because the server
+			// wanted so
+			Assert.AreEqual (1, secondSyncClient.DeletedNotes.Count);
+
 			// the server should now only have one note
 			Assert.AreEqual (1, serverStorage.GetNotes ().Count);
 
@@ -325,9 +336,53 @@ namespace Tomboy.Sync.Filesystem
 			Assert.AreEqual (1, serverStorage.GetNotes ().Count);
 			// which should be the same as the note on client2
 			Assert.AreEqual (serverStorage.GetNotes ().Values.First (), secondClientStorage.GetNotes ().Values.First ());
+		}
 
+		[Test]
+		public void TwoWaySyncConflict ()
+		{
+			// initial sync
+			FirstSyncForBothSides ();
 
+			// sync with second client
+			new SyncManager (secondSyncClient, syncServer).DoSync ();
 
+			// mofiy a note on the first client
+			var modified_note = clientStorage.GetNotes ().First ().Value;
+			modified_note.Text = "This note has changed.";
+			// we need to modified the metadata change date so the note will be
+			// selected for uploading
+			modified_note.MetadataChangeDate = DateTime.Now;
+			clientStorage.SaveNote (modified_note);
+
+			// modify the same note on the second client
+			var second_modified_note = clientStorage.GetNotes ().Values.Where (n => n.Guid == modified_note.Guid).First ();
+			second_modified_note.Text = "This note changed on the second client, too!";
+			second_modified_note.MetadataChangeDate = DateTime.Now;
+			modified_note.ChangeDate = DateTime.Now;
+			secondClientStorage.SaveNote(second_modified_note);
+
+			// sync the first client again
+			// this should go well
+			syncServer = new FilesystemSyncServer (serverStorage, serverManifest);
+			new SyncManager (syncClient, syncServer).DoSync ();
+
+			var server_modified_note = serverStorage.GetNotes ().Values
+				.Where (n => n.Guid == modified_note.Guid)
+				.First ();
+
+			// check that the note got updated
+			Assert.AreEqual ("This note has changed.", server_modified_note.Text);
+
+			// now sync the second client again
+			// there should now be a note conflict!
+			syncServer = new FilesystemSyncServer (serverStorage, serverManifest);
+			new SyncManager (secondSyncClient, syncServer).DoSync ();
+
+			// TODO there is no conflict resoltuion implemented right now
+			// we should check if the event of conflict resolution got fired here
+			// until it is implemented, make this test fail
+			Assert.Fail ();
 		}
 	}
 }

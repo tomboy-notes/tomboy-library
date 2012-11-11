@@ -83,8 +83,12 @@ namespace Tomboy.Sync.Filesystem
 			}
 		}
 		public DateTime LastSyncDate {
-			get;
-			set;
+			get {
+				return manifest.LastSyncDate;
+			}
+			set {
+				manifest.LastSyncDate = value;
+			}
 		}
 		// TODO remove the dictionary and replace with IList<string>
 		// the client should be able to retrieve the note title

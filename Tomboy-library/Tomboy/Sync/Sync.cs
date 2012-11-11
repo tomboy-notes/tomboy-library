@@ -83,10 +83,16 @@ namespace Tomboy.Sync
 			bool clientSyncedBefore = client.LastSynchronizedRevision > -1;
 			bool clientWantsNotesDeleted = client.NotesForDeletion.Count > 0;
 
-			if (revisionsAreEqual && clientSyncedBefore && !clientWantsNotesDeleted)
-				return false;
-			else
+			bool clientHasNoteChangesSinceLastSync = FindLocallyModifiedNotes ().Count > 0;
+
+			if (clientHasNoteChangesSinceLastSync || clientWantsNotesDeleted)
 				return true;
+
+			else if (revisionsAreEqual && clientSyncedBefore)
+				return false;
+
+			// all other cases we need syncing
+			return true;
 		}
 
 		private void UpdateLocalNotesNewOrModifiedByServer (List<Note> new_or_modified_notes)
@@ -161,15 +167,19 @@ namespace Tomboy.Sync
 			List<Note> new_or_modified_notes = new List<Note> ();
 			foreach (Note note in clientNotes) {
 
-				bool notes_is_new = client.GetRevision (note) == -1;
+				bool note_is_new = client.GetRevision (note) == -1;
 
-				// note was already on server, but got modified on the client since
-				// last sync
+				// remember: we dont increase a note revision in the manifest
+				// if we edit the note locally - we can only use the 
+				// metadata change date to find out what notes got modified
+
+				// TODO OLD CODE FROM TOMBOY
+				// this doesn't seem right, as there will be never this situation
+				// client.GetRevision (note) <= client.LastSynchronizedRevision
 				bool local_note_changed_since_last_sync =
-					client.GetRevision (note) <= client.LastSynchronizedRevision
-					&& note.MetadataChangeDate > client.LastSyncDate;
+					 note.MetadataChangeDate > client.LastSyncDate;
 
-				if (notes_is_new || local_note_changed_since_last_sync) {
+				if (note_is_new || local_note_changed_since_last_sync) {
 					new_or_modified_notes.Add (note);
 				}
 			}
