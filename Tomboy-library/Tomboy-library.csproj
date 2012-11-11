@@ -52,6 +52,7 @@
     <Folder Include="Tomboy\Tags\" />
     <Folder Include="Tomboy\Sync\" />
     <Folder Include="Tomboy\Sync\Snowy\" />
+    <Folder Include="Tomboy\Sync\Filesystem\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Tomboy\Note.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Tomboy\Tags\Tag.cs" />
     <Compile Include="Tomboy\Tags\TagManager.cs" />
     <Compile Include="Tomboy\SearchEngine.cs" />
+    <Compile Include="Tomboy\Sync\Sync.cs" />
     <Compile Include="Tomboy\Sync\ISyncAgent.cs" />
     <Compile Include="Tomboy\Sync\Snowy\CertificateManager.cs" />
     <Compile Include="Tomboy\Sync\Snowy\JsonParser.cs" />
@@ -79,8 +81,12 @@
     <Compile Include="Tomboy\Sync\Snowy\NoteChanges.cs" />
     <Compile Include="Tomboy\Sync\Snowy\WebRequestMethod.cs" />
     <Compile Include="Tomboy\Sync\Snowy\OAuthAuthorizationTokens.cs" />
+    <Compile Include="Tomboy\Sync\SyncInterfaces.cs" />
+    <Compile Include="Tomboy\Sync\SyncManifest.cs" />
+    <Compile Include="Tomboy\Sync\Filesystem\FilesystemSyncClient.cs" />
+    <Compile Include="Tomboy\Sync\Filesystem\FilesystemSyncServer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Tomboy\note_stylesheet.xsl" />
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/sync_from_scratch
   </ItemGroup>
 </Project>
