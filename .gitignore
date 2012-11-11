@@ -6,3 +6,6 @@
 bin/
 test-results/
 Tomboy-library/Tomboy-library-tests/test_notes/proper_notes/Backup
+
+# OS annoying files
+.DS_Store

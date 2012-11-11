@@ -37,11 +37,11 @@ namespace Tomboy
 		/// The path_to_notes.
 		/// </summary>
 		/// <description>/home/user/.local/share/tomboy</description>
-		private static string path_to_notes = null;
-		private static string backup_path_notes = null;
-		private static string configPath = null;
+		private string path_to_notes = null;
+		private string backup_path_notes = null;
+		private string configPath = null;
 
-		protected DiskStorage ()
+		public DiskStorage ()
 		{
 			reader = new Reader ();
 		}
@@ -77,6 +77,11 @@ namespace Tomboy
 			backup_path_notes = Path.Combine (path_to_notes, "Backup");
 			configPath = Path.Combine (path_to_notes, "config.xml");
 		}
+
+		public void SetBackupPath (string path)
+		{
+			backup_path_notes = path;
+		}
 		
 		public void SaveNote (Note note)
 		{
@@ -94,7 +99,7 @@ namespace Tomboy
 		/// <param name='note'>
 		/// Note.
 		/// </param>
-		public static void Write (string filename, Note note)
+		public void Write (string filename, Note note)
 		{
 			WriteFile (Path.Combine (path_to_notes, filename), note);
 		}
@@ -108,7 +113,7 @@ namespace Tomboy
 		/// <param name='note'>
 		/// Note.
 		/// </param>
-		private static void WriteFile (string write_file, Note note)
+		private void WriteFile (string write_file, Note note)
 		{
 			string tmp_file = write_file + ".tmp";
 
@@ -151,7 +156,8 @@ namespace Tomboy
 				foreach (string file_path in files) {
 					try {
 						Note note = Read (file_path, Utils.GetURI (file_path));
-						notes.Add (note.Uri, note);
+						if (note != null)
+							notes.Add (note.Uri, note);
 					} catch (System.Xml.XmlException e) {
 						Console.WriteLine ("Failed to read Note {0}", file_path); /* so we know what note we cannot read */
 						Console.WriteLine (e);
@@ -188,8 +194,9 @@ namespace Tomboy
 			/* Reader.Read should be called by all storage classes.
 			 * The Reader is responsible for taking the XML data and turning it into a Note object
 			 */
-			XDocument xDoc = XDocument.Load (new StreamReader (read_file), LoadOptions.PreserveWhitespace);
-			note = reader.Read (xDoc, uri);
+			using (var xml = new XmlTextReader (new StreamReader (read_file, System.Text.Encoding.UTF8)) {Namespaces = false})
+				note = Reader.Read (xml, uri);
+
 			return note;
 		}
 
@@ -241,6 +248,25 @@ namespace Tomboy
 			} catch (NullReferenceException) {
 				throw new TomboyException ("There is no config variable by that name.");
 			}
+		}
+
+		public string Backup ()
+		{
+			string msg = "";
+			if (!Directory.Exists (backup_path_notes))
+				Directory.CreateDirectory (backup_path_notes);
+			string[] files = Directory.GetFiles (path_to_notes, "*.note", SearchOption.TopDirectoryOnly);
+			if (files.Length == 0) {
+				msg += "No files were found to backup";
+			} else {
+				int count = 0;
+				foreach (var item in files) {
+					File.Copy (item, Path.Combine (backup_path_notes, Path.GetFileName (item)));
+					count ++;
+				}
+				msg += "A total of " + count + " files were backed up";
+			}
+			return msg;
 		}
 	}
 }

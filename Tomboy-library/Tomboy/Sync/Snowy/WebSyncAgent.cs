@@ -25,17 +25,113 @@ using System.Web;
 using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Framework;
 using System.IO;
+using System.Collections.Generic;
 
 namespace Tomboy.Sync.Snowy
 {
 	public class WebSyncAgent : ISyncAgent
 	{
+		/// <summary>
+		/// Provides a predefined set of signature algorithms that are supported officially by the protocol
+		/// </summary>
+		public enum SignatureType
+		{
+			HMACSHA1,
+			PLAINTEXT,
+			RSASHA1
+		}
+
 		private OAuthSession session;
-		private IToken requestToken;
+
+		/// <summary>
+		/// Gets the request token.
+		/// </summary>
+		/// <description>Acquire a Request Token. This essentially acts as a session identifier for the authorisation process.</description>
+		/// <value>
+		/// The request token.
+		/// </value>
+		public IToken requestToken {
+			get {
+				return session.GetRequestToken ();
+			}
+		}
 		private IToken accessToken;
 		protected string ServerApiRootUrl;
 		private string username;
 		private string verifier;
+
+
+		#region public methods
+
+
+		/// <summary>
+		/// Begins the SSO with u1.
+		/// <description>Yes currently this method is designed for Ubuntu One.
+		/// Yes we this should be generic for any oAuth service or other types of SSO servcies.
+		/// Also this possibly should be broken out, but for it intends to start the SSO service with U1
+		/// so that we can get a request token, maybe an authorization token too.
+		/// </description>
+		/// </summary>
+		/// <returns>
+		/// <c>true</c>, if SSO with u1 was begun, <c>false</c> otherwise.
+		/// </returns>
+		/// <param name='username'>
+		/// Username.
+		/// </param>
+		/// <param name='password'>
+		/// Password.
+		/// </param>
+		public bool BeginSSOWithU1 (string username, string password)
+		{
+			WebRequest request = WebRequest.Create ("https://login.ubuntu.com/api/1.0/authentications?ws.op=authenticate&token_name=Tomboy on " + 
+			                                        System.Environment.MachineName);
+			//Using this method of U1 SSO we don't have to open a webpage to handle the handshakes.
+			//Examples can be find at https://one.ubuntu.com/developer/account_admin/auth/otherplatforms
+			request.Credentials = new NetworkCredential(username, password);
+			HttpWebResponse response = (HttpWebResponse)request.GetResponse ();
+			Console.WriteLine ("Response Description {0}", response.StatusDescription);
+
+			Stream dataStream = response.GetResponseStream ();
+			// Open the stream using a StreamReader for easy access.
+			StreamReader reader = new StreamReader (dataStream);
+			// Read the content. 
+			string responseFromServer = reader.ReadToEnd ();
+		// At this point we have a response from the server, which contains the pieces we need.
+		// This needs to be parsed from the JSON format so we can retreive the keys.
+		/*
+		 * 
+		 * 
+		 * {
+		...."name": "Ubuntu One @ $hostname [$application]",
+		    "consumer_key": "$consumer_key",
+		    "consumer_secret": "$consumer_secret",
+		    "token": "$token",
+		    "token_secret": "$token_secret"
+		} 
+		*/
+			// Display the content.
+			Console.WriteLine (responseFromServer);
+			reader.Close ();
+			dataStream.Close ();
+			response.Close ();
+
+			var consumerContext = new OAuthConsumerContext
+			{
+				ConsumerKey = "ubuntuone",
+				ConsumerSecret = "hammertime",
+				Realm = "Snowy"
+			};
+
+		// at this point things fall apart.
+		// I'm not sure how to build the oAuth object and make the request to U1 to finish so that the tokens are stored.
+		// also these tokens need to be returned to the calling Tomboy app so that they can be stored.
+		// Although it does appear that we were thinking of possibly storing this in a configuration and that would be extendable by an interface
+			request = WebRequest.Create ("https://one.ubuntu.com/oauth/sso-finished-so-get-tokens/");
+			request.Credentials = new NetworkCredential(username, password);
+			response = (HttpWebResponse)request.GetResponse ();
+			Console.WriteLine ("Response Description {0}", response.StatusDescription);
+			return true;
+		}
 
 		public WebSyncAgent ()
 		{
@@ -100,10 +196,21 @@ namespace Tomboy.Sync.Snowy
 			//Set up session and get the request token
 
 			this.session = new OAuthSession (consumerContext, endpoints.requestUrl, endpoints.userAuthorizeUrl, endpoints.accessUrl);
-			this.requestToken = session.GetRequestToken();
+			this.session.GetRequestToken();
 
 			//return the authorisation URL that the user has to go to verify identity TODO: Error handling would probably be smart here
 			return session.GetUserAuthorizationUrlForToken (requestToken, callbackUrl);
+		}
+
+		/// <summary>
+		/// Setups the Sync Server URL. This is the URL that you will be syncing Notes with
+		/// </summary>
+		/// <param name='serverUrl'>
+		/// Server URL.
+		/// </param>
+		public void SetupServerUrl (string serverUrl)
+		{
+			ServerApiRootUrl = serverUrl.TrimEnd ('/') + "/api/1.0/"; //Make sure traling slash is right TODO: Write a test for this, make sure it works fo rstuff like U1 Notes
 		}
 
 		/// <summary>
@@ -142,13 +249,14 @@ namespace Tomboy.Sync.Snowy
 			ParentEngine.SetConfigVariable ("websync_serverrooturl", string.Empty);
 		}
 
-		protected OAuthEndPoints RequestServiceOAuthEndPoints ()
+		public OAuthEndPoints RequestServiceOAuthEndPoints ()
 		{
 			string response = string.Empty;
 			ServicePointManager.CertificatePolicy = new CertificateManager ();
-			HttpWebRequest request = WebRequest.Create (this.ServerApiRootUrl) as HttpWebRequest;
-			request.Method = "GET";
+			HttpWebRequest request = WebRequest.Create (ServerApiRootUrl) as HttpWebRequest;
+			request.Method = WebRequestMethod.GET.ToString ();
 			request.ServicePoint.Expect100Continue = false;
+
 			using (var responseReader = new StreamReader (request.GetResponse ().GetResponseStream ())) {
 				response = responseReader.ReadToEnd ();
 			}
@@ -156,11 +264,17 @@ namespace Tomboy.Sync.Snowy
 			return JsonParser.ParseRootLevelResponseForOAuthDetails (response);
 		}
 
+		#endregion public regions
+
+		#region private regions
+
 		private string GetAuthenticatedUserName ()
 		{
 			string response = session.Request().Get().ForUrl(ServerApiRootUrl).ToString();
 			return JsonParser.ParseRootLevelResponseForUserName (response);
 		}
+
+		#endregion private regions
 
 		void StoreWebSyncDetails ()
 		{
@@ -178,7 +292,7 @@ namespace Tomboy.Sync.Snowy
 			try {
 				IToken newToken = new TokenBase
 				{
-					ConsumerKey = "anyone",
+					ConsumerKey = "ubuntuone",
 					Realm = "Snowy",
 					Token = ParentEngine.GetConfigVariable ("websync_accesstoken_token"),
 					TokenSecret = ParentEngine.GetConfigVariable ("websync_accesstoken_tokensecret"),

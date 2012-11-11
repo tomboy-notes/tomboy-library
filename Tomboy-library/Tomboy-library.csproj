@@ -11,24 +11,24 @@
     <AssemblyName>Tomboy-library</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <OutputPath>bin\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
-    <ConsolePause>false</ConsolePause>
+    <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
-    <ConsolePause>false</ConsolePause>
+    <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -52,6 +52,7 @@
     <Folder Include="Tomboy\Tags\" />
     <Folder Include="Tomboy\Sync\" />
     <Folder Include="Tomboy\Sync\Snowy\" />
+    <Folder Include="Tomboy\Sync\Filesystem\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Tomboy\Note.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Tomboy\Tags\Tag.cs" />
     <Compile Include="Tomboy\Tags\TagManager.cs" />
     <Compile Include="Tomboy\SearchEngine.cs" />
+    <Compile Include="Tomboy\Sync\Sync.cs" />
     <Compile Include="Tomboy\Sync\ISyncAgent.cs" />
     <Compile Include="Tomboy\Sync\Snowy\CertificateManager.cs" />
     <Compile Include="Tomboy\Sync\Snowy\JsonParser.cs" />
@@ -77,8 +79,14 @@
     <Compile Include="Tomboy\Sync\Snowy\WebSyncAgent.cs" />
     <Compile Include="Tomboy\Sync\Snowy\UserInfo.cs" />
     <Compile Include="Tomboy\Sync\Snowy\NoteChanges.cs" />
+    <Compile Include="Tomboy\Sync\Snowy\WebRequestMethod.cs" />
+    <Compile Include="Tomboy\Sync\Snowy\OAuthAuthorizationTokens.cs" />
+    <Compile Include="Tomboy\Sync\SyncInterfaces.cs" />
+    <Compile Include="Tomboy\Sync\SyncManifest.cs" />
+    <Compile Include="Tomboy\Sync\Filesystem\FilesystemSyncClient.cs" />
+    <Compile Include="Tomboy\Sync\Filesystem\FilesystemSyncServer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Tomboy\note_stylesheet.xsl" />
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/sync_from_scratch
   </ItemGroup>
 </Project>

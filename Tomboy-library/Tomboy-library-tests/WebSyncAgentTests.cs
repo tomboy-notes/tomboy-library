@@ -27,6 +27,13 @@ namespace Tomboy.Sync.Snowy
 		[TestFixture()]
 		public class WebSyncAgentTests : WebSyncAgent
 		{
+
+		[Test()]
+		public void SetupU1Synchronization_Successfully ()
+		{
+			this.ServerApiRootUrl = "https://login.ubuntu.com/api/1.0/";
+			Assert.IsTrue (BeginSSOWithU1 ("AUbuntuOneUserName", "password"));
+		}
 	
 		[Test()]
 		public void RequestServiceOAuthEndPoints_GoodConnection_GetsEndPoints ()

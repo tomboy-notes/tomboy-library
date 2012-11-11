@@ -25,6 +25,13 @@ namespace Tomboy.Sync.Snowy
     public struct OAuthEndPoints
     {
 		public string requestUrl;
+		/// <summary>
+		/// The user authorize URL.
+		/// </summary>
+		/// <description>User Authorises Access
+		/// At this point, the user needs to agree to provide your web site access to their data. 
+		/// This is achieved by redirecting the user to the User Authorization URL end point with the request token included in the URL
+		/// </description>
 		public string userAuthorizeUrl;
 		public string accessUrl;
     }

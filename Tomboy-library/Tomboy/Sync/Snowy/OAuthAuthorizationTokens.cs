@@ -1,5 +1,5 @@
 // 
-//  DummyStorage.cs
+//  JsonParser.cs
 //  
 //  Author:
 //       Robert Nordan <rpvn@robpvn.net>
@@ -21,49 +21,13 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 using System;
 using System.Collections.Generic;
-namespace Tomboy
+using Newtonsoft.Json.Linq;
+
+namespace Tomboy.Sync.Snowy
 {
-	public class DummyStorage : IStorage
+	public static class OAuthAuthorizationTokens
 	{
-		public DummyStorage ()
-		{
-		}
-
-		public Dictionary<string, Note> GetNotes () 
-		{
-			return new Dictionary<string, Note> ();
-		}
-
-		public void SetPath (string path)
-		{
-		}
-
-		public void SetBackupPath (string path)
-		{
-		}
-
-		public string Backup ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		public void SaveNote (Note note)
-		{
-		}
-
-		public void DeleteNote (Note note)
-		{
-		}
-
-		public void SetConfigVariable (string key, string value)
-		{
-		}
-
-		public string GetConfigVariable (string key)
-		{
-			return key;
-		}
-
 	}
+
 }
 
