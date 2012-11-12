@@ -76,7 +76,7 @@ namespace Tomboy.Sync
 	public interface ISyncClient
 	{
 		// the undelying IStorage of the client
-		IStorage Storage { get; }
+		Engine Engine { get; }
 
 		// the global revision the client is on
 		int LastSynchronizedRevision { get; set; }

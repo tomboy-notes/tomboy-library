@@ -164,7 +164,7 @@ namespace Tomboy.Sync
 							if (DateTime.TryParse (xml.ReadString (), out date))
 								manifest.LastSyncDate = date;
 							else
-								manifest.LastSyncDate = DateTime.Now;
+								manifest.LastSyncDate = DateTime.UtcNow;
 							break;
 						case "last-sync-rev":
 							int num;

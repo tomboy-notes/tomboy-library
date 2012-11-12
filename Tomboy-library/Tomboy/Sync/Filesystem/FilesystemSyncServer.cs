@@ -31,13 +31,13 @@ namespace Tomboy.Sync.Filesystem
 	/// </summary>
 	public class FilesystemSyncServer : ISyncServer
 	{
-		private IStorage storage;
+		private Engine engine;
 		private SyncManifest manifest;
 		private int newRevision;
 
-		public FilesystemSyncServer (IStorage storage, SyncManifest manifest)
+		public FilesystemSyncServer (Engine engine, SyncManifest manifest)
 		{
-			this.storage = storage;
+			this.engine = engine;
 			this.manifest = manifest;
 
 			// will only be written back on successfull sync transcation complete
@@ -70,7 +70,7 @@ namespace Tomboy.Sync.Filesystem
 
 		public IList<Note> GetAllNotes (bool include_note_content)
 		{
-			var notes = storage.GetNotes ().Select (kvp => kvp.Value).ToList ();
+			var notes = engine.GetNotes ().Select (kvp => kvp.Value).ToList ();
 			if (!include_note_content) {
 				notes.ForEach (note => note.Text = "");
 			}
@@ -90,7 +90,7 @@ namespace Tomboy.Sync.Filesystem
 		public void DeleteNotes (IList<Note> deleteNotes)
 		{
 			deleteNotes.ToList ().ForEach (note => {
-				storage.DeleteNote (note);
+				engine.DeleteNote (note);
 				this.DeletedServerNotes.Add (note);
 			});
 		}
@@ -98,7 +98,7 @@ namespace Tomboy.Sync.Filesystem
 		public void UploadNotes (IList<Note> notes)
 		{
 			notes.ToList ().ForEach (note => {
-				storage.SaveNote (note);
+				engine.SaveNote (note);
 				UploadedNotes.Add (note);
 				// set the note to the new revision
 				manifest.NoteRevisions [note.Guid] = newRevision;

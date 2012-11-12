@@ -37,7 +37,7 @@ namespace Tomboy.Sync.Filesystem
 		/// FilesystemSyncClient using static storage may exist at a time, else
 		/// expect race canditions.
 		/// </summary>
-		public FilesystemSyncClient (SyncManifest manifest) : this (DiskStorage.Instance, manifest)
+		public FilesystemSyncClient (SyncManifest manifest) : this (new Engine (DiskStorage.Instance), manifest)
 		{
 		}
 
@@ -46,10 +46,10 @@ namespace Tomboy.Sync.Filesystem
 		/// When using different IStorage backend, multiple instances of ISyncClient
 		/// are allowed to exist simultaneously.
 		/// </summary>
-		public FilesystemSyncClient (IStorage storage, SyncManifest manifest)
+		public FilesystemSyncClient (Engine engine, SyncManifest manifest)
 		{
 			this.manifest = manifest;
-			this.Storage = storage;
+			this.Engine = engine;
 			this.AssociatedServerId = "";
 			this.DeletedNotes = new List<Note> ();
 		}
@@ -71,7 +71,7 @@ namespace Tomboy.Sync.Filesystem
 			// reset the manifest
 			this.manifest.Reset ();
 		}
-		public IStorage Storage {
+		public Engine Engine {
 			get; private set;
 		}
 		public int LastSynchronizedRevision {

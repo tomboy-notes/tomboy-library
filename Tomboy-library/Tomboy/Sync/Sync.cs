@@ -28,13 +28,11 @@ namespace Tomboy.Sync
 	{
 		private ISyncClient client;
 		private ISyncServer server;
-		private IList<Note> clientNotes;
 
 		public SyncManager (ISyncClient client, ISyncServer server)
 		{
 			this.client = client;
 			this.server = server;
-			this.clientNotes = client.Storage.GetNotes ().Select (kvp => kvp.Value).ToList ();
 		}
 
 		/// <summary>
@@ -67,7 +65,7 @@ namespace Tomboy.Sync
 			// all notes that are affected by the sync must be saved before the sync
 			// else the user might lose changes of an unsaved note
 			foreach (Note note in affected_notes) {
-				client.Storage.SaveNote (note);
+				client.Engine.SaveNote (note);
 			}
 		}
 
@@ -99,21 +97,21 @@ namespace Tomboy.Sync
 		{
 			foreach (Note note in new_or_modified_notes) {
 
-				bool note_already_exists_locally = clientNotes.Contains (note);
+				bool note_already_exists_locally = client.Engine.GetNotes().Values.Contains (note);
 
 				bool note_unchanged_since_last_sync = false;
 				if (note_already_exists_locally) {
-					Note local_note = clientNotes.Where (n => note.Guid == n.Guid).First ();
+					Note local_note = client.Engine.GetNotes ().Values.Where (n => note.Guid == n.Guid).First ();
 					note_unchanged_since_last_sync = local_note.MetadataChangeDate <= client.LastSyncDate;
 				}
 
 				if (!note_already_exists_locally) {
 					// note does not exist on the client, import it
-					client.Storage.SaveNote (note);
+					client.Engine.SaveNote (note);
 				} else if (note_unchanged_since_last_sync) {
 					// note has not been changed locally since the last  sync,
 					// but is newer on the server - so update it with the server version
-					client.Storage.SaveNote (note);
+					client.Engine.SaveNote (note);
 				} else {
 					// note exists and was modified since the last sync - oops
 					// TODO conflict resolution
@@ -131,20 +129,18 @@ namespace Tomboy.Sync
 		/// </param>
 		private void DeleteClientNotesDeletedByServer (IList<Note> server_notes)
 		{
+			IList<Note> clientNotes = client.Engine.GetNotes ().Values.ToList ();
 			foreach (Note note in clientNotes) {
-				bool notes_has_local_changes = client.GetRevision (note) > -1;
-				bool server_wants_notes_deleted = !server_notes.Contains (note);
+				bool note_is_new = client.GetRevision (note) == -1;
+				bool server_wants_note_deleted = !server_notes.Contains (note);
 
-				// TODO this makes not much sense ?! if the note has local changes
-				// don't delete it!
-				if (notes_has_local_changes && server_wants_notes_deleted) {
-					client.Storage.DeleteNote (note);
+				// we don't delete a new note at this point, since we are about to upload
+				// it later in the sync process to the server
+				if (server_wants_note_deleted && !note_is_new) {
+					client.Engine.DeleteNote (note);
 					client.DeletedNotes.Add (note);
 				}
 			}
-			// update our internal clientNotes list since notes might have been deleted now
-			// TODO when introducing transactions, is this necessary / right?
-			clientNotes = client.Storage.GetNotes ().Values.ToList ();
 		}
 
 		/// <summary>
@@ -153,7 +149,7 @@ namespace Tomboy.Sync
 		private void DeleteServerNotesNotPresentOnClient (IList<Note> server_notes)
 		{
 			List<Note> server_delete_notes = new List<Note> ();
-			
+			List<Note> clientNotes = client.Engine.GetNotes ().Values.ToList ();
 			foreach (Note note in server_notes) {
 				if (!clientNotes.Contains (note)) {
 					server_delete_notes.Add (note);
@@ -165,6 +161,7 @@ namespace Tomboy.Sync
 		private List<Note> FindLocallyModifiedNotes ()
 		{
 			List<Note> new_or_modified_notes = new List<Note> ();
+			var clientNotes = client.Engine.GetNotes ().Values;
 			foreach (Note note in clientNotes) {
 
 				bool note_is_new = client.GetRevision (note) == -1;
@@ -221,12 +218,12 @@ namespace Tomboy.Sync
 			var new_revision = server.LatestRevision + 1;
 
 			// get all notes, but without the content 
-			IList<Note> server_notes = server.GetAllNotes (false);
+			IList<Note> server_notes_metadata = server.GetAllNotes (false);
 
 			// TODO transaction begin
 
 			// delete notes that are present in the client store but not on the server anymore
-			DeleteClientNotesDeletedByServer (server_notes);
+			DeleteClientNotesDeletedByServer (server_notes_metadata);
 
 			// Look through all the notes modified on the client...
 			List<Note> new_or_modified_notes = FindLocallyModifiedNotes ();
@@ -240,13 +237,13 @@ namespace Tomboy.Sync
 
 			// every server note, that does not exist on the client
 			// should be deleted from the server
-			DeleteServerNotesNotPresentOnClient (server_notes);
+			DeleteServerNotesNotPresentOnClient (server_notes_metadata);
 
 			server.CommitSyncTransaction ();
 
 			// set revisions to new state
 			client.LastSynchronizedRevision = new_revision;
-			client.LastSyncDate = DateTime.Now;
+			client.LastSyncDate = DateTime.UtcNow;
 		}
 	}
 }
