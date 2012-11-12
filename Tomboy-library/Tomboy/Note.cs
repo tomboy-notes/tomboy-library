@@ -232,10 +232,36 @@ namespace Tomboy
 			get;
 			set;
 		}
+		// note that .Equals is required when using i.e. List<T>.Contains ()
 		public override bool Equals (object obj)
 		{
 			// two notes are considered equal if the use the same Guid
 			return (obj is Note && Guid == ((Note)obj).Guid);
+		}
+		public static bool operator == (Note note1, Note note2)
+		{
+			// while the == operator usually checks for reference equalness by default,
+			// we want to compare the Notes by Guid (i.e. for usage in LINQ queries).
+			// Reference equalness can always be checked by object.ReferenceEquals (obj1, obj2)
+			return note1.Equals (note2);
+		}
+		public static bool operator != (Note note1, Note note2)
+		{
+			return !note1.Equals (note2);
+		}
+
+		public override int GetHashCode ()
+		{
+			// the HashCode has not to be unique like the Guid. It is just
+			// good to have it evenly distributed, so lookups in a Hashset
+			// won't hit a collision, or if hit a collsision, have only few
+			// elements in the same bucket so that linear lookup time is
+			// minimized
+
+			// get the first 4 chars
+			var chars = Guid.Replace ("-","").Substring (0,4);
+
+			return Convert.ToInt32 (chars, 16);
 		}
 	}
 }
