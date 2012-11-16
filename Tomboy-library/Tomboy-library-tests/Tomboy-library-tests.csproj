@@ -43,6 +43,7 @@
     <Compile Include="JsonParserTests.cs" />
     <Compile Include="WebSyncAgentTests.cs" />
     <Compile Include="Dummies\DummyStorage.cs" />
+    <Compile Include="SyncTests\TwoWaySyncTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
