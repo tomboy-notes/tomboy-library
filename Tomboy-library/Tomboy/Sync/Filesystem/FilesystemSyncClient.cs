@@ -50,8 +50,9 @@ namespace Tomboy.Sync.Filesystem
 		{
 			this.manifest = manifest;
 			this.Engine = engine;
-			this.AssociatedServerId = "";
+
 			this.DeletedNotes = new List<Note> ();
+
 		}
 		#region ISyncClient implementation
 		public int GetRevision (Note note)

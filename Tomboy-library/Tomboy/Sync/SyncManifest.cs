@@ -30,7 +30,7 @@ namespace Tomboy.Sync
 	{
 		private DateTime last_sync_date = DateTime.MinValue;
 		private int last_sync_rev = -1;
-		private string server_id = Guid.NewGuid ().ToString ();
+		private string server_id = "";
 		private IDictionary<string, int> note_revisions = new Dictionary<string, int> ();
 		private IDictionary<string, string> note_deletions = new Dictionary<string, string> ();
 

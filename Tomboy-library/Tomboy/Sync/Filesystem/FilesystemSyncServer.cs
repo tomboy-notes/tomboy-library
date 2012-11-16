@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Tomboy;
 using Tomboy.Sync;
+using System;
 
 namespace Tomboy.Sync.Filesystem
 {
@@ -39,6 +40,11 @@ namespace Tomboy.Sync.Filesystem
 		{
 			this.engine = engine;
 			this.manifest = manifest;
+
+			// if not server id is set, set a new one
+			if (string.IsNullOrEmpty (this.Id)) {
+				this.Id = Guid.NewGuid ().ToString ();
+			}
 
 			// will only be written back on successfull sync transcation complete
 			newRevision = this.manifest.LastSyncRevision + 1;
@@ -87,9 +93,13 @@ namespace Tomboy.Sync.Filesystem
 			return changedNotes.ToList ();
 		}
 
-		public void DeleteNotes (IList<Note> deleteNotes)
+		public void DeleteNotes (IList<string> deleteNotesGuids)
 		{
-			deleteNotes.ToList ().ForEach (note => {
+			// select the notes by Guid that we want to delete
+			var notes_to_delete = engine.GetNotes ().Values
+				.Where (n => deleteNotesGuids.Contains (n.Guid));
+			// delete those selected notes from our local store
+			notes_to_delete.ToList ().ForEach (note => {
 				engine.DeleteNote (note);
 				this.DeletedServerNotes.Add (note);
 			});

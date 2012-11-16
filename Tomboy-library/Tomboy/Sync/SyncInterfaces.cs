@@ -45,7 +45,7 @@ namespace Tomboy.Sync
 		IList<Note> GetNoteUpdatesSince (int revision);
 
 		// perform deletion of the notes
-		void DeleteNotes (IList<Note> deleteNotes);
+		void DeleteNotes (IList<string> deleteNotesGuids);
 
 		// list of notes that were deleted from the server
 		// should return the list of notes deleted via DeleteNotes ()
