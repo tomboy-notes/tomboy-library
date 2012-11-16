@@ -28,62 +28,49 @@ namespace Tomboy.Sync
 {
 	public class SyncManifest
 	{
-		private DateTime last_sync_date = DateTime.MinValue;
-		private int last_sync_rev = -1;
-		private string server_id = "";
-		private IDictionary<string, int> note_revisions = new Dictionary<string, int> ();
-		private IDictionary<string, string> note_deletions = new Dictionary<string, string> ();
-
 		public DateTime LastSyncDate {
-			get {
-				return last_sync_date;
-			}
-			set {
-				last_sync_date = value;
-			}
+			get; set;
 		}
 
 		public int LastSyncRevision {
-			get {
-				return last_sync_rev;
-			}
-			set {
-				last_sync_rev = value;
-			}
+			get; set;
 		}
 
 		public string ServerId {
-			get {
-				return server_id;
-			}
-			set {
-				server_id = value;
-			}
+			get; set;
 		}
 
+		/// <summary>
+		/// Gets the note revisions. Note that only a synchronization server needs these
+		/// revisions. A client should not access those. A note revision will ALWAYS be less
+		/// or equal to LastSyncRevision.
+		/// </summary>
 		public IDictionary<string, int> NoteRevisions {
-			get {
-				return note_revisions;
-			}
+			get ; private set;
 		}
 
+		/// <summary>
+		/// Gets the note deletions.
+		/// </summary>
+		/// <value>
+		/// The note deletions.
+		/// </value>
 		public IDictionary<string, string> NoteDeletions {
-			get {
-				return note_deletions;
-			}
+			get; private set;
 		}
 
 		public SyncManifest ()
 		{
+			Reset ();
 		}
 
 		public void Reset ()
 		{
-			note_revisions = new Dictionary<string, int> ();
-			note_deletions = new Dictionary<string, string> ();
-			server_id = String.Empty;
-			last_sync_date = DateTime.MinValue;
-			last_sync_rev = -1;
+			NoteRevisions = new Dictionary<string, int> ();
+			NoteDeletions = new Dictionary<string, string> ();
+			ServerId = "";
+			LastSyncDate = DateTime.MinValue;
+			LastSyncRevision = -1;
 		}
 		#region Xml serialization
 		private const string CURRENT_VERSION = "0.3";
@@ -155,6 +142,7 @@ namespace Tomboy.Sync
 							version = xml.GetAttribute ("version");
 							break;
 						case "server-id":
+
 							// <text> is just a wrapper around <note-content>
 							// NOTE: Use .text here to avoid triggering a save.
 							manifest.ServerId = xml.ReadString ();
