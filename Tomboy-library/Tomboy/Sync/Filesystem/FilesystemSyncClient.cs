@@ -55,17 +55,6 @@ namespace Tomboy.Sync.Filesystem
 
 		}
 		#region ISyncClient implementation
-		public int GetRevision (Note note)
-		{
-			if (manifest.NoteRevisions.ContainsKey (note.Guid))
-				return manifest.NoteRevisions [note.Guid];
-			else
-				return -1;
-		}
-		public void SetRevision (Note note, int revision)
-		{
-			manifest.NoteRevisions [note.Guid] = revision;
-		}
 		public void Reset ()
 		{
 			this.AssociatedServerId = "";

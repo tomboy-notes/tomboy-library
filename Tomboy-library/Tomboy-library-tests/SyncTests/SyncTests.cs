@@ -171,9 +171,6 @@ namespace Tomboy.Sync.Filesystem
 
 			sync_manager.DoSync ();
 
-			// afterwards, the server storage should consist of three notes
-			Assert.AreEqual (3, serverEngine.GetNotes ().Count);
-
 			var local_notes = clientEngineOne.GetNotes ().Values;
 			var server_notes = serverEngine.GetNotes ().Values;
 
@@ -319,6 +316,21 @@ namespace Tomboy.Sync.Filesystem
 			Assert.AreEqual (0, syncServer.DeletedServerNotes.Count);
 		}
 
+		[Test]
+		public void MassiveAmountOfNotes ()
+		{
+			// we have some notes added by default, so substract from total amount
+			int num_notes = 1024 - clientEngineOne.GetNotes ().Count;
 
+			while (num_notes-- > 0) {
+				var note = NoteCreator.NewNote ("Sample note number " + num_notes, "This is a sample note body.");
+				clientEngineOne.SaveNote (note);
+			}
+
+			// perform first sync
+			FirstSyncForBothSides ();
+
+			Assert.AreEqual (1024, clientEngineOne.GetNotes ().Count);
+		}
 	}
 }

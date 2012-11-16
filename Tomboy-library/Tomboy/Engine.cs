@@ -91,6 +91,9 @@ namespace Tomboy
 		/// </returns>
 		public Dictionary<string, Note> GetNotes ()
 		{
+			// TODO this has to be performance optimized
+			// reading in all notes from disk every time GetNotes () is called is not
+			// a very good idea.
 			Dictionary<string, Note> temp_notes = this.storage.GetNotes ();
 			if (this.notes == null)
 				this.notes = temp_notes;

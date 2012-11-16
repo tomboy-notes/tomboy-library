@@ -84,14 +84,6 @@ namespace Tomboy.Sync
 		// date of the last sync
 		DateTime LastSyncDate { get; set; }
 
-		// get the revision for a specific note
-		// identified by its Guid
-		int GetRevision (Note note);
-
-		// sets the revision for a specific note
-		// identified by its Guid
-		void SetRevision (Note note, int revision);
-
 		// notes that should be deleted in the sync, because the client
 		// deleted them since last sync
 		IDictionary<string, string> NotesForDeletion { get; }
