@@ -45,9 +45,7 @@ namespace Tomboy.Sync.Filesystem
 			if (string.IsNullOrEmpty (this.Id)) {
 				this.Id = Guid.NewGuid ().ToString ();
 			}
-
-			// will only be written back on successfull sync transcation complete
-			newRevision = this.manifest.LastSyncRevision + 1;
+			newRevision = this.LatestRevision + 1;
 
 			this.UploadedNotes = new List<Note> ();
 			this.DeletedServerNotes = new List<Note> ();
@@ -64,7 +62,10 @@ namespace Tomboy.Sync.Filesystem
 		public bool CommitSyncTransaction ()
 		{
 			// TODO
-			this.LatestRevision = newRevision;
+			this.LatestRevision = this.LatestRevision + 1;
+
+			// required for testing, as we will always reuse the same object instance
+			newRevision++;
 			return true;
 		}
 

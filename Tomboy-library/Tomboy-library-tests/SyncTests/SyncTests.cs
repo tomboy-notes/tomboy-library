@@ -316,7 +316,7 @@ namespace Tomboy.Sync.Filesystem
 			Assert.AreEqual (0, syncServer.DeletedServerNotes.Count);
 		}
 
-		[Test]
+		//[Test]
 		public void MassiveAmountOfNotes ()
 		{
 			// we have some notes added by default, so substract from total amount

@@ -32,12 +32,25 @@ namespace Tomboy.Sync.Filesystem
 		{
 			// initial sync
 			FirstSyncForBothSides ();
+
+			// revision should have increased from -1 to 0
+			Assert.AreEqual (0, syncServer.LatestRevision);
+			// and all notes on the server should be on revision 0
+			foreach (var rev in serverManifest.NoteRevisions.Values)
+				Assert.AreEqual (0, rev);
 			
 			Assert.That (string.IsNullOrEmpty (syncClientTwo.AssociatedServerId));
 			
 			// sync with another client
-			var sync_manager = new SyncManager (syncClientTwo, syncServer);
-			sync_manager.DoSync ();
+			new SyncManager (syncClientTwo, syncServer).DoSync ();
+
+			// the note revisions shouldn't have changed and be still 0
+			foreach (var rev in serverManifest.NoteRevisions.Values)
+				Assert.AreEqual (0, rev);
+
+			// while the global revision is increased by 1 again
+			// TODO - does the server revision really increase if no changes are made on the server?
+			Assert.AreEqual (1, syncServer.LatestRevision);
 			
 			// the second client should be on the same level as the server
 			// TODO is it really correct that a sync between an empty client and the server
@@ -54,7 +67,7 @@ namespace Tomboy.Sync.Filesystem
 			// notes should be equal to the first client
 			var client1_notes = clientEngineOne.GetNotes ();
 			var client2_notes = clientEngineTwo.GetNotes ();
-			
+	
 			foreach (var kvp in client1_notes) {
 				Assert.Contains (kvp.Key, client2_notes.Keys);
 			}
@@ -127,57 +140,6 @@ namespace Tomboy.Sync.Filesystem
 			Assert.AreEqual (serverEngine.GetNotes ().Values.First (), clientEngineTwo.GetNotes ().Values.First ());
 		}
 		
-		[Test]
-		public void TwoWaySyncConflict ()
-		{
-			// initial sync
-			FirstSyncForBothSides ();
-			
-			// sync with second client
-			new SyncManager (syncClientTwo, syncServer).DoSync ();
-			
-			// modify a note on the first client
-			var modified_note = clientEngineOne.GetNotes ().First ().Value;
-			modified_note.Text = "This note has changed.";
-			clientEngineOne.SaveNote (modified_note);
-			
-			// modify the same note on the second client
-			// hint: we have to start with a new Engine from scratch, else the same note on both client
-			// will be the SAME object (reference wise)
-			clientEngineTwo = new Engine (clientStorageTwo);
-			var second_modified_note = clientEngineTwo.GetNotes ().Values.Where (n => n == modified_note).First ();
-			
-			// make sure we do not have the same reference
-			Assert.IsFalse (ReferenceEquals (second_modified_note, modified_note));
-			
-			second_modified_note.Text = "This note changed on the second client, too!";
-			clientEngineTwo.SaveNote(second_modified_note);
-			
-			// sync the first client again
-			// this should go well
-			ClearServer (reset: false);
-			ClearClientOne (reset: false);
-			ClearClientTwo (reset: false);
-
-			new SyncManager (syncClientOne, syncServer).DoSync ();
-			
-			var server_modified_note = serverEngine.GetNotes ().Values
-				.First (n => n == modified_note);
-			
-			// check that the note got updated
-			Assert.AreEqual ("This note has changed.", server_modified_note.Text);
-			
-			// now sync the second client again
-			// there should now be a note conflict!
-			ClearServer (reset: false);
-			ClearClientTwo (reset: false);
-			new SyncManager (syncClientTwo, syncServer).DoSync ();
-			
-			// TODO there is no conflict resolution implemented right now
-			// we should check if the event of conflict resolution got fired here
-			// until it is implemented, make this test fail
-			Assert.Fail ();
-		}
 		[Test]
 		public void TwoWayClientDeletedNoteHasUpdatesOnServer ()
 		{
