@@ -45,6 +45,7 @@
     <Compile Include="Dummies\DummyStorage.cs" />
     <Compile Include="SyncTests\TwoWaySyncTests.cs" />
     <Compile Include="SyncTests\SyncConflicts.cs" />
+    <Compile Include="SyncTests\WebSyncTests\BasicWebSyncTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -58,6 +59,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Libs\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="ServiceStack.Common">
+      <HintPath>..\..\..\lib\ServiceStack.Common.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Tomboy-library.csproj">
@@ -68,5 +72,6 @@
   <ItemGroup>
     <Folder Include="SyncTests\" />
     <Folder Include="Dummies\" />
+    <Folder Include="SyncTests\WebSyncTests\" />
   </ItemGroup>
 </Project>

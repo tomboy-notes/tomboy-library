@@ -23,7 +23,7 @@
 using System.Linq;
 using NUnit.Framework;
 
-namespace Tomboy.Sync.Filesystem
+namespace Tomboy.Sync.Filesystem.Tests
 {
 	public partial class SyncingTests
 	{

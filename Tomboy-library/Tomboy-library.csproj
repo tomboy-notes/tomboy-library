@@ -44,6 +44,10 @@
       <HintPath>Libs\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Net" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="ServiceStack.Common">
+      <HintPath>..\..\lib\ServiceStack.Common.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tomboy\" />
@@ -53,6 +57,7 @@
     <Folder Include="Tomboy\Sync\" />
     <Folder Include="Tomboy\Sync\Snowy\" />
     <Folder Include="Tomboy\Sync\Filesystem\" />
+    <Folder Include="Tomboy\Sync\Rainy\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Tomboy\Note.cs" />
@@ -85,6 +90,9 @@
     <Compile Include="Tomboy\Sync\SyncManifest.cs" />
     <Compile Include="Tomboy\Sync\Filesystem\FilesystemSyncClient.cs" />
     <Compile Include="Tomboy\Sync\Filesystem\FilesystemSyncServer.cs" />
+    <Compile Include="Tomboy\Sync\Rainy\WebSyncClient.cs" />
+    <Compile Include="Tomboy\Sync\Rainy\WebSyncServer.cs" />
+    <Compile Include="Tomboy\Sync\Rainy\DtoClasses.cs" />
   </ItemGroup>
   <ItemGroup>
 &gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/sync_from_scratch

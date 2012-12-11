@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using System.Linq;
 
-namespace Tomboy.Sync.Filesystem
+namespace Tomboy.Sync.Filesystem.Tests
 {
 	public partial class SyncingTests
 	{

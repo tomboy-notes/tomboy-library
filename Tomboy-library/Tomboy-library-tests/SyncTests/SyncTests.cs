@@ -26,34 +26,36 @@ using System.Linq;
 using NUnit.Framework;
 using System.IO;
 
-namespace Tomboy.Sync.Filesystem
+namespace Tomboy.Sync.Filesystem.Tests
 {
+
 	[TestFixture]
 	public partial class SyncingTests
 	{
-		private ISyncServer syncServer;
-		private ISyncClient syncClientOne;
-		private ISyncClient syncClientTwo;
+		protected ISyncServer syncServer;
+		protected ISyncClient syncClientOne;
+		protected ISyncClient syncClientTwo;
 
 		private Engine serverEngine;
 		private IStorage serverStorage;
 		private SyncManifest serverManifest;
 
-		private Engine clientEngineOne;
-		private IStorage clientStorageOne;
-		private SyncManifest clientManifestOne;
+		protected Engine clientEngineOne;
+		protected IStorage clientStorageOne;
+		protected SyncManifest clientManifestOne;
 
-		private Engine clientEngineTwo;
-		private IStorage clientStorageTwo;
-		private SyncManifest clientManifestTwo;
+		protected Engine clientEngineTwo;
+		protected IStorage clientStorageTwo;
+		protected SyncManifest clientManifestTwo;
 
 		private string serverStorageDir;
-		private string clientStorageDirOne;
-		private string clientStorageDirTwo;
+		protected string clientStorageDirOne;
+		protected string clientStorageDirTwo;
 
 		[SetUp]
-		public void SetUp ()
+		public virtual void SetUp ()
 		{
+			Console.WriteLine ("SETUP BASE! " + this.GetType ());
 			var current_dir = Directory.GetCurrentDirectory ();
 			serverStorageDir = Path.Combine (current_dir, "../../syncserver/");
 			clientStorageDirOne = Path.Combine (current_dir, "../../syncclient_one/");
@@ -64,49 +66,64 @@ namespace Tomboy.Sync.Filesystem
 			CleanupServerDirectory ();
 			CleanupClientDirectoryTwo ();
 
-			// setup a sample server
-			serverStorage = new DiskStorage ();
-			serverStorage.SetPath (serverStorageDir);
-			serverEngine = new Engine (serverStorage);
-			serverManifest = new SyncManifest ();
+			InitClientOne ();
+			InitClientTwo ();
+			InitServer ();
 
-			// setup a sample client
-			clientStorageOne = new DiskStorage ();
-			clientStorageOne.SetPath (clientStorageDirOne);
-			clientEngineOne = new Engine (clientStorageOne);
-			clientManifestOne = new SyncManifest ();
+			CreateSomeSampleNotes (clientEngineOne);
 
-			// create a third client that synchronizes
-			clientManifestTwo = new SyncManifest ();
-			clientStorageTwo = new DiskStorage ();
-			clientStorageTwo.SetPath (clientStorageDirTwo);
-			clientEngineTwo = new Engine (clientStorageTwo);
-
-			// add some notes to the store
-			clientEngineOne.SaveNote (new Note () {
-				Text = "This is some sample note text.",
-				Title = "Sample Note 1",
-			});
-			clientEngineOne.SaveNote (new Note () {
-				Text = "This is some sample note text.",
-				Title = "Sample Note 2",
-			});
-			clientEngineOne.SaveNote (new Note () {
-				Text = "This is some sample note text.",
-				Title = "Sample Note 3",
-			});
-
-			syncServer = new FilesystemSyncServer (serverEngine, serverManifest);
-			syncClientOne = new FilesystemSyncClient (clientEngineOne, clientManifestOne);
-			syncClientTwo = new FilesystemSyncClient (clientEngineTwo, clientManifestTwo);
 		}
 		[TearDown]
-		public void TearDown ()
+		public virtual void TearDown ()
 		{
 			CleanupClientDirectoryOne ();
 			CleanupClientDirectoryTwo ();
 			CleanupServerDirectory ();
 		}
+
+		protected virtual void InitClientOne ()
+		{
+			Console.WriteLine ("init BASE");
+
+			clientStorageOne = new DiskStorage ();
+			clientStorageOne.SetPath (clientStorageDirOne);
+			clientEngineOne = new Engine (clientStorageOne);
+			clientManifestOne = new SyncManifest ();
+			syncClientOne = new FilesystemSyncClient (clientEngineOne, clientManifestOne);
+		}
+		protected virtual void InitClientTwo ()
+		{
+			clientManifestTwo = new SyncManifest ();
+			clientStorageTwo = new DiskStorage ();
+			clientStorageTwo.SetPath (clientStorageDirTwo);
+			clientEngineTwo = new Engine (clientStorageTwo);
+			syncClientTwo = new FilesystemSyncClient (clientEngineTwo, clientManifestTwo);
+		}
+		protected virtual void InitServer ()
+		{
+			serverStorage = new DiskStorage ();
+			serverStorage.SetPath (serverStorageDir);
+			serverEngine = new Engine (serverStorage);
+			serverManifest = new SyncManifest ();
+			syncServer = new FilesystemSyncServer (serverEngine, serverManifest);
+		}
+		protected virtual void CreateSomeSampleNotes (Engine engine)
+		{
+			// add some notes to the store
+			engine.SaveNote (new Note () {
+				Text = "This is some sample note text.",
+				Title = "Sample Note 1",
+			});
+			engine.SaveNote (new Note () {
+				Text = "This is some sample note text.",
+				Title = "Sample Note 2",
+			});
+			engine.SaveNote (new Note () {
+				Text = "This is some sample note text.",
+				Title = "Sample Note 3",
+			});
+		}
+
 		private void CleanupServerDirectory ()
 		{
 			// delete the test storage
@@ -161,7 +178,7 @@ namespace Tomboy.Sync.Filesystem
 		}
 
 		[Test]
-		public void FirstSyncForBothSides ()
+		public virtual void FirstSyncForBothSides ()
 		{
 			SyncManager sync_manager = new SyncManager (this.syncClientOne, this.syncServer);
 

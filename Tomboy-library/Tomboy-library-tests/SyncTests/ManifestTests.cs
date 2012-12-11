@@ -23,6 +23,8 @@ using System.Xml;
 using Tomboy.Sync;
 using System.Text;
 using System.IO;
+using Tomboy.Sync.DTO;
+using ServiceStack.Common;
 
 namespace Tomboy.Sync
 {
@@ -74,6 +76,27 @@ namespace Tomboy.Sync
 				Assert.That (manifest.NoteDeletions.ContainsKey (kvp.Key));
 				Assert.That (manifest.NoteDeletions[kvp.Key] == kvp.Value);
 			}
+
+		}
+
+		[Test ()]
+		public void AutomappingDtoNoteToTomboyNote ()
+		{
+			var tomboy_note = new Note ();
+			tomboy_note.Title = "This is a sample note";
+			tomboy_note.Text = "This is some sample text";
+
+			var dto_note = new DTONote ();
+			dto_note.PopulateWith (tomboy_note);
+
+			Assert.AreEqual (tomboy_note.Title, dto_note.Title);
+			Assert.AreEqual (tomboy_note.Text, dto_note.Text);
+
+			Assert.AreEqual (tomboy_note.ChangeDate, dto_note.ChangeDate);
+			Assert.AreEqual (tomboy_note.CreateDate, dto_note.CreateDate);
+			Assert.AreEqual (tomboy_note.MetadataChangeDate, dto_note.MetadataChangeDate);
+			Assert.AreEqual (tomboy_note.Guid, dto_note.Guid);
+			Assert.AreEqual (tomboy_note.Tags, dto_note.Tags);
 
 		}
 	}
