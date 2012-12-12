@@ -22,12 +22,17 @@ namespace Tomboy.Sync.Web
 		private IToken accessToken;
 
 		public string ServerUrl;
+
 		public WebSyncServer (string server_url, IToken access_token)
 		{
 			ServerUrl = server_url;
 			mainServiceUrl = server_url + "/api/1.0";
 			accessToken = access_token;
+
+			this.DeletedServerNotes = new List<string> ();
+			this.UploadedNotes = new List<Note> ();
 		}
+
 		private void Connect ()
 		{
 			// with the first connection we find out the OAuth urls
@@ -93,14 +98,29 @@ namespace Tomboy.Sync.Web
 			return notes;
 		}
 
-		public IList<Note> GetNoteUpdatesSince (int revision)
+		public IList<Note> GetNoteUpdatesSince (long revision)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public void DeleteNotes (IList<string> deleteNotesGuids)
+		public void DeleteNotes (IList<string> delete_note_guids)
 		{
-			throw new NotImplementedException ();
+			var restClient = new JsonServiceClient ();
+			restClient.SetAccessToken (accessToken);
+
+			// to delete not, we call PutNotes and set the command to 'delete'
+			var request = new PutNotesRequest ();
+
+			request.Notes = new List<DTONote> ();
+			foreach (string delete_guid in delete_note_guids) {
+				request.Notes.Add (new DTONote () {
+					Guid = delete_guid,
+					Command = "delete"
+				});
+				DeletedServerNotes.Add (delete_guid);
+			}
+
+			restClient.Put<PutNotesRequest> (notesServiceUrl, request);
 		}
 
 		public void UploadNotes (IList<Note> notes)
@@ -109,20 +129,26 @@ namespace Tomboy.Sync.Web
 			restClient.SetAccessToken (accessToken);
 
 			var request = new PutNotesRequest ();
-			request.LatestSyncRevision = 0;
+			request.LatestSyncRevision = this.LatestRevision;
 			request.Notes = new List<DTONote> ();
 
 			foreach (var tomboy_note in notes) {
 				var dto_note = new DTONote ();
 				dto_note.PopulateWith (tomboy_note);
+
+				// TODO
 				dto_note.LastSyncRevision = 0;
+
 				dto_note.Tags = new string[] { };
 				dto_note.Command = "update";
 				request.Notes.Add (dto_note);
 
 			}
-			var repsonse = restClient.Put<PutNotesResponse> (notesServiceUrl, request);
-//			var repsonse = restClient.Put<GetNotesResponse> ("http://127.0.0.1:8090/api/1.0/johndoe/notes", request);
+			var response = restClient.Put<PutNotesResponse> (notesServiceUrl, request);
+
+			foreach (var tomboy_note in notes) {
+				UploadedNotes.Add (tomboy_note);
+			}
 		}
 
 		public bool UpdatesAvailableSince (int revision)
@@ -130,10 +156,9 @@ namespace Tomboy.Sync.Web
 			throw new NotImplementedException ();
 		}
 
-		public IList<Note> DeletedServerNotes {
+		public IList<string> DeletedServerNotes {
 			get;
-			// TODO remove set
-			set;
+			private set;
 		}
 
 		public IList<Note> UploadedNotes {
@@ -142,9 +167,9 @@ namespace Tomboy.Sync.Web
 			set;
 		}
 
-		public int LatestRevision {
-			get { return 0; }
-			// TODO remove set
+		public long LatestRevision {
+			get;
+			private set;
 		}
 
 		public string Id {

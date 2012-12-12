@@ -90,7 +90,6 @@
     <Compile Include="Tomboy\Sync\SyncManifest.cs" />
     <Compile Include="Tomboy\Sync\Filesystem\FilesystemSyncClient.cs" />
     <Compile Include="Tomboy\Sync\Filesystem\FilesystemSyncServer.cs" />
-    <Compile Include="Tomboy\Sync\Rainy\WebSyncClient.cs" />
     <Compile Include="Tomboy\Sync\Rainy\WebSyncServer.cs" />
     <Compile Include="Tomboy\Sync\Rainy\DtoClasses.cs" />
   </ItemGroup>

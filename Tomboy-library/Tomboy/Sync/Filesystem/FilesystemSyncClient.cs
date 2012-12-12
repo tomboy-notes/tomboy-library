@@ -64,7 +64,7 @@ namespace Tomboy.Sync.Filesystem
 		public Engine Engine {
 			get; private set;
 		}
-		public int LastSynchronizedRevision {
+		public long LastSynchronizedRevision {
 			get {
 				return manifest.LastSyncRevision;
 			}

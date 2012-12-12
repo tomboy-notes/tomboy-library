@@ -42,14 +42,19 @@ namespace Tomboy.Sync
 
 		// get notes that have changed since a specific revision
 		// always includes the full note with its content.
-		IList<Note> GetNoteUpdatesSince (int revision);
+		IList<Note> GetNoteUpdatesSince (long revision);
 
 		// perform deletion of the notes
 		void DeleteNotes (IList<string> deleteNotesGuids);
 
 		// list of notes that were deleted from the server
-		// should return the list of notes deleted via DeleteNotes ()
-		IList<Note> DeletedServerNotes { get; }
+		// because the client deleted them earlier. Note that since the notes
+		// are deleted, we do not have the note content anymore, and work 
+		// only with the note GUIDs.
+		//
+		// This value should be set in the implementation of DeleteNotes ()
+		// and contain the list of notes deleted via DeleteNotes ()
+		IList<string> DeletedServerNotes { get; }
 
 		// uploads a list of notes to the server for updating
 		void UploadNotes (IList<Note> notes);
@@ -59,7 +64,7 @@ namespace Tomboy.Sync
 		IList<Note> UploadedNotes { get; }
 
 		// the global sync revision the server is on
-		int LatestRevision { get; } // NOTE: Only reliable during a transaction
+		long LatestRevision { get; } // NOTE: Only reliable during a transaction
 
 		//SyncLockInfo CurrentSyncLock { get; }
 
@@ -79,7 +84,7 @@ namespace Tomboy.Sync
 		Engine Engine { get; }
 
 		// the global revision the client is on
-		int LastSynchronizedRevision { get; set; }
+		long LastSynchronizedRevision { get; set; }
 
 		// date of the last sync
 		DateTime LastSyncDate { get; set; }
@@ -88,8 +93,8 @@ namespace Tomboy.Sync
 		// deleted them since last sync
 		IDictionary<string, string> NotesForDeletion { get; }
 
-		// notes that have been deleted after the sync, because the server
-		// did not have a copy of those
+		// notes that have been deleted from the client storage 
+		// after the sync, because the server did not have a copy of those
 		IList<Note> DeletedNotes { get; }
 
 		// unassociate a client and a server, reseting

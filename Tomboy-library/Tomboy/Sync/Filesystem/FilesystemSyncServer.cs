@@ -17,6 +17,7 @@
 //  You should have received a copy of the GNU Lesser General Public
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 using System.Collections.Generic;
 using System.Linq;
 using Tomboy;
@@ -34,7 +35,7 @@ namespace Tomboy.Sync.Filesystem
 	{
 		private Engine engine;
 		private SyncManifest manifest;
-		private int newRevision;
+		private long newRevision;
 
 		public FilesystemSyncServer (Engine engine, SyncManifest manifest)
 		{
@@ -48,7 +49,7 @@ namespace Tomboy.Sync.Filesystem
 			newRevision = this.LatestRevision + 1;
 
 			this.UploadedNotes = new List<Note> ();
-			this.DeletedServerNotes = new List<Note> ();
+			this.DeletedServerNotes = new List<string> ();
 		}
 
 		#region ISyncServer implementation
@@ -84,7 +85,7 @@ namespace Tomboy.Sync.Filesystem
 			return notes;
 		}
 
-		public IList<Note> GetNoteUpdatesSince (int revision)
+		public IList<Note> GetNoteUpdatesSince (long revision)
 		{
 			var allNotes = GetAllNotes (true);
 			var changedNotes = from Note note in allNotes
@@ -102,7 +103,7 @@ namespace Tomboy.Sync.Filesystem
 			// delete those selected notes from our local store
 			notes_to_delete.ToList ().ForEach (note => {
 				engine.DeleteNote (note);
-				this.DeletedServerNotes.Add (note);
+				this.DeletedServerNotes.Add (note.Guid);
 			});
 		}
 
@@ -123,11 +124,11 @@ namespace Tomboy.Sync.Filesystem
 			return GetNoteUpdatesSince (revision).Count > 0;
 		}
 
-		public IList<Note> DeletedServerNotes {
+		public IList<string> DeletedServerNotes {
 			get; private set;
 		}
 
-		public int LatestRevision {
+		public long LatestRevision {
 			get {
 				return manifest.LastSyncRevision;
 			}

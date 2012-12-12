@@ -32,7 +32,7 @@ namespace Tomboy.Sync
 			get; set;
 		}
 
-		public int LastSyncRevision {
+		public long LastSyncRevision {
 			get; set;
 		}
 
@@ -45,7 +45,7 @@ namespace Tomboy.Sync
 		/// revisions. A client should not access those. A note revision will ALWAYS be less
 		/// or equal to LastSyncRevision.
 		/// </summary>
-		public IDictionary<string, int> NoteRevisions {
+		public IDictionary<string, long> NoteRevisions {
 			get ; private set;
 		}
 
@@ -66,7 +66,7 @@ namespace Tomboy.Sync
 
 		public void Reset ()
 		{
-			NoteRevisions = new Dictionary<string, int> ();
+			NoteRevisions = new Dictionary<string, long> ();
 			NoteDeletions = new Dictionary<string, string> ();
 			ServerId = "";
 			LastSyncDate = DateTime.MinValue;

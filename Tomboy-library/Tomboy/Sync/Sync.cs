@@ -276,7 +276,7 @@ namespace Tomboy.Sync
 			// update all notes with changes from the server
 			UpdateClientNotesWithServerVersion (server_updated_notes);
 
-			var new_revision = server.LatestRevision + 1;
+			long new_revision = server.LatestRevision + 1;
 
 			// delete notes that are present in the client store but not on the server anymore
 			DeleteClientNotesDeletedByServer (serverNotesMetadata);
