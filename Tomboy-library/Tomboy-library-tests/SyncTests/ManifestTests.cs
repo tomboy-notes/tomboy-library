@@ -95,9 +95,9 @@ namespace Tomboy.Sync
 			Assert.AreEqual (tomboy_note.ChangeDate, dto_note.ChangeDate);
 			Assert.AreEqual (tomboy_note.CreateDate, dto_note.CreateDate);
 			Assert.AreEqual (tomboy_note.MetadataChangeDate, dto_note.MetadataChangeDate);
+
 			Assert.AreEqual (tomboy_note.Guid, dto_note.Guid);
 			Assert.AreEqual (tomboy_note.Tags, dto_note.Tags);
-
 		}
 	}
 }

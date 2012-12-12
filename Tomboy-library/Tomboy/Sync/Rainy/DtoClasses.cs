@@ -1,6 +1,8 @@
 using System;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
+using Tomboy.Tags;
+using System.Linq;
 
 namespace Tomboy.Sync.DTO
 {
@@ -162,10 +164,24 @@ namespace Tomboy.Sync.DTO
 		}
 
 		[DataMember (Name = "last-sync-revision")]
-		public int LastSyncRevision { get; set; }
+		public long LastSyncRevision { get; set; }
+
+		public IDictionary<string, Tag> Tags { get; set; }
 
 		[DataMember (Name = "tags")]
-		public string[] Tags { get; set; }
+		public string[] TagsAsString {
+			get {
+				if (Tags == null) return null;
+				return Tags.Values.Select (tag => tag.Name).ToArray ();
+			}
+			set {
+				Tags = new Dictionary<string, Tag> ();
+				foreach (string tag in value) {
+					var t = new Tag (tag);
+					Tags.Add (t.Name, t);
+				}
+			}
+		}
 
 		[DataMember (Name = "command")]
 		public string Command { get; set; }

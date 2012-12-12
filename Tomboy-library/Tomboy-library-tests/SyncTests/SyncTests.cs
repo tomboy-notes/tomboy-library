@@ -210,6 +210,21 @@ namespace Tomboy.Sync.Filesystem.Tests
 			Assert.AreEqual (0, syncServer.LatestRevision);
 			Assert.AreEqual (0, serverManifest.LastSyncRevision);
 		}
+
+		[Test]
+		public void ServerNoteRevisionsAfterSync ()
+		{
+			FirstSyncForBothSides ();
+
+			Assert.AreEqual (0, syncClientOne.LastSynchronizedRevision);
+			Assert.AreEqual (3, syncServer.UploadedNotes.Count);
+
+			// client revisions are equal to 0
+			var server_notes = serverEngine.GetNotes ().Values;
+			foreach (var note in server_notes) {
+				Assert.AreEqual (0, serverManifest.NoteRevisions[note.Guid]);
+			}
+		}
 		[Test]
 		public void NoteDatesAfterSync ()
 		{
@@ -293,7 +308,7 @@ namespace Tomboy.Sync.Filesystem.Tests
 
 			// one note should have been deleted on server
 			Assert.AreEqual (1, syncServer.DeletedServerNotes.Count);
-			Assert.AreEqual (deleted_note, syncServer.DeletedServerNotes.First ());
+			Assert.AreEqual (deleted_note.Guid, syncServer.DeletedServerNotes.First ());
 
 			// zero notes were deleted on the client
 			Assert.AreEqual (0, syncClientOne.DeletedNotes.Count);

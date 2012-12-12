@@ -20,14 +20,17 @@ namespace Tomboy.Sync.Web
 		private string oauthAccessTokenUrl;
 
 		private IToken accessToken;
+		private SyncManifest manifest;
 
 		public string ServerUrl;
 
-		public WebSyncServer (string server_url, IToken access_token)
+		// TODO access_Token must be better handled
+		public WebSyncServer (string server_url, SyncManifest sync_manifest, IToken access_token)
 		{
 			ServerUrl = server_url;
 			mainServiceUrl = server_url + "/api/1.0";
 			accessToken = access_token;
+			manifest = sync_manifest;
 
 			this.DeletedServerNotes = new List<string> ();
 			this.UploadedNotes = new List<Note> ();
@@ -54,10 +57,8 @@ namespace Tomboy.Sync.Web
 			var user_response = restClient.Get<UserResponse> (this.userServiceUrl);
 			this.notesServiceUrl = user_response.NotesRef.ApiRef;
 
-			Console.WriteLine (this.notesServiceUrl);
-
-			//this.LatestRevision = user_response.LatestSyncRevision;
-			//this.Id = user_response.CurrentSyncGuid;
+			this.LatestRevision = user_response.LatestSyncRevision;
+			this.Id = user_response.CurrentSyncGuid;
 
 		}
 
@@ -71,7 +72,8 @@ namespace Tomboy.Sync.Web
 
 		public bool CommitSyncTransaction ()
 		{
-			throw new NotImplementedException ();
+			this.LatestRevision++;
+			return true;
 		}
 
 		public bool CancelSyncTransaction ()
@@ -94,6 +96,8 @@ namespace Tomboy.Sync.Web
 
 				notes.Add (tomboy_note);
 			}
+
+			this.LatestRevision = notes_response.LatestSyncRevision;
 
 			return notes;
 		}
@@ -136,11 +140,6 @@ namespace Tomboy.Sync.Web
 				var dto_note = new DTONote ();
 				dto_note.PopulateWith (tomboy_note);
 
-				// TODO
-				dto_note.LastSyncRevision = 0;
-
-				dto_note.Tags = new string[] { };
-				dto_note.Command = "update";
 				request.Notes.Add (dto_note);
 
 			}
@@ -168,12 +167,16 @@ namespace Tomboy.Sync.Web
 		}
 
 		public long LatestRevision {
-			get;
-			private set;
+			get {
+				return manifest.LastSyncRevision;
+			}
+			private set {
+				manifest.LastSyncRevision = value;
+			}
 		}
 
 		public string Id {
-			get { return "0"; }
+			get; private set;
 		}
 
 		#endregion
