@@ -90,7 +90,7 @@ namespace Tomboy.Sync
 				}
 			}
 			foreach (var client_note in notes_to_save)
-				client.Engine.SaveNote (client_note);
+				client.Engine.SaveNote (client_note, false);
 		}
 
 		/// <summary>
@@ -131,11 +131,11 @@ namespace Tomboy.Sync
 
 				if (!note_already_exists_locally) {
 					// note does not exist on the client, import it
-					client.Engine.SaveNote (note);
+					client.Engine.SaveNote (note, false);
 				} else if (note_unchanged_since_last_sync) {
 					// note has not been changed locally since the last  sync,
 					// but is newer on the server - so update it with the server version
-					client.Engine.SaveNote (note);
+					client.Engine.SaveNote (note, false);
 				} else {
 					// note exists and was modified since the last sync - oops
 					// TODO conflict resolution
@@ -239,7 +239,7 @@ namespace Tomboy.Sync
 
 			// actually perform the import / save
 			foreach (var note in notes_marked_for_saving_on_client) {
-				client.Engine.SaveNote (note);
+				client.Engine.SaveNote (note, false);
 			}
 
 		}
@@ -260,12 +260,14 @@ namespace Tomboy.Sync
 			//remote.Store.Backup ();
 			this.clientNotes = client.Engine.GetNotes ().Values.ToList ();
 
+			server.BeginSyncTransaction ();
+
 			AssertClientServerRelationship ();
 
-			if (!NeedSyncing ())
+			if (!NeedSyncing ()) {
+				server.CancelSyncTransaction ();
 				return;
-
-			server.BeginSyncTransaction ();
+			}
 
 			serverNotesMetadata = server.GetAllNotes (false);
 

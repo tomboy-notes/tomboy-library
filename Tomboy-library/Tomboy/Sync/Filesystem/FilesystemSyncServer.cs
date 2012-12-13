@@ -110,7 +110,7 @@ namespace Tomboy.Sync.Filesystem
 		public void UploadNotes (IList<Note> notes)
 		{
 			notes.ToList ().ForEach (note => {
-				engine.SaveNote (note);
+				engine.SaveNote (note, false);
 				UploadedNotes.Add (note);
 				// set the note to the new revision
 				manifest.NoteRevisions [note.Guid] = newRevision;

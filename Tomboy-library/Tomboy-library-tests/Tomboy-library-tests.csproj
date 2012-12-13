@@ -45,7 +45,6 @@
     <Compile Include="Dummies\DummyStorage.cs" />
     <Compile Include="SyncTests\TwoWaySyncTests.cs" />
     <Compile Include="SyncTests\SyncConflicts.cs" />
-    <Compile Include="SyncTests\WebSyncTests\BasicWebSyncTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

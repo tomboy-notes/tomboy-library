@@ -5,13 +5,14 @@ using Tomboy.Sync.DTO;
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Consumer;
 using ServiceStack.Common;
+using System.Linq;
 
 namespace Tomboy.Sync.Web
 {
 	// proxy class, that provides connecticity to a remote web synchronization server like snowy/rainy/ubuntu1
 	public class WebSyncServer : ISyncServer
 	{
-		private string mainServiceUrl;
+		private string rootApiUrl;
 		private string userServiceUrl;
 		private string notesServiceUrl;
 
@@ -20,28 +21,33 @@ namespace Tomboy.Sync.Web
 		private string oauthAccessTokenUrl;
 
 		private IToken accessToken;
-		private SyncManifest manifest;
 
-		public string ServerUrl;
+		private string ServerUrl;
 
 		// TODO access_Token must be better handled
-		public WebSyncServer (string server_url, SyncManifest sync_manifest, IToken access_token)
+		public WebSyncServer (string server_url, IToken access_token)
 		{
 			ServerUrl = server_url;
-			mainServiceUrl = server_url + "/api/1.0";
+			rootApiUrl = server_url + "/api/1.0";
 			accessToken = access_token;
-			manifest = sync_manifest;
 
 			this.DeletedServerNotes = new List<string> ();
 			this.UploadedNotes = new List<Note> ();
 		}
 
+		private JsonServiceClient GetJsonClient ()
+		{
+			var restClient = new JsonServiceClient ();
+			restClient.SetAccessToken (accessToken);
+			return restClient;
+		}
+
 		private void Connect ()
 		{
+			var restClient = GetJsonClient ();
+
 			// with the first connection we find out the OAuth urls
-			var restClient = new JsonServiceClient ("http://127.0.0.1:8080/johndoe/none/");
-			restClient.SetAccessToken (accessToken);
-			var api_response = restClient.Get<ApiResponse> ("/api/1.0/");
+			var api_response = restClient.Get<ApiResponse> (rootApiUrl);
 
 			// the server tells us the address of the user webservice
 			this.userServiceUrl = api_response.UserRef.ApiRef;
@@ -72,47 +78,44 @@ namespace Tomboy.Sync.Web
 
 		public bool CommitSyncTransaction ()
 		{
-			this.LatestRevision++;
+			// TODO is this really correct? can we always assume the server advances
+			// the current revision by only + 1 ?? Maybe better call the UserApi
+			// to check the real revision?
+			LatestRevision++;
 			return true;
 		}
 
 		public bool CancelSyncTransaction ()
 		{
-			throw new NotImplementedException ();
+			// TODO
+			return true;
 		}
 
 		public IList<Note> GetAllNotes (bool include_note_content)
 		{
-			var restClient = new JsonServiceClient ();
-			restClient.SetAccessToken (accessToken);
+			var restClient = GetJsonClient ();
+			var response = restClient.Get<GetNotesResponse> (this.notesServiceUrl);
 
-			var notes_response = restClient.Get<GetNotesResponse> (this.notesServiceUrl);
-
-			IList<Note> notes = new List<Note> ();
-
-			foreach (DTONote dto_note in notes_response.Notes) {
-				var tomboy_note = new Note ();
-				tomboy_note.PopulateWith (dto_note);
-
-				notes.Add (tomboy_note);
-			}
-
-			this.LatestRevision = notes_response.LatestSyncRevision;
-
-			return notes;
+			return response.Notes.ToTomboyNotes ();
 		}
 
 		public IList<Note> GetNoteUpdatesSince (long revision)
 		{
-			throw new NotImplementedException ();
+			var restClient = GetJsonClient ();
+
+			// we have to add the ?since parameter to our uri
+			var notes_request_url = notesServiceUrl + "?since=" + revision;
+
+			var response = restClient.Get<GetNotesResponse> (notes_request_url);
+
+			return response.Notes.ToTomboyNotes ();
 		}
 
 		public void DeleteNotes (IList<string> delete_note_guids)
 		{
-			var restClient = new JsonServiceClient ();
-			restClient.SetAccessToken (accessToken);
+			var restClient = GetJsonClient ();
 
-			// to delete not, we call PutNotes and set the command to 'delete'
+			// to delete notes, we call PutNotes and set the command to 'delete'
 			var request = new PutNotesRequest ();
 
 			request.Notes = new List<DTONote> ();
@@ -129,25 +132,16 @@ namespace Tomboy.Sync.Web
 
 		public void UploadNotes (IList<Note> notes)
 		{
-			var restClient = new JsonServiceClient ();
-			restClient.SetAccessToken (accessToken);
+			var restClient = GetJsonClient ();
 
 			var request = new PutNotesRequest ();
-			request.LatestSyncRevision = this.LatestRevision;
-			request.Notes = new List<DTONote> ();
+			//request.LatestSyncRevision = this.LatestRevision;
+			request.Notes = notes.ToDTONotes ();
 
-			foreach (var tomboy_note in notes) {
-				var dto_note = new DTONote ();
-				dto_note.PopulateWith (tomboy_note);
+			restClient.Put<PutNotesResponse> (notesServiceUrl, request);
 
-				request.Notes.Add (dto_note);
-
-			}
-			var response = restClient.Put<PutNotesResponse> (notesServiceUrl, request);
-
-			foreach (var tomboy_note in notes) {
-				UploadedNotes.Add (tomboy_note);
-			}
+			// TODO if conflicts arise, this may be different
+			UploadedNotes = notes;
 		}
 
 		public bool UpdatesAvailableSince (int revision)
@@ -156,23 +150,15 @@ namespace Tomboy.Sync.Web
 		}
 
 		public IList<string> DeletedServerNotes {
-			get;
-			private set;
+			get; private set;
 		}
 
 		public IList<Note> UploadedNotes {
-			get;
-			// TODO remove set
-			set;
+			get; private set;
 		}
 
 		public long LatestRevision {
-			get {
-				return manifest.LastSyncRevision;
-			}
-			private set {
-				manifest.LastSyncRevision = value;
-			}
+			get ; private set;
 		}
 
 		public string Id {

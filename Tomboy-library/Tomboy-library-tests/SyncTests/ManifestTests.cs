@@ -79,15 +79,33 @@ namespace Tomboy.Sync
 
 		}
 
-		[Test ()]
-		public void AutomappingDtoNoteToTomboyNote ()
+		[Test]
+		public void ConvertFromTomboyNoteToDTO()
 		{
 			var tomboy_note = new Note ();
 			tomboy_note.Title = "This is a sample note";
 			tomboy_note.Text = "This is some sample text";
 
+			var dto_note = tomboy_note.ToDTONote ();
+
+			Assert.AreEqual (tomboy_note.Title, dto_note.Title);
+			Assert.AreEqual (tomboy_note.Text, dto_note.Text);
+
+			Assert.AreEqual (tomboy_note.ChangeDate, dto_note.ChangeDate);
+			Assert.AreEqual (tomboy_note.CreateDate, dto_note.CreateDate);
+			Assert.AreEqual (tomboy_note.MetadataChangeDate, dto_note.MetadataChangeDate);
+
+			Assert.AreEqual (tomboy_note.Guid, dto_note.Guid);
+			Assert.AreEqual (tomboy_note.Tags, dto_note.Tags);
+		}
+		[Test]
+		public void ConvertFromDTONoteToTomboyNote()
+		{
 			var dto_note = new DTONote ();
-			dto_note.PopulateWith (tomboy_note);
+			dto_note.Title = "This is a sample note";
+			dto_note.Text = "This is some sample text";
+
+			var tomboy_note = dto_note.ToTomboyNote ();
 
 			Assert.AreEqual (tomboy_note.Title, dto_note.Title);
 			Assert.AreEqual (tomboy_note.Text, dto_note.Text);

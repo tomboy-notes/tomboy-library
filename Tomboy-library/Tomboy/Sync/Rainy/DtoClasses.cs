@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 using System.Collections.Generic;
 using Tomboy.Tags;
 using System.Linq;
+using ServiceStack.Common;
 
 namespace Tomboy.Sync.DTO
 {
@@ -187,4 +188,41 @@ namespace Tomboy.Sync.DTO
 		public string Command { get; set; }
 
 	}
+
+	// extension methods for converting between Tomboy.Note and Tomboy.Sync.DTO.DTONote
+	// and vice versa
+	public static class NoteConverter
+	{
+		// Tomboy.Note -> DTONote
+		public static DTONote ToDTONote (this Tomboy.Note tomboy_note)
+		{
+			DTONote dto_note = new DTONote ();
+
+			// using ServiceStack simple auto mapper
+			dto_note.PopulateWith (tomboy_note);
+
+			return dto_note;
+		}
+
+		// DTONote -> Tomboy.Note
+		public static Tomboy.Note ToTomboyNote (this DTONote dto_note)
+		{
+			var tomboy_note = new Tomboy.Note ();
+
+			tomboy_note.PopulateWith (dto_note);
+
+			return tomboy_note;
+		}
+
+		// same as above but for IList's
+		public static IList<DTONote> ToDTONotes (this IList<Tomboy.Note> tomboy_notes)
+		{
+			return tomboy_notes.Select (n => n.ToDTONote ()).ToList ();
+		}
+		public static IList<Tomboy.Note> ToTomboyNotes (this IList<DTONote> dto_notes)
+		{
+			return dto_notes.Select (n => n.ToTomboyNote ()).ToList ();
+		}
+	}
 }
+
