@@ -168,13 +168,16 @@ namespace Tomboy
 		/// <param name='note'>
 		/// Note.
 		/// </param>
-		public void SaveNote (Note note)
+		/// <param name='update_dates'>
+		/// By default true and can be omited. If set to false, do not update the ChangeDate
+		/// and MetadataChangeDate fields. Usefull for pure data storage, and when syncing.
+		/// </param>
+		public void SaveNote (Note note, bool update_dates = true)
 		{
-			/* jjennings
-			 * Setting the save time of the note. I'm not for sure is this is the best method at this point.
-			 * it is possible that maybe the UI will want to control this. */
-			DateTime saveUtcNow = DateTime.UtcNow;
-			note.ChangeDate = saveUtcNow;
+			if (update_dates) {
+				DateTime saveUtcNow = DateTime.UtcNow;
+				note.ChangeDate = saveUtcNow;
+			}
 
 			/* Update the dictionary of notes */
 			if (notes.ContainsKey (note.Uri))
