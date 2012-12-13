@@ -38,13 +38,12 @@
     <Compile Include="ReaderTests.cs" />
     <Compile Include="TagManagerTests.cs" />
     <Compile Include="SearchTests.cs" />
-    <Compile Include="SyncTests\ManifestTests.cs" />
-    <Compile Include="SyncTests\SyncTests.cs" />
     <Compile Include="JsonParserTests.cs" />
-    <Compile Include="WebSyncAgentTests.cs" />
     <Compile Include="Dummies\DummyStorage.cs" />
-    <Compile Include="SyncTests\TwoWaySyncTests.cs" />
-    <Compile Include="SyncTests\SyncConflicts.cs" />
+    <Compile Include="SyncTests\SyncObjects.cs" />
+    <Compile Include="SyncTests\FilesystemSyncBasic.cs" />
+    <Compile Include="SyncTests\FilesystemSyncTwoWay.cs" />
+    <Compile Include="SyncTests\FilesystemSyncTwoWayConflicts.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -71,6 +70,5 @@
   <ItemGroup>
     <Folder Include="SyncTests\" />
     <Folder Include="Dummies\" />
-    <Folder Include="SyncTests\WebSyncTests\" />
   </ItemGroup>
 </Project>

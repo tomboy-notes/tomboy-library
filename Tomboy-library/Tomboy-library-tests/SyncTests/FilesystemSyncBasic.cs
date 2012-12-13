@@ -25,12 +25,13 @@ using Tomboy.Sync;
 using System.Linq;
 using NUnit.Framework;
 using System.IO;
+using Tomboy.Sync.Filesystem;
 
-namespace Tomboy.Sync.Filesystem.Tests
+namespace Tomboy
 {
 
 	[TestFixture]
-	public partial class SyncingTests
+	public partial class FilesystemSyncTests
 	{
 		protected ISyncServer syncServer;
 		protected ISyncClient syncClientOne;

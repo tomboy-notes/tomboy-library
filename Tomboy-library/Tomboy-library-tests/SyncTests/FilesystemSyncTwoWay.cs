@@ -22,10 +22,11 @@
 
 using System.Linq;
 using NUnit.Framework;
+using Tomboy.Sync;
 
-namespace Tomboy.Sync.Filesystem.Tests
+namespace Tomboy
 {
-	public partial class SyncingTests
+	public partial class FilesystemSyncTests
 	{
 		[Test]
 		public void TwoWaySyncBasic ()

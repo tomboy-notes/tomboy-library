@@ -26,12 +26,13 @@ using System.IO;
 using Tomboy.Sync.DTO;
 using ServiceStack.Common;
 
-namespace Tomboy.Sync
+namespace Tomboy
 {
 	[TestFixture()]
-	public class SyncManifestTests
+	public class SyncObjectsTest
 	{
 		SyncManifest sampleManifest;
+
 		[SetUp]
 		public void Setup ()
 		{
@@ -96,6 +97,8 @@ namespace Tomboy.Sync
 			Assert.AreEqual (tomboy_note.MetadataChangeDate, dto_note.MetadataChangeDate);
 
 			Assert.AreEqual (tomboy_note.Guid, dto_note.Guid);
+
+			Assert.Fail ("TODO: Tags must be copied over");
 			Assert.AreEqual (tomboy_note.Tags, dto_note.Tags);
 		}
 		[Test]
@@ -115,6 +118,9 @@ namespace Tomboy.Sync
 			Assert.AreEqual (tomboy_note.MetadataChangeDate, dto_note.MetadataChangeDate);
 
 			Assert.AreEqual (tomboy_note.Guid, dto_note.Guid);
+
+			// FAILS:
+			Assert.Fail ("TODO: Tags must be copied over");
 			Assert.AreEqual (tomboy_note.Tags, dto_note.Tags);
 		}
 	}

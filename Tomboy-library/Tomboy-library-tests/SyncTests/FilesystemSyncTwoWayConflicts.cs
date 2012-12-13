@@ -24,10 +24,11 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using System.Linq;
+using Tomboy.Sync;
 
-namespace Tomboy.Sync.Filesystem.Tests
+namespace Tomboy
 {
-	public partial class SyncingTests
+	public partial class FilesystemSyncTests
 	{
 		[Test]
 		public void TwoWayConflictTitleAlreadyExists ()
