@@ -55,7 +55,6 @@
     <Folder Include="Tomboy\Notebooks\" />
     <Folder Include="Tomboy\Tags\" />
     <Folder Include="Tomboy\Sync\" />
-    <Folder Include="Tomboy\Sync\Snowy\" />
     <Folder Include="Tomboy\Sync\Filesystem\" />
     <Folder Include="Tomboy\Sync\Rainy\" />
   </ItemGroup>
@@ -78,20 +77,12 @@
     <Compile Include="Tomboy\SearchEngine.cs" />
     <Compile Include="Tomboy\Sync\Sync.cs" />
     <Compile Include="Tomboy\Sync\ISyncAgent.cs" />
-    <Compile Include="Tomboy\Sync\Snowy\CertificateManager.cs" />
-    <Compile Include="Tomboy\Sync\Snowy\JsonParser.cs" />
-    <Compile Include="Tomboy\Sync\Snowy\OAuthEndPoints.cs" />
-    <Compile Include="Tomboy\Sync\Snowy\WebSyncAgent.cs" />
-    <Compile Include="Tomboy\Sync\Snowy\UserInfo.cs" />
-    <Compile Include="Tomboy\Sync\Snowy\NoteChanges.cs" />
-    <Compile Include="Tomboy\Sync\Snowy\WebRequestMethod.cs" />
-    <Compile Include="Tomboy\Sync\Snowy\OAuthAuthorizationTokens.cs" />
     <Compile Include="Tomboy\Sync\SyncInterfaces.cs" />
     <Compile Include="Tomboy\Sync\SyncManifest.cs" />
-    <Compile Include="Tomboy\Sync\Filesystem\FilesystemSyncClient.cs" />
     <Compile Include="Tomboy\Sync\Filesystem\FilesystemSyncServer.cs" />
     <Compile Include="Tomboy\Sync\Rainy\WebSyncServer.cs" />
     <Compile Include="Tomboy\Sync\Rainy\DtoClasses.cs" />
+    <Compile Include="Tomboy\Sync\Filesystem\FilesystemSyncClient.cs" />
   </ItemGroup>
   <ItemGroup>
 &gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/sync_from_scratch

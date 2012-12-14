@@ -91,6 +91,9 @@ namespace Tomboy.Sync.Web
 
 		public bool BeginSyncTransaction ()
 		{
+			this.UploadedNotes = new List<Note> ();
+			this.DeletedServerNotes = new List<string> ();
+
 			Connect ();
 			return true;
 		}

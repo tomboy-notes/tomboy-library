@@ -31,98 +31,41 @@ namespace Tomboy
 {
 
 	[TestFixture]
-	public partial class FilesystemSyncTests
+	public partial class FilesystemSyncTests : AbstractSyncTests
 	{
-		protected ISyncServer syncServer;
-		protected ISyncClient syncClientOne;
-		protected ISyncClient syncClientTwo;
-
 		private Engine serverEngine;
 		private IStorage serverStorage;
 		private SyncManifest serverManifest;
 
-		protected Engine clientEngineOne;
-		protected IStorage clientStorageOne;
-		protected SyncManifest clientManifestOne;
-
-		protected Engine clientEngineTwo;
-		protected IStorage clientStorageTwo;
-		protected SyncManifest clientManifestTwo;
-
 		private string serverStorageDir;
-		protected string clientStorageDirOne;
-		protected string clientStorageDirTwo;
 
 		[SetUp]
-		public virtual void SetUp ()
+		public void SetUp ()
 		{
-			Console.WriteLine ("SETUP BASE! " + this.GetType ());
+
+			Console.WriteLine ("SETUP FilesystemSyncTest! " + this.GetType ());
 			var current_dir = Directory.GetCurrentDirectory ();
 			serverStorageDir = Path.Combine (current_dir, "../../syncserver/");
-			clientStorageDirOne = Path.Combine (current_dir, "../../syncclient_one/");
-			clientStorageDirTwo = Path.Combine (current_dir, "../../syncclient_two/");
 
 			// make sure we start from empty data store directories
-			CleanupClientDirectoryOne ();
 			CleanupServerDirectory ();
-			CleanupClientDirectoryTwo ();
 
-			InitClientOne ();
-			InitClientTwo ();
 			InitServer ();
-
-			CreateSomeSampleNotes (clientEngineOne);
 
 		}
 		[TearDown]
-		public virtual void TearDown ()
+		public void TearDown ()
 		{
-			CleanupClientDirectoryOne ();
-			CleanupClientDirectoryTwo ();
 			CleanupServerDirectory ();
 		}
 
-		protected virtual void InitClientOne ()
-		{
-			Console.WriteLine ("init BASE");
-
-			clientStorageOne = new DiskStorage ();
-			clientStorageOne.SetPath (clientStorageDirOne);
-			clientEngineOne = new Engine (clientStorageOne);
-			clientManifestOne = new SyncManifest ();
-			syncClientOne = new FilesystemSyncClient (clientEngineOne, clientManifestOne);
-		}
-		protected virtual void InitClientTwo ()
-		{
-			clientManifestTwo = new SyncManifest ();
-			clientStorageTwo = new DiskStorage ();
-			clientStorageTwo.SetPath (clientStorageDirTwo);
-			clientEngineTwo = new Engine (clientStorageTwo);
-			syncClientTwo = new FilesystemSyncClient (clientEngineTwo, clientManifestTwo);
-		}
-		protected virtual void InitServer ()
+		private void InitServer ()
 		{
 			serverStorage = new DiskStorage ();
 			serverStorage.SetPath (serverStorageDir);
 			serverEngine = new Engine (serverStorage);
 			serverManifest = new SyncManifest ();
 			syncServer = new FilesystemSyncServer (serverEngine, serverManifest);
-		}
-		protected virtual void CreateSomeSampleNotes (Engine engine)
-		{
-			// add some notes to the store
-			engine.SaveNote (new Note () {
-				Text = "This is some sample note text.",
-				Title = "Sample Note 1",
-			});
-			engine.SaveNote (new Note () {
-				Text = "This is some sample note text.",
-				Title = "Sample Note 2",
-			});
-			engine.SaveNote (new Note () {
-				Text = "This is some sample note text.",
-				Title = "Sample Note 3",
-			});
 		}
 
 		private void CleanupServerDirectory ()
@@ -131,42 +74,8 @@ namespace Tomboy
 			if (Directory.Exists (serverStorageDir))
 				Directory.Delete (serverStorageDir, true);
 		}
-		private void CleanupClientDirectoryOne ()
-		{
-			if (Directory.Exists (clientStorageDirOne))
-				Directory.Delete (clientStorageDirOne, true);
-		}
-		private void CleanupClientDirectoryTwo ()
-		{
-			if (Directory.Exists (clientStorageDirTwo))
-				Directory.Delete (clientStorageDirTwo, true);
-		}
-		// forces re-readin from disk, and will make sure a client does not hold
-		// Notes which are equal by reference as the server
-		private void ClearClientOne (bool reset = false)
-		{
-			if (reset) {
-				clientManifestOne = new SyncManifest ();
-				CleanupClientDirectoryOne ();
-			}
 
-			clientStorageOne = new DiskStorage ();
-			clientStorageOne.SetPath (clientStorageDirOne);
-			clientEngineOne = new Engine (clientStorageOne);
-			syncClientOne = new FilesystemSyncClient (clientEngineOne, clientManifestOne);
-		}
-		private void ClearClientTwo (bool reset = false)
-		{
-			if (reset) {
-				clientManifestTwo = new SyncManifest ();
-				CleanupClientDirectoryTwo ();
-			}
-			clientStorageTwo = new DiskStorage ();
-			clientStorageTwo.SetPath (clientStorageDirTwo);
-			clientEngineTwo = new Engine (clientStorageTwo);
-			syncClientTwo = new FilesystemSyncClient (clientEngineTwo, clientManifestTwo);
-		}
-		private void ClearServer (bool reset = false)
+		protected override void ClearServer (bool reset = false)
 		{
 			if (reset) {
 				serverManifest = new SyncManifest ();
@@ -179,15 +88,11 @@ namespace Tomboy
 		}
 
 		[Test]
-		public virtual void FirstSyncForBothSides ()
+		public void FirstSyncForBothSides ()
 		{
-			SyncManager sync_manager = new SyncManager (this.syncClientOne, this.syncServer);
-
-			// before the sync, the client should have an empty AssociatedServerId
-			Assert.That (string.IsNullOrEmpty (syncClientOne.AssociatedServerId));
 			Assert.That (string.IsNullOrEmpty (clientManifestOne.ServerId));
 
-			sync_manager.DoSync ();
+			base.FirstSyncForBothSides ();
 
 			var local_notes = clientEngineOne.GetNotes ().Values;
 			var server_notes = serverEngine.GetNotes ().Values;
@@ -197,55 +102,45 @@ namespace Tomboy
 				Assert.That (server_notes.Contains (note));
 			}
 
-			// after the sync the client should carry the associated ServerId
-			Assert.That (!string.IsNullOrEmpty (syncClientOne.AssociatedServerId));
-			Assert.AreEqual (syncClientOne.AssociatedServerId, syncServer.Id);
-
+			// manifest Ids should be equal and not empty
 			Assert.AreEqual (clientManifestOne.ServerId, serverManifest.ServerId);
 			Assert.That (!string.IsNullOrEmpty (clientManifestOne.ServerId));
 
-			// both revisions should be 0
-			Assert.AreEqual (0, syncClientOne.LastSynchronizedRevision);
+			// manifest revisions should be 0
 			Assert.AreEqual (0, clientManifestOne.LastSyncRevision);
-
-			Assert.AreEqual (0, syncServer.LatestRevision);
 			Assert.AreEqual (0, serverManifest.LastSyncRevision);
+
+
 		}
 
-		[Test]
-		public void ServerNoteRevisionsAfterSync ()
-		{
-			FirstSyncForBothSides ();
-
-			Assert.AreEqual (0, syncClientOne.LastSynchronizedRevision);
-			Assert.AreEqual (3, syncServer.UploadedNotes.Count);
-
-			// client revisions are equal to 0
-			var server_notes = serverEngine.GetNotes ().Values;
-			foreach (var note in server_notes) {
-				Assert.AreEqual (0, serverManifest.NoteRevisions[note.Guid]);
-			}
-		}
 		[Test]
 		public void NoteDatesAfterSync ()
 		{
-			FirstSyncForBothSides ();
+			base.NoteDatesAfterSync ();
 
-			// now make sure, the metadata change date is smaller or equal to the last
-			// sync date
-			foreach (var note in clientEngineOne.GetNotes ().Values) {
-				Assert.LessOrEqual (note.MetadataChangeDate, clientManifestOne.LastSyncDate);
+			// make sure the server engine dates match the note dates
+			var stored_notes = clientEngineOne.GetNotes ().Values;
+			var server_stored_notes = serverEngine.GetNotes ().Values;
+
+			foreach (var note in stored_notes) {
+
+				var server_stored_note = server_stored_notes.Single (n => n.Guid == note.Guid);
+				Assert.AreEqual (note.ChangeDate, server_stored_note.ChangeDate);
+				Assert.AreEqual (note.MetadataChangeDate, server_stored_note.MetadataChangeDate);
+				Assert.AreEqual (note.CreateDate, server_stored_note.CreateDate);
+
 			}
 		}
 
 		[Test]
 		public void MakeSureTextIsSynced ()
 		{
-			FirstSyncForBothSides ();
+			base.MakeSureTextIsSynced ();
 
 			// re-read server notes from disk
 			ClearServer (reset: false);
 
+			// make sure the written-out notes carries the text, too
 			var server_notes = serverEngine.GetNotes ().Values;
 			foreach (var note in clientEngineOne.GetNotes ().Values) {
 				var note_on_server = server_notes.First (n => n == note);
@@ -256,14 +151,12 @@ namespace Tomboy
 		[Test]
 		public void ClientSyncsToNewServer()
 		{
-			// perform initial sync for both ends
-			FirstSyncForBothSides ();
+			base.ClientSyncsToNewServer ();
 
 			// now switch the client to a new, empty server
 			ClearServer (reset: true);
 
 			var sync_manager = new SyncManager (syncClientOne, syncServer);
-
 			sync_manager.DoSync ();
 
 			// three notes should have been uploaded
@@ -293,28 +186,9 @@ namespace Tomboy
 		[Test]
 		public void ClientDeletesNotesAfterFirstSync ()
 		{
-			// perform initial sync
-			FirstSyncForBothSides ();
+			base.ClientDeletesNotesAfterFirstSync ();
 
-			Assert.AreEqual (3, clientEngineOne.GetNotes ().Count);
-
-			// now, lets delete a note from the client
-			var deleted_note = clientEngineOne.GetNotes ().First ().Value;
-			clientEngineOne.DeleteNote (deleted_note);
-			clientManifestOne.NoteDeletions.Add (deleted_note.Guid, deleted_note.Title);
-
-			// perform a sync again
-			var sync_manager = new SyncManager (syncClientOne, syncServer);
-			sync_manager.DoSync ();
-
-			// one note should have been deleted on server
-			Assert.AreEqual (1, syncServer.DeletedServerNotes.Count);
-			Assert.AreEqual (deleted_note.Guid, syncServer.DeletedServerNotes.First ());
-
-			// zero notes were deleted on the client
-			Assert.AreEqual (0, syncClientOne.DeletedNotes.Count);
-
-			//  server now holds a total of two notes
+			//  server engine now holds a total of two notes
 			Assert.AreEqual (2, serverEngine.GetNotes ().Count);
 
 			// all notes on the client and the server should be equal
@@ -327,43 +201,14 @@ namespace Tomboy
 		[Test]
 		public void NoSyncingNeededIfNoChangesAreMade ()
 		{
-			// perform initial sync
-			FirstSyncForBothSides ();
-
-			var server_id = syncClientOne.AssociatedServerId;
-
-			// new instance of the server needed (to simulate a new connection)
-			ClearServer (reset:  false);
-
-			// now that we are synced, there should not happen anything when syncing again
-			SyncManager sync_manager = new SyncManager (syncClientOne, syncServer);
-			sync_manager.DoSync ();
-
-			// the association id should not have changed
-			Assert.AreEqual (server_id, syncClientOne.AssociatedServerId);
-			Assert.AreEqual (server_id, syncServer.Id);
-
-			// no notes should have been transfered or deleted
-
-			Assert.AreEqual (0, syncServer.UploadedNotes.Count);
-			Assert.AreEqual (0, syncServer.DeletedServerNotes.Count);
+			base.NoSyncingNeededIfNoChangesAreMade ();
 		}
 
-		//[Test]
+		[Test]
+		[Ignore]
 		public void MassiveAmountOfNotes ()
 		{
-			// we have some notes added by default, so substract from total amount
-			int num_notes = 1024 - clientEngineOne.GetNotes ().Count;
-
-			while (num_notes-- > 0) {
-				var note = NoteCreator.NewNote ("Sample note number " + num_notes, "This is a sample note body.");
-				clientEngineOne.SaveNote (note);
-			}
-
-			// perform first sync
-			FirstSyncForBothSides ();
-
-			Assert.AreEqual (1024, clientEngineOne.GetNotes ().Count);
+			base.MassiveAmountOfNotes ();
 		}
 	}
 }

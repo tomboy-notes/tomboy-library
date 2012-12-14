@@ -56,6 +56,9 @@ namespace Tomboy.Sync.Filesystem
 
 		public bool BeginSyncTransaction ()
 		{
+			this.UploadedNotes = new List<Note> ();
+			this.DeletedServerNotes = new List<string> ();
+
 			// TODO
 			return true;
 		}

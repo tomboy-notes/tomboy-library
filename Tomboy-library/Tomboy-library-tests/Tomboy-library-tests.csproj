@@ -38,12 +38,12 @@
     <Compile Include="ReaderTests.cs" />
     <Compile Include="TagManagerTests.cs" />
     <Compile Include="SearchTests.cs" />
-    <Compile Include="JsonParserTests.cs" />
     <Compile Include="Dummies\DummyStorage.cs" />
     <Compile Include="SyncTests\SyncObjects.cs" />
     <Compile Include="SyncTests\FilesystemSyncBasic.cs" />
     <Compile Include="SyncTests\FilesystemSyncTwoWay.cs" />
     <Compile Include="SyncTests\FilesystemSyncTwoWayConflicts.cs" />
+    <Compile Include="SyncTests\AbstractSyncTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
