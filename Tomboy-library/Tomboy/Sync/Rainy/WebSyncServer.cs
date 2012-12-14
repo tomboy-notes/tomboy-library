@@ -157,7 +157,7 @@ namespace Tomboy.Sync.Web
 			//request.LatestSyncRevision = this.LatestRevision;
 			request.Notes = notes.ToDTONotes ();
 
-			restClient.Put<PutNotesResponse> (notesServiceUrl, request);
+			restClient.Put<GetNotesResponse> (notesServiceUrl, request);
 
 			// TODO if conflicts arise, this may be different
 			UploadedNotes = notes;

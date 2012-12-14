@@ -115,17 +115,6 @@ namespace Tomboy.Sync.DTO
 
 	}
 
-	// PutNotesResponse is the same as GetNotesResponse
-	[DataContract]
-	public class PutNotesResponse
-	{
-		[DataMember (Name ="latest-sync-revision")]
-		public long LatestSyncRevision { get; set; }
-		
-		[DataMember (Name = "notes")]
-		public IList<DTONote> Notes { get; set; }
-	}
-
 	[DataContract]
 	public class DTONote
 	{
