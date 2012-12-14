@@ -56,7 +56,7 @@
     <Folder Include="Tomboy\Tags\" />
     <Folder Include="Tomboy\Sync\" />
     <Folder Include="Tomboy\Sync\Filesystem\" />
-    <Folder Include="Tomboy\Sync\Rainy\" />
+    <Folder Include="Tomboy\Sync\WebSync\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Tomboy\Note.cs" />
@@ -80,9 +80,9 @@
     <Compile Include="Tomboy\Sync\SyncInterfaces.cs" />
     <Compile Include="Tomboy\Sync\SyncManifest.cs" />
     <Compile Include="Tomboy\Sync\Filesystem\FilesystemSyncServer.cs" />
-    <Compile Include="Tomboy\Sync\Rainy\WebSyncServer.cs" />
-    <Compile Include="Tomboy\Sync\Rainy\DtoClasses.cs" />
     <Compile Include="Tomboy\Sync\Filesystem\FilesystemSyncClient.cs" />
+    <Compile Include="Tomboy\Sync\WebSync\DtoClasses.cs" />
+    <Compile Include="Tomboy\Sync\WebSync\WebSyncServer.cs" />
   </ItemGroup>
   <ItemGroup>
 &gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/sync_from_scratch
