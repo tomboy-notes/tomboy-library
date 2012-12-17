@@ -77,6 +77,17 @@ namespace Tomboy
 		#region public methods
 
 		/// <summary>
+		/// Gets the tags, which is built from the collection of Notes
+		/// </summary>
+		/// <returns>
+		/// The tags.
+		/// </returns>
+		public List<Tag> GetTags ()
+		{
+			return tagMgr.AllTags;
+		}
+
+		/// <summary>
 		/// Gets the notes.
 		/// </summary>
 		/// <description>
