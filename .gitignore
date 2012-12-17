@@ -6,3 +6,5 @@
 bin/
 test-results/
 Tomboy-library/Tomboy-library-tests/test_notes/proper_notes/Backup
+#Ignore OSX Files
+.DS_Store
