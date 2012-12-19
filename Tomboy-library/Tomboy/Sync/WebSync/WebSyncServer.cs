@@ -25,6 +25,7 @@ using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Consumer;
 using ServiceStack.Common;
 using System.Linq;
+using System.IO;
 
 namespace Tomboy.Sync.Web
 {
@@ -58,6 +59,15 @@ namespace Tomboy.Sync.Web
 		{
 			var restClient = new JsonServiceClient ();
 			restClient.SetAccessToken (accessToken);
+
+			/*restClient.LocalHttpWebResponseFilter += (response) => {
+				if (response.ResponseUri.ToString ().Contains ("notes")) {
+					var stream = response.GetResponseStream ();
+					var reader = new StreamReader (stream);		
+					var text = reader.ReadToEnd ();
+					Console.WriteLine (text);
+				}
+			}; */
 			return restClient;
 		}
 
@@ -116,7 +126,10 @@ namespace Tomboy.Sync.Web
 		public IList<Note> GetAllNotes (bool include_note_content)
 		{
 			var restClient = GetJsonClient ();
-			var response = restClient.Get<GetNotesResponse> (this.notesServiceUrl);
+
+			string url;
+			url = this.notesServiceUrl + "?include_notes=" + include_note_content.ToString ();
+			var response = restClient.Get<GetNotesResponse> (url);
 
 			return response.Notes.ToTomboyNotes ();
 		}
@@ -140,6 +153,9 @@ namespace Tomboy.Sync.Web
 			// to delete notes, we call PutNotes and set the command to 'delete'
 			var request = new PutNotesRequest ();
 
+			request.LatestSyncRevision = (int) this.LatestRevision; 
+
+			Console.WriteLine (request.LatestSyncRevision);
 			request.Notes = new List<DTONote> ();
 			foreach (string delete_guid in delete_note_guids) {
 				request.Notes.Add (new DTONote () {
@@ -150,6 +166,7 @@ namespace Tomboy.Sync.Web
 			}
 
 			restClient.Put<PutNotesRequest> (notesServiceUrl, request);
+//			restClient.Put<PutNotesRequest> ("http://127.0.0.1:8090/johndoe/notes/", request);
 		}
 
 		public void UploadNotes (IList<Note> notes)

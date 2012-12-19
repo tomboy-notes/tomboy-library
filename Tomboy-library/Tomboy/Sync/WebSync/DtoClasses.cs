@@ -108,11 +108,10 @@ namespace Tomboy.Sync.DTO
 	public class PutNotesRequest
 	{
 		[DataMember (Name = "latest-sync-revision")]
-		public long? LatestSyncRevision { get; set; }
+		public int LatestSyncRevision { get; set; }
 
 		[DataMember (Name = "note-changes")]
 		public IList<DTONote> Notes { get; set; }
-
 	}
 
 	[DataContract]
@@ -191,6 +190,13 @@ namespace Tomboy.Sync.DTO
 				}
 			}
 		}
+
+		[DataMember (Name = "open-on-startup")]
+		public bool OpenOnStartup { get; set; }
+
+		[DataMember (Name = "pinned")]
+		public bool Pinned { get; set; }
+
 
 		[DataMember (Name = "command")]
 		public string Command { get; set; }

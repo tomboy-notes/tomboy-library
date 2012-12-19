@@ -1,6 +1,4 @@
 //
-//  SyncConflicts.cs
-//
 //  Author:
 //       Timo Dörr <timo@latecrew.de>
 //
@@ -26,9 +24,9 @@ using NUnit.Framework;
 using System.Linq;
 using Tomboy.Sync;
 
-namespace Tomboy
+namespace Tomboy.Sync
 {
-	public partial class FilesystemSyncTests
+	public partial class AbstractSyncManagerTests
 	{
 		[Test]
 		public void TwoWayConflictTitleAlreadyExists ()
@@ -41,9 +39,13 @@ namespace Tomboy
 			// sync clientOne with server
 			FirstSyncForBothSides ();
 
-			Assert.AreEqual (4, serverEngine.GetNotes ().Count);
+			var server_notes = syncServer.GetAllNotes (true);
+			Assert.AreEqual (4, server_notes.Count);
+
 			// sync clientTwo with server
 			new SyncManager (syncClientTwo, syncServer).DoSync ();
+
+			// TODO Assert the right exception is thrown / have conflict resolution in place
 		}
 
 		[Test]
@@ -79,8 +81,8 @@ namespace Tomboy
 			ClearClientTwo (reset: false);
 			
 			new SyncManager (syncClientOne, syncServer).DoSync ();
-			
-			var server_modified_note = serverEngine.GetNotes ().Values
+		
+			var server_modified_note = syncServer.GetAllNotes (true)
 				.First (n => n == modified_note);
 			
 			// check that the note got updated

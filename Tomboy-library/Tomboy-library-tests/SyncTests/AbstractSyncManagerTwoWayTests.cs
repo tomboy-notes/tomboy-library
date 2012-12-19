@@ -23,10 +23,11 @@
 using System.Linq;
 using NUnit.Framework;
 using Tomboy.Sync;
+using System;
 
-namespace Tomboy
+namespace Tomboy.Sync
 {
-	public partial class FilesystemSyncTests
+	public abstract partial class AbstractSyncManagerTests
 	{
 		[Test]
 		public void TwoWaySyncBasic ()
@@ -36,18 +37,21 @@ namespace Tomboy
 
 			// revision should have increased from -1 to 0
 			Assert.AreEqual (0, syncServer.LatestRevision);
-			// and all notes on the server should be on revision 0
-			foreach (var rev in serverManifest.NoteRevisions.Values)
-				Assert.AreEqual (0, rev);
-			
 			Assert.That (string.IsNullOrEmpty (syncClientTwo.AssociatedServerId));
-			
+
 			// sync with another client
 			new SyncManager (syncClientTwo, syncServer).DoSync ();
 
-			// the note revisions shouldn't have changed and be still 0
-			foreach (var rev in serverManifest.NoteRevisions.Values)
-				Assert.AreEqual (0, rev);
+			var server_notes = syncServer.GetAllNotes (true);
+			var client1_notes = clientEngineOne.GetNotes ().Values;
+			var client2_notes = clientEngineTwo.GetNotes ().Values;
+
+			// all three participants should now have the same notes
+			Assert.AreEqual (sampleNotes.Count, server_notes.Count);
+			foreach (var server_note in server_notes) {
+				Assert.Contains (server_note, client1_notes);
+				Assert.Contains (server_note, client2_notes);
+			}
 
 			// while the global revision is increased by 1 again
 			// TODO - does the server revision really increase if no changes are made on the server?
@@ -63,15 +67,9 @@ namespace Tomboy
 			Assert.AreEqual (syncServer.Id, syncClientOne.AssociatedServerId);
 			Assert.AreEqual (syncServer.Id, syncClientTwo.AssociatedServerId);
 
-			Assert.AreEqual (3, clientEngineTwo.GetNotes ().Count);
+			Assert.AreEqual (sampleNotes.Count, client2_notes.Count);
+			Assert.AreEqual (sampleNotes.Count, client1_notes.Count);
 			
-			// notes should be equal to the first client
-			var client1_notes = clientEngineOne.GetNotes ();
-			var client2_notes = clientEngineTwo.GetNotes ();
-	
-			foreach (var kvp in client1_notes) {
-				Assert.Contains (kvp.Key, client2_notes.Keys);
-			}
 		}
 		[Test]
 		public void TwoWaySyncDeletion ()
@@ -81,13 +79,14 @@ namespace Tomboy
 			
 			// sync with second client
 			new SyncManager (syncClientTwo, syncServer).DoSync ();
+
 		
 			// delete a note on the first client
 			var deleted_note = clientEngineOne.GetNotes ().Values.First ();
 			clientEngineOne.DeleteNote (deleted_note);
 			clientManifestOne.NoteDeletions.Add (deleted_note.Guid, deleted_note.Title);
 
-			// delete another note on the second client
+			// delete a note on the second client
 			// which is not the same note as deleted by the first client
 			var second_deleted_note = clientEngineTwo.GetNotes ().Values.First (n => deleted_note != n);
 			clientEngineTwo.DeleteNote (second_deleted_note);
@@ -100,45 +99,46 @@ namespace Tomboy
 
 			// sync the first client again
 			new SyncManager (syncClientOne, syncServer).DoSync ();
-			
+
 			// server should now hold two notes (because we deleted one)
-			Assert.AreEqual (2, serverEngine.GetNotes ().Count);
+			var server_notes = syncServer.GetAllNotes (true);
+			Assert.AreEqual (2, server_notes.Count);
 			// first client should hold two notes
 			Assert.AreEqual (2, clientEngineOne.GetNotes ().Count);
 
-			// server_notes should be identical to notes on clientOne
-			var server_notes = serverEngine.GetNotes ().Values;
-			var client_notes = clientEngineOne.GetNotes ().Values;
-			var intersection = server_notes.Intersect (client_notes);
-			Assert.AreEqual (2, intersection.Count ());
+			// those two notes should be the same as on the server
+			var client_one_notes = clientEngineOne.GetNotes ().Values;
+			var intersection_one = server_notes.Intersect (client_one_notes);
+			Assert.AreEqual (2, intersection_one.Count ());
 
-			// second client should hold two notes
-			Assert.AreEqual (2, clientEngineTwo.GetNotes ().Count);
-			// one of it equals a note on the server
-			intersection = clientEngineTwo.GetNotes ().Values.Intersect (serverEngine.GetNotes ().Values);
-			Assert.AreEqual (1, intersection.Count ());
-			// and one should equal to a clientOne note
-			intersection = clientEngineTwo.GetNotes ().Values.Intersect (clientEngineOne.GetNotes ().Values);
-			Assert.AreEqual (1, intersection.Count ());
+			// second client should hold two notes, too
+			var client_two_notes = clientEngineTwo.GetNotes ().Values;
+			Assert.AreEqual (2, client_two_notes.Count);
+
+			var intersection_two = server_notes.Intersect (client_two_notes);
+			// and one should equal to a clientOne note (only one because we deleted a note on client two that wa
+			Assert.AreEqual (1, intersection_two.Count ());
 
 			// now sync the second client again
 			ClearServer (reset: false);
 			ClearClientTwo (reset: false);
 			new SyncManager (syncClientTwo, syncServer).DoSync ();
-	
+
+			server_notes = syncServer.GetAllNotes (true);
+
 			// the second client should have deleted one note because the server
 			// wanted so, and now has a total of 1 note
 			Assert.AreEqual (1, syncClientTwo.DeletedNotes.Count);
 			Assert.AreEqual (1, syncClientTwo.Engine.GetNotes ().Count);
 	
 			// check that the server does not hold any of the deleted notes
-			Assert.AreNotEqual (serverEngine.GetNotes ().Values.First (), deleted_note);
-			Assert.AreNotEqual (serverEngine.GetNotes ().Values.First (), second_deleted_note);
+			Assert.AreNotEqual (server_notes.First (), deleted_note);
+			Assert.AreNotEqual (server_notes.First (), second_deleted_note);
 			
 			// the server should also hold only one note
-			Assert.AreEqual (1, serverEngine.GetNotes ().Count);
+			Assert.AreEqual (1, server_notes.Count);
 			// which should be the same as the note on client2
-			Assert.AreEqual (serverEngine.GetNotes ().Values.First (), clientEngineTwo.GetNotes ().Values.First ());
+			Assert.AreEqual (server_notes.First (), clientEngineTwo.GetNotes ().Values.First ());
 		}
 		
 		[Test]
@@ -152,9 +152,7 @@ namespace Tomboy
 			// reset the server storage
 			// delete a note on the first client
 			//var note_of_interest = clientEngineOne.GetNotes.First ();
-			
-			
-			
+
 		}
 	}
 }

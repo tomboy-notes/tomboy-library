@@ -4,15 +4,25 @@ using Tomboy.Sync;
 using System.IO;
 using Tomboy.Sync.Filesystem;
 using System.Linq;
+using System.Collections.Generic;
 
-namespace Tomboy
+namespace Tomboy.Sync
 {
-	public abstract class AbstractSyncTests
+	/// <summary>
+	/// Abstract class that performs tests of the Tomboy.SyncManager class (and thus tests the full syncing logic). 
+	/// We want to test different implementation of SyncManager (i.e. Filesytsem sync, Web sync with Snowy/Rainy).
+	/// This class holds tests, that are not dependant on implemenation details. There should be test classes deriving
+	/// (see FilesystemSyncManagerTests) and extend/override these testcases and perform implemenatation specifc tests.
+	/// </summary>
+	public abstract partial class AbstractSyncManagerTests 
 	{
+		// our scenarios always involve a server, and up to 2 clients
 		protected ISyncServer syncServer;
 		protected ISyncClient syncClientOne;
 		protected ISyncClient syncClientTwo;
 
+		// the clients are always using local disk storage
+		// as backend
 		protected Engine clientEngineOne;
 		protected IStorage clientStorageOne;
 		protected SyncManifest clientManifestOne;
@@ -24,10 +34,11 @@ namespace Tomboy
 		protected string clientStorageDirOne;
 		protected string clientStorageDirTwo;
 
+		protected IList<Note> sampleNotes;
+
 		[SetUp]
 		public void SetUp ()
 		{
-			Console.WriteLine ("SETUP Abstract BaseTests! " + this.GetType ());
 			var current_dir = Directory.GetCurrentDirectory ();
 
 			clientStorageDirOne = Path.Combine (current_dir, "../../syncclient_one/");
@@ -53,8 +64,6 @@ namespace Tomboy
 
 		protected virtual void InitClientOne ()
 		{
-			Console.WriteLine ("init BASE");
-			
 			clientStorageOne = new DiskStorage ();
 			clientStorageOne.SetPath (clientStorageDirOne);
 			clientEngineOne = new Engine (clientStorageOne);
@@ -111,21 +120,38 @@ namespace Tomboy
 
 		protected virtual void CreateSomeSampleNotes (Engine engine)
 		{
-			// add some notes to the store
-			engine.SaveNote (new Note () {
-				Text = "This is some sample note text.",
-				Title = "Sample Note 1",
+			sampleNotes = new List<Note> ();
+			
+			sampleNotes.Add(new Note () {
+				Title = "Sämplé title 1!",
+				Text = "** This is the text of Sämple Note 1**",
+				CreateDate = DateTime.Now,
+				MetadataChangeDate = DateTime.Now,
+				ChangeDate = DateTime.Now
 			});
-			engine.SaveNote (new Note () {
-				Text = "This is some sample note text.",
-				Title = "Sample Note 2",
+			
+			sampleNotes.Add(new Note () {
+				Title = "2nd Example",
+				Text = "This is the text of the second sample note",
+				CreateDate = new DateTime (1984, 04, 14, 4, 32, 0, DateTimeKind.Utc),
+				ChangeDate = new DateTime (2012, 04, 14, 4, 32, 0, DateTimeKind.Utc),
+				MetadataChangeDate = new DateTime (2012, 12, 12, 12, 12, 12, DateTimeKind.Utc),
 			});
-			engine.SaveNote (new Note () {
-				Text = "This is some sample note text.",
-				Title = "Sample Note 3",
+			
+			// note that DateTime.MinValue is not an allowed timestamp for notes!
+			sampleNotes.Add(new Note () {
+				Title = "3rd exampel title",
+				Text = "Another example note",
+				CreateDate = DateTime.MinValue + new TimeSpan (1, 0, 0, 0, 0),
+				ChangeDate = DateTime.MinValue + new TimeSpan (1, 0, 0, 0, 0),
+				MetadataChangeDate = DateTime.MinValue + new TimeSpan (1, 0, 0, 0, 0)
 			});
+
+			// save the notes to the cient engine 
+			sampleNotes.ToList ().ForEach(n => engine.SaveNote (n));
 		}
 
+		[Test]
 		public void FirstSyncForBothSides ()
 		{
 
@@ -143,8 +169,10 @@ namespace Tomboy
 			Assert.AreEqual (0, syncClientOne.LastSynchronizedRevision);
 			Assert.AreEqual (0, syncServer.LatestRevision);
 
+			Assert.Greater (syncServer.UploadedNotes.Count, 0);
 		}
-		
+	
+		[Test]
 		public void NoteDatesAfterSync ()
 		{
 			// this test makes sure the Dates of the note are not modified by the sync process
@@ -173,6 +201,8 @@ namespace Tomboy
 				Assert.AreEqual (note.CreateDate, uploaded_note.CreateDate);
 			}
 		}
+
+		[Test]
 		public void MakeSureTextIsSynced ()
 		{
 			FirstSyncForBothSides ();
@@ -184,11 +214,13 @@ namespace Tomboy
 			}
 		}
 
+		[Test]
 		public void ClientSyncsToNewServer()
 		{
 			FirstSyncForBothSides ();
 		}
 
+		[Test]
 		public void ClientDeletesNotesAfterFirstSync ()
 		{
 			// perform initial sync
@@ -222,6 +254,7 @@ namespace Tomboy
 			Assert.AreEqual (2, intersection.Count ());
 		}
 
+		[Test]
 		public void NoSyncingNeededIfNoChangesAreMade ()
 		{
 			FirstSyncForBothSides ();
@@ -244,6 +277,8 @@ namespace Tomboy
 			Assert.AreEqual (0, syncServer.DeletedServerNotes.Count);
 		}
 
+		[Test]
+		[Ignore]
 		public void MassiveAmountOfNotes ()
 		{
 			// we have some notes added by default, so substract from total amount

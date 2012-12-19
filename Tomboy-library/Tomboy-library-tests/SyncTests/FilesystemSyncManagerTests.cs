@@ -27,11 +27,11 @@ using NUnit.Framework;
 using System.IO;
 using Tomboy.Sync.Filesystem;
 
-namespace Tomboy
+namespace Tomboy.Sync
 {
 
 	[TestFixture]
-	public partial class FilesystemSyncTests : AbstractSyncTests
+	public partial class FilesystemSyncManagerTests : AbstractSyncManagerTests
 	{
 		private Engine serverEngine;
 		private IStorage serverStorage;
@@ -40,10 +40,8 @@ namespace Tomboy
 		private string serverStorageDir;
 
 		[SetUp]
-		public void SetUp ()
+		public new void SetUp ()
 		{
-
-			Console.WriteLine ("SETUP FilesystemSyncTest! " + this.GetType ());
 			var current_dir = Directory.GetCurrentDirectory ();
 			serverStorageDir = Path.Combine (current_dir, "../../syncserver/");
 
@@ -54,7 +52,7 @@ namespace Tomboy
 
 		}
 		[TearDown]
-		public void TearDown ()
+		public new void TearDown ()
 		{
 			CleanupServerDirectory ();
 		}
@@ -88,7 +86,7 @@ namespace Tomboy
 		}
 
 		[Test]
-		public void FirstSyncForBothSides ()
+		public new void FirstSyncForBothSides ()
 		{
 			Assert.That (string.IsNullOrEmpty (clientManifestOne.ServerId));
 
@@ -114,7 +112,7 @@ namespace Tomboy
 		}
 
 		[Test]
-		public void NoteDatesAfterSync ()
+		public new void NoteDatesAfterSync ()
 		{
 			base.NoteDatesAfterSync ();
 
@@ -133,7 +131,7 @@ namespace Tomboy
 		}
 
 		[Test]
-		public void MakeSureTextIsSynced ()
+		public new void MakeSureTextIsSynced ()
 		{
 			base.MakeSureTextIsSynced ();
 
@@ -149,7 +147,7 @@ namespace Tomboy
 		}
 
 		[Test]
-		public void ClientSyncsToNewServer()
+		public new void ClientSyncsToNewServer()
 		{
 			base.ClientSyncsToNewServer ();
 
@@ -184,7 +182,7 @@ namespace Tomboy
 		}
 
 		[Test]
-		public void ClientDeletesNotesAfterFirstSync ()
+		public new void ClientDeletesNotesAfterFirstSync ()
 		{
 			base.ClientDeletesNotesAfterFirstSync ();
 
@@ -199,16 +197,24 @@ namespace Tomboy
 		}
 
 		[Test]
-		public void NoSyncingNeededIfNoChangesAreMade ()
+		public void TwoWaySyncBasicCheckServerRevisions ()
 		{
-			base.NoSyncingNeededIfNoChangesAreMade ();
-		}
+			// performs the same scenario as base.TwoWaySyncBasic () but
+			// tests the server engine, because we need the note revisions
 
-		[Test]
-		[Ignore]
-		public void MassiveAmountOfNotes ()
-		{
-			base.MassiveAmountOfNotes ();
+			// initial sync
+			FirstSyncForBothSides ();
+			
+			foreach (var rev in serverManifest.NoteRevisions.Values)
+				Assert.AreEqual (0, rev);
+			
+			// sync with another client
+			new SyncManager (syncClientTwo, syncServer).DoSync ();
+			
+			// the note revisions shouldn't have changed and be still 0
+			foreach (var rev in serverManifest.NoteRevisions.Values)
+				Assert.AreEqual (0, rev);
+
 		}
 	}
 }

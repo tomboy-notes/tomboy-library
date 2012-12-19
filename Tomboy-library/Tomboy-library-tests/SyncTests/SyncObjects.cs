@@ -24,9 +24,8 @@ using Tomboy.Sync;
 using System.Text;
 using System.IO;
 using Tomboy.Sync.DTO;
-using ServiceStack.Common;
 
-namespace Tomboy
+namespace Tomboy.Sync
 {
 	[TestFixture()]
 	public class SyncObjectsTest
@@ -125,4 +124,3 @@ namespace Tomboy
 		}
 	}
 }
-
