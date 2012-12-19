@@ -159,7 +159,12 @@ namespace Tomboy
 		/// </returns>
 		public Note NewNote ()
 		{
-			Note note = NoteCreator.NewNote (this.notes.Count);
+			// We maybe need a way to detect if we've tried loading the notes yet.
+			// basically it's possible to call NewNote () and not have loaded the notes database yet.
+			// this would then generate a 0 note list.
+			if (this.notes == null || this.notes.Count == 0)
+				GetNotes ();
+			Note note = NoteCreator.NewNote (notes.Count);
 			notes.Add (note.Uri, note);
 			if (NoteAdded != null)
 				NoteAdded (note);
