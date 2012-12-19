@@ -212,9 +212,7 @@ namespace Tomboy
 				if (File.Exists (file_backup_path))
 					File.Delete (file_backup_path);
 				File.Move (file_path, file_backup_path);
-			} else {
-				File.Move (file_path, file_backup_path);
-			}
+			} //TODO: what if there isn't a file to delete. We should at least log this in DEBUG
 		}
 
 		public void SetConfigVariable (string key, string value)
