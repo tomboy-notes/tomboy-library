@@ -225,6 +225,9 @@ namespace Tomboy.Sync.DTO
 
 			tomboy_note.PopulateWith (dto_note);
 
+			// Guid is internal and cannot be set by PopulateWith since it is in another assembly
+			tomboy_note.Guid = dto_note.Guid;
+
 			return tomboy_note;
 		}
 

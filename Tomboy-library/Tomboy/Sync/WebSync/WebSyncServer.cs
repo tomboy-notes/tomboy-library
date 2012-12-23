@@ -110,10 +110,12 @@ namespace Tomboy.Sync.Web
 
 		public bool CommitSyncTransaction ()
 		{
-			// TODO is this really correct? can we always assume the server advances
-			// the current revision by only + 1 ?? Maybe better call the UserApi
-			// to check the real revision?
-			LatestRevision++;
+			bool notes_were_deleted_or_uploaded =
+				DeletedServerNotes.Count > 0 || UploadedNotes.Count > 0;
+
+			if (notes_were_deleted_or_uploaded)
+				this.LatestRevision++;
+
 			return true;
 		}
 
@@ -155,7 +157,6 @@ namespace Tomboy.Sync.Web
 
 			request.LatestSyncRevision = (int) this.LatestRevision; 
 
-			Console.WriteLine (request.LatestSyncRevision);
 			request.Notes = new List<DTONote> ();
 			foreach (string delete_guid in delete_note_guids) {
 				request.Notes.Add (new DTONote () {

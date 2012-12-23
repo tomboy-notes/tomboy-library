@@ -41,7 +41,7 @@ namespace Tomboy.Sync
 		private bool LocalNoteIsNewOrChangedSinceLastSync (Note local_note)
 		{
 			if (client.LastSynchronizedRevision == -1)
-				// this is the first sync, there cannot be local changes
+				// this is the first sync, so the note is new
 				return true;
 
 			if (local_note.MetadataChangeDate > client.LastSyncDate)
@@ -139,6 +139,7 @@ namespace Tomboy.Sync
 				} else {
 					// note exists and was modified since the last sync - oops
 					// TODO conflict resolution
+					throw new Exception ("TODO: conflict resolution!");
 				}
 			}
 		}
@@ -153,15 +154,15 @@ namespace Tomboy.Sync
 		/// </param>
 		private void DeleteClientNotesDeletedByServer (IList<Note> server_notes)
 		{
-			foreach (Note note in clientNotes) {
-				bool note_has_changes = LocalNoteIsNewOrChangedSinceLastSync (note);
-				bool server_wants_note_deleted = !server_notes.Contains (note);
+			foreach (Note local_note in clientNotes) {
+				bool note_has_changes = LocalNoteIsNewOrChangedSinceLastSync (local_note);
+				bool server_wants_note_deleted = !server_notes.Contains (local_note);
 
 				// we don't delete a new note at this point, since we are about to upload
 				// it later in the sync process to the server
 				if (server_wants_note_deleted && !note_has_changes) {
-					client.Engine.DeleteNote (note);
-					client.DeletedNotes.Add (note);
+					client.Engine.DeleteNote (local_note);
+					client.DeletedNotes.Add (local_note);
 				}
 			}
 		}
@@ -179,23 +180,12 @@ namespace Tomboy.Sync
 		private List<Note> FindLocallyModifiedNotes ()
 		{
 			List<Note> new_or_modified_notes = new List<Note> ();
-			foreach (Note note in clientNotes) {
 
-				bool note_has_changes = LocalNoteIsNewOrChangedSinceLastSync (note);
+			foreach (Note local_note in clientNotes) {
 
-				// remember: we dont increase a note revision in the manifest
-				// if we edit the note locally - we can only use the 
-				// metadata change date to find out what notes got modified
+				if (LocalNoteIsNewOrChangedSinceLastSync (local_note))
+					new_or_modified_notes.Add (local_note);
 
-				// TODO OLD CODE FROM TOMBOY
-				// this doesn't seem right, as there will be never this situation
-				// client.GetRevision (note) <= client.LastSynchronizedRevision
-				bool local_note_changed_since_last_sync =
-					 note.MetadataChangeDate > client.LastSyncDate;
-
-				if (note_has_changes || local_note_changed_since_last_sync) {
-					new_or_modified_notes.Add (note);
-				}
 			}
 			return new_or_modified_notes;
 		}
@@ -205,7 +195,7 @@ namespace Tomboy.Sync
 			// assertions: server_updated_notes consist of notes, that have all higher revision
 			// than our local notes. So every note should be saved and replace local notes.
 			// Exception: If a local note was changed since last sync, or a note with the same 
-			// title (but not Guid) exists.
+			// title (but not Guid) exists, there is a possible conflict!.
 
 			// do not directly save the notes, as this would
 			// modifiy our clientNotes array, too (this is due to engine internals)
@@ -225,16 +215,27 @@ namespace Tomboy.Sync
 					throw new NotImplementedException ("TODO conflict resolution: title already exists");
 				}
 
-				bool first_time_sync = client.LastSynchronizedRevision == -1;
-				bool note_has_changes = LocalNoteIsNewOrChangedSinceLastSync (new_or_updated_note); 
-				if (note_has_changes && !first_time_sync) {
-					// fatal: the note has changes on the server (so was changed by another client)
-					// AND has local changes. Either way, we lose data.
-					// TODO conflict resolution
-					throw new NotImplementedException ("TODO conflict resolution: note has changes on client AND server");
+				bool is_first_time_sync = client.LastSynchronizedRevision == -1;
+
+				if (is_first_time_sync) {
+					// on the first sync for the client, we always accept all server notes
+					notes_marked_for_saving_on_client.Add (new_or_updated_note);
+				} else {
+					// check for possible conflict
+					var client_note = clientNotes.FirstOrDefault (n => n == new_or_updated_note);
+					// TODO HACK FIXME this is forbidden - we are not allowed to compare time clocks from 
+					// two different network systems since they may drift
+					// use the client manifest instead to check if the note is tainted
+					if (client_note != null && client_note.MetadataChangeDate > new_or_updated_note.MetadataChangeDate) {
+						// fatal: the note has changes on the server (so was changed by another client)
+						// AND has local changes on the client. Either way, we lose data.
+						// TODO conflict resolution
+						throw new NotImplementedException ("TODO conflict resolution: note has changes on client AND server");
+					} else {
+						// no conflict, we can go ahead and save the note
+						notes_marked_for_saving_on_client.Add (new_or_updated_note);
+					}
 				}
-				// if conflicts resolved, save the note
-				notes_marked_for_saving_on_client.Add (new_or_updated_note);
 			}
 
 			// actually perform the import / save
@@ -278,8 +279,6 @@ namespace Tomboy.Sync
 			// update all notes with changes from the server
 			UpdateClientNotesWithServerVersion (server_updated_notes);
 
-			long new_revision = server.LatestRevision + 1;
-
 			// delete notes that are present in the client store but not on the server anymore
 			DeleteClientNotesDeletedByServer (serverNotesMetadata);
 
@@ -296,7 +295,7 @@ namespace Tomboy.Sync
 			server.CommitSyncTransaction ();
 
 			// set revisions to new state
-			client.LastSynchronizedRevision = new_revision;
+			client.LastSynchronizedRevision = server.LatestRevision;
 			client.LastSyncDate = DateTime.UtcNow;
 		}
 	}

@@ -65,11 +65,15 @@ namespace Tomboy.Sync.Filesystem
 
 		public bool CommitSyncTransaction ()
 		{
-			// TODO
-			this.LatestRevision = this.LatestRevision + 1;
+			bool notes_were_deleted_or_uploaded = 
+				DeletedServerNotes.Count > 0 || UploadedNotes.Count > 0;
+
+			if (notes_were_deleted_or_uploaded)
+				this.LatestRevision++;
 
 			// required for testing, as we will always reuse the same object instance
 			newRevision++;
+
 			return true;
 		}
 
