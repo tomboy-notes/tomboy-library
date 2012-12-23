@@ -317,12 +317,13 @@ namespace Tomboy.Sync
 		{
 			FirstSyncForBothSides ();
 
-			// sync 2nd client
+			var notes = syncServer.GetNoteUpdatesSince (-1);
 
-			Assert.Fail ();
+			var client_notes = clientEngineOne.GetNotes ().Values;
+			client_notes.ToList ().ForEach(n=> { Assert.That (notes.Contains (n)); });
 
+			notes = syncServer.GetNoteUpdatesSince (0);
+			Assert.AreEqual (0, notes.Count);
 		}
-
-
 	}
 }
