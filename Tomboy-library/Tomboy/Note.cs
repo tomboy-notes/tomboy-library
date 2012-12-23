@@ -243,11 +243,18 @@ namespace Tomboy
 			// while the == operator usually checks for reference equalness by default,
 			// we want to compare the Notes by Guid (i.e. for usage in LINQ queries).
 			// Reference equalness can always be checked by object.ReferenceEquals (obj1, obj2)
+	
+			if ((object)note1 == null && (object)note2 == null)
+				return true;
+
+			if ((object)note1 == null || (object)note2 == null)
+				return false;
+
 			return note1.Equals (note2);
 		}
 		public static bool operator != (Note note1, Note note2)
 		{
-			return !note1.Equals (note2);
+			return !(note1 == note2);
 		}
 
 		public override int GetHashCode ()
