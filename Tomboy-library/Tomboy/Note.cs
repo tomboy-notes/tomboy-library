@@ -46,11 +46,9 @@ namespace Tomboy
 		public Note ()
 		{
 			this.Guid = System.Guid.NewGuid ().ToString ();
-			this.uri = "note://tomboy/" + this.Guid;
 		}
 		public Note (string uri) : this ()
 		{
-			this.uri = uri;
 			this.Guid = uri.Replace ("note://tomboy/", "").Replace (".note","");
 		}
 
@@ -77,7 +75,7 @@ namespace Tomboy
 		/// </value>
 		public string Uri {
 			get {
-				return uri;
+				return "note://tomboy/" + this.Guid;
 			}
 		}
 
@@ -230,7 +228,9 @@ namespace Tomboy
 		}
 		public string Guid {
 			get;
-			set;
+			// guid should only be set by tomboy-library itself
+			// (i.e. when setting from a websync)
+			internal set;
 		}
 		// note that .Equals is required when using i.e. List<T>.Contains ()
 		public override bool Equals (object obj)
