@@ -61,11 +61,11 @@ namespace Tomboy.Sync
 			var modified_note = clientEngineOne.GetNotes ().First ().Value;
 			modified_note.Text = "This note has changed.";
 			clientEngineOne.SaveNote (modified_note);
+
+			ClearClientOne (reset: false);
+			ClearClientTwo (reset: false);
 			
 			// modify the same note on the second client
-			// hint: we have to start with a new Engine from scratch, else the same note on both client
-			// will be the SAME object (reference wise)
-			clientEngineTwo = new Engine (clientStorageTwo);
 			var second_modified_note = clientEngineTwo.GetNotes ().Values.Where (n => n == modified_note).First ();
 			
 			// make sure we do not have the same reference
@@ -87,11 +87,23 @@ namespace Tomboy.Sync
 			
 			// check that the note got updated
 			Assert.AreEqual ("This note has changed.", server_modified_note.Text);
+
+			var server_notes = syncServer.GetAllNotes (true);
+			var client_one_notes = clientEngineOne.GetNotes ().Values;
+			var client_two_notes = clientEngineTwo.GetNotes ().Values;
 			
 			// now sync the second client again
 			// there should now be a note conflict!
 			ClearServer (reset: false);
 			ClearClientTwo (reset: false);
+
+			server_notes = syncServer.GetAllNotes (true);
+			client_one_notes = clientEngineOne.GetNotes ().Values;
+			client_two_notes = clientEngineTwo.GetNotes ().Values;
+
+			var c1_rev = clientManifestOne.LastSyncRevision;
+			var c2_rev = clientManifestTwo.LastSyncRevision;
+
 			new SyncManager (syncClientTwo, syncServer).DoSync ();
 		}
 	}

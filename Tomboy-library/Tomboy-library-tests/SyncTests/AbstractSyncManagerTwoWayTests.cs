@@ -53,14 +53,12 @@ namespace Tomboy.Sync
 				Assert.Contains (server_note, client2_notes);
 			}
 
-			// while the global revision is increased by 1 again
-			// TODO - does the server revision really increase if no changes are made on the server?
-			Assert.AreEqual (1, syncServer.LatestRevision);
-			
+			// while the global revision should still be 0
+			Assert.AreEqual (0, syncServer.LatestRevision);
+
 			// the second client should be on the same level as the server
-			// TODO is it really correct that a sync between an empty client and the server
-			// advances the LatestSyncRevision on the server? If not, this should be 0 here
-			Assert.AreEqual (1, syncClientTwo.LastSynchronizedRevision);
+			Assert.AreEqual (syncServer.LatestRevision, syncClientTwo.LastSynchronizedRevision);
+
 
 			// all three participants should have the same server/sync id
 			Assert.AreNotEqual (string.Empty, syncServer.Id);
@@ -71,8 +69,73 @@ namespace Tomboy.Sync
 			Assert.AreEqual (sampleNotes.Count, client1_notes.Count);
 			
 		}
+
 		[Test]
-		public void TwoWaySyncDeletion ()
+		public void TwoWaySyncEditedNote ()
+		{
+			// perform a two way sync, so that both client have
+			// the same notes
+			TwoWaySyncBasic ();
+
+			// edit a note
+			var edited_note = clientEngineOne.GetNotes ().Values.First ();
+			edited_note.Title = "This note has changed!";
+			clientEngineOne.SaveNote (edited_note);
+
+			new SyncManager (syncClientOne, syncServer).DoSync ();
+
+			ClearClientOne ();
+			ClearClientTwo ();
+			ClearServer ();
+
+			new SyncManager (syncClientTwo, syncServer).DoSync ();
+
+			var synced_edited_note = clientEngineTwo.GetNotes ().Values.Single (n => edited_note == n);
+			Assert.AreEqual (edited_note.Title, synced_edited_note.Title);
+		}
+
+		[Test]
+		public void TwoWaySyncFetchOnlyRevisions ()
+		{
+			FirstSyncForBothSides ();
+			// LastSynchronizedRevision is now 0 for clientOne and server
+
+			new SyncManager (this.syncClientTwo, this.syncServer).DoSync ();
+
+			// the second client did not update or delete a note, so the global repo counter
+			// should not have advanced
+			Assert.AreEqual (0, this.syncServer.LatestRevision);
+			Assert.AreEqual (0, this.syncClientOne.LastSynchronizedRevision);
+			Assert.AreEqual (0, this.syncClientTwo.LastSynchronizedRevision);
+
+			ClearClientOne (reset: false);
+			ClearClientTwo (reset: false);
+			ClearServer (reset: false);
+
+			// edit a note
+			var edited_note = clientEngineOne.GetNotes ().Values.First ();
+			edited_note.Title = "This note has changed!";
+			clientEngineOne.SaveNote (edited_note);
+
+			new SyncManager (this.syncClientOne, this.syncServer).DoSync ();
+
+			Assert.AreEqual (1, this.syncServer.LatestRevision);
+			// LastSynchronizedRevision is now 1 for clientOne and server
+
+			ClearClientOne (reset: false);
+			ClearClientTwo (reset: false);
+			ClearServer (reset: false);
+
+			new SyncManager (this.syncClientTwo, this.syncServer).DoSync ();
+
+			Assert.AreEqual (1, this.syncClientOne.LastSynchronizedRevision);
+			Assert.AreEqual (1, this.syncServer.LatestRevision);
+			Assert.AreEqual (1, this.syncClientTwo.LastSynchronizedRevision);
+
+		}
+
+		[Test]
+		public void TwoWaySync_Deletion ()
 		{
 			// initial sync
 			FirstSyncForBothSides ();
@@ -80,7 +143,6 @@ namespace Tomboy.Sync
 			// sync with second client
 			new SyncManager (syncClientTwo, syncServer).DoSync ();
 
-		
 			// delete a note on the first client
 			var deleted_note = clientEngineOne.GetNotes ().Values.First ();
 			clientEngineOne.DeleteNote (deleted_note);
@@ -91,7 +153,7 @@ namespace Tomboy.Sync
 			var second_deleted_note = clientEngineTwo.GetNotes ().Values.First (n => deleted_note != n);
 			clientEngineTwo.DeleteNote (second_deleted_note);
 			clientManifestTwo.NoteDeletions.Add (second_deleted_note.Guid, second_deleted_note.Title);
-		
+
 			// re-read all notes from disk
 			ClearClientOne (reset: false);
 			ClearClientTwo (reset: false);

@@ -197,23 +197,14 @@ namespace Tomboy.Sync
 		}
 
 		[Test]
-		public void TwoWaySyncBasicCheckServerRevisions ()
+		public void TwoWaySyncFetchOnlyRevisions ()
 		{
-			// performs the same scenario as base.TwoWaySyncBasic () but
-			// tests the server engine, because we need the note revisions
+			base.TwoWaySyncFetchOnlyRevisions ();
 
-			// initial sync
-			FirstSyncForBothSides ();
-			
+			Assert.AreEqual (1, serverManifest.LastSyncRevision);
+
 			foreach (var rev in serverManifest.NoteRevisions.Values)
-				Assert.AreEqual (0, rev);
-			
-			// sync with another client
-			new SyncManager (syncClientTwo, syncServer).DoSync ();
-			
-			// the note revisions shouldn't have changed and be still 0
-			foreach (var rev in serverManifest.NoteRevisions.Values)
-				Assert.AreEqual (0, rev);
+				Assert.LessOrEqual (rev, 1);
 
 		}
 	}

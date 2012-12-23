@@ -170,6 +170,22 @@ namespace Tomboy.Sync
 			Assert.AreEqual (0, syncServer.LatestRevision);
 
 			Assert.Greater (syncServer.UploadedNotes.Count, 0);
+
+			ClearClientOne (reset: false);
+			ClearClientTwo (reset: false);
+			ClearServer (reset: false);
+		}
+
+		[Test]
+		public void ClientHasAllNotesAfterFirstSync ()
+		{
+			FirstSyncForBothSides ();
+
+			var client_one_notes = clientEngineOne.GetNotes ().Values;
+			Assert.AreEqual (sampleNotes.Count, client_one_notes.Count);
+
+			foreach (var note in sampleNotes)
+				Assert.Contains (note, client_one_notes);
 		}
 	
 		[Test]
@@ -295,5 +311,18 @@ namespace Tomboy.Sync
 			Assert.AreEqual (1024, clientEngineOne.GetNotes ().Count);
 			Assert.AreEqual (1024, syncServer.UploadedNotes.Count);
 		}
+
+		[Test]
+		public void GetNoteUpdateSinceTest ()
+		{
+			FirstSyncForBothSides ();
+
+			// sync 2nd client
+
+			Assert.Fail ();
+
+		}
+
+
 	}
 }

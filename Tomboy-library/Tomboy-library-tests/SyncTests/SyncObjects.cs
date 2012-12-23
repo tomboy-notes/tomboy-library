@@ -80,6 +80,23 @@ namespace Tomboy.Sync
 		}
 
 		[Test]
+		public void ConvertUriTests ()
+		{
+			var tomboy_note = new Note ();
+			var dto_note = tomboy_note.ToDTONote ();
+
+			Assert.That (!string.IsNullOrEmpty (dto_note.Guid));
+
+			Assert.AreEqual (tomboy_note.Guid, dto_note.Guid);
+			Assert.That (tomboy_note.Uri.Contains (dto_note.Guid));
+			Assert.That (tomboy_note.Uri.Contains (tomboy_note.Guid));
+
+			var tomboy_note_2 = dto_note.ToTomboyNote ();
+			Assert.AreEqual (tomboy_note.Guid, tomboy_note_2.Guid);
+			Assert.AreEqual (tomboy_note.Uri, tomboy_note_2.Uri);
+		}
+
+		[Test]
 		public void ConvertFromTomboyNoteToDTO()
 		{
 			var tomboy_note = new Note ();
@@ -115,8 +132,6 @@ namespace Tomboy.Sync
 			Assert.AreEqual (tomboy_note.ChangeDate, dto_note.ChangeDate);
 			Assert.AreEqual (tomboy_note.CreateDate, dto_note.CreateDate);
 			Assert.AreEqual (tomboy_note.MetadataChangeDate, dto_note.MetadataChangeDate);
-
-			Assert.AreEqual (tomboy_note.Guid, dto_note.Guid);
 
 			// FAILS:
 			Assert.Fail ("TODO: Tags must be copied over");
