@@ -40,10 +40,10 @@
     <Reference Include="System.Net" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="ServiceStack.Common">
-      <HintPath>..\ServiceStack\lib\ServiceStack.Common.dll</HintPath>
+      <HintPath>Libs\ServiceStack-v3.9.32\ServiceStack.Common.dll</HintPath>
     </Reference>
     <Reference Include="ServiceStack.Text">
-      <HintPath>..\ServiceStack\lib\ServiceStack.Text.dll</HintPath>
+      <HintPath>Libs\ServiceStack-v3.9.32\ServiceStack.Text.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

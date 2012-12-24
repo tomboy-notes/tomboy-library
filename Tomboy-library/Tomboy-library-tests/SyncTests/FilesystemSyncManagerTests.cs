@@ -108,7 +108,6 @@ namespace Tomboy.Sync
 			Assert.AreEqual (0, clientManifestOne.LastSyncRevision);
 			Assert.AreEqual (0, serverManifest.LastSyncRevision);
 
-
 		}
 
 		[Test]

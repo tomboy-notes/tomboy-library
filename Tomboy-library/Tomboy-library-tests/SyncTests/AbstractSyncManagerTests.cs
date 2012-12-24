@@ -173,7 +173,6 @@ namespace Tomboy.Sync
 		[Test]
 		public void FirstSyncForBothSides ()
 		{
-
 			// before the sync, the client should have an empty AssociatedServerId
 			Assert.That (string.IsNullOrEmpty (syncClientOne.AssociatedServerId));
 
@@ -192,7 +191,8 @@ namespace Tomboy.Sync
 
 			ClearClientOne (reset: false);
 			ClearClientTwo (reset: false);
-			ClearServer (reset: false);
+
+			Assert.Greater (syncServer.UploadedNotes.Count, 0);
 		}
 
 		[Test]
