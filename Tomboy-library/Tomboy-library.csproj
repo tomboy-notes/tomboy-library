@@ -70,7 +70,6 @@
     <Compile Include="Tomboy\Tags\TagManager.cs" />
     <Compile Include="Tomboy\SearchEngine.cs" />
     <Compile Include="Tomboy\Sync\Sync.cs" />
-    <Compile Include="Tomboy\Sync\ISyncAgent.cs" />
     <Compile Include="Tomboy\Sync\SyncInterfaces.cs" />
     <Compile Include="Tomboy\Sync\SyncManifest.cs" />
     <Compile Include="Tomboy\Sync\Filesystem\FilesystemSyncServer.cs" />

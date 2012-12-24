@@ -1,6 +1,4 @@
 //
-//  TwoWaySyncTests.cs
-//
 //  Author:
 //       Timo Dörr <timo@latecrew.de>
 //

@@ -2,6 +2,7 @@
 //       jjennings <jaredljennings@gmail.com>
 //  
 //  Copyright (c) 2012 jjennings
+//  Timo Dörr
 //  Robert Nordan
 //  Alex Graveley (original author)
 // 

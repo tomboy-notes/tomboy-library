@@ -1,5 +1,7 @@
 //
-//  Copyright (c) Sandy Armstrong and others
+//  Copyright (c) ?? - 2012 Sandy Armstrong and others
+//  Copyright (c) 2012 Timo Dörr <timo@latecrew.de>
+//
 //  File contents partially taken from Tomboy source
 //	at http://git.gnome.org/browse/tomboy/tree/Tomboy/Synchronization/SyncManager.cs 
 //

@@ -60,14 +60,6 @@ namespace Tomboy.Sync.Web
 			var restClient = new JsonServiceClient ();
 			restClient.SetAccessToken (accessToken);
 
-			/*restClient.LocalHttpWebResponseFilter += (response) => {
-				if (response.ResponseUri.ToString ().Contains ("notes")) {
-					var stream = response.GetResponseStream ();
-					var reader = new StreamReader (stream);		
-					var text = reader.ReadToEnd ();
-					Console.WriteLine (text);
-				}
-			}; */
 			return restClient;
 		}
 
