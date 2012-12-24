@@ -40,7 +40,10 @@
     <Reference Include="System.Net" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="ServiceStack.Common">
-      <HintPath>..\..\lib\ServiceStack.Common.dll</HintPath>
+      <HintPath>..\ServiceStack\lib\ServiceStack.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text">
+      <HintPath>..\ServiceStack\lib\ServiceStack.Text.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -81,7 +84,7 @@
 &gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/sync_from_scratch
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DevDefined.OAuth\src\DevDefined.OAuth\DevDefined.OAuth.csproj">
+    <ProjectReference Include="..\DevDefined.OAuth\src\DevDefined.OAuth\DevDefined.OAuth.csproj">
       <Project>{61B700B6-3911-4CEF-8751-7F42CA765068}</Project>
       <Name>DevDefined.OAuth</Name>
     </ProjectReference>

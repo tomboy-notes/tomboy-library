@@ -1,0 +1,6 @@
+[submodule "ServiceStack"]
+	path = ServiceStack
+	url = git://github.com/ServiceStack/ServiceStack.git
+[submodule "DevDefined.OAuth"]
+	path = DevDefined.OAuth
+	url = git://github.com/bittercoder/DevDefined.OAuth.git

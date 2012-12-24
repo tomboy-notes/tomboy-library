@@ -57,11 +57,6 @@ namespace Tomboy
 		}
 		#endregion Constructors
 
-		public Sync.ISyncAgent SyncAgent {
-			get;
-			set;
-		}
-
 		#region delegate
 
 		public delegate void NoteAddedEventHandler (Note note);
