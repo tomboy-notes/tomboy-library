@@ -47,10 +47,5 @@ namespace Tomboy
 			notes = syncServer.GetAllNotes (false);
 			Assert.AreEqual (0, notes.Count);
 		}
-		[TearDown]
-		public new void TearDown ()
-		{
-		}
 	}
 }
-

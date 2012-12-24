@@ -307,7 +307,7 @@ namespace Tomboy.Sync
 			
 			// perform first sync
 			FirstSyncForBothSides ();
-			
+
 			Assert.AreEqual (1024, clientEngineOne.GetNotes ().Count);
 			Assert.AreEqual (1024, syncServer.UploadedNotes.Count);
 		}

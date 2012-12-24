@@ -117,6 +117,10 @@ namespace Tomboy.Sync.DTO
 	[DataContract]
 	public class DTONote
 	{
+		public DTONote ()
+		{
+			this.Tags = new string[] {};
+		}
 		[DataMember (Name = "title")]
 		public string Title { get; set; }
 
@@ -174,29 +178,14 @@ namespace Tomboy.Sync.DTO
 		[DataMember (Name = "last-sync-revision")]
 		public long LastSyncRevision { get; set; }
 
-		public IDictionary<string, Tag> Tags { get; set; }
-
 		[DataMember (Name = "tags")]
-		public string[] TagsAsString {
-			get {
-				if (Tags == null) return null;
-				return Tags.Values.Select (tag => tag.Name).ToArray ();
-			}
-			set {
-				Tags = new Dictionary<string, Tag> ();
-				foreach (string tag in value) {
-					var t = new Tag (tag);
-					Tags.Add (t.Name, t);
-				}
-			}
-		}
+		public string[] Tags { get; set; }
 
 		[DataMember (Name = "open-on-startup")]
 		public bool OpenOnStartup { get; set; }
 
 		[DataMember (Name = "pinned")]
 		public bool Pinned { get; set; }
-
 
 		[DataMember (Name = "command")]
 		public string Command { get; set; }
@@ -215,6 +204,9 @@ namespace Tomboy.Sync.DTO
 			// using ServiceStack simple auto mapper
 			dto_note.PopulateWith (tomboy_note);
 
+			// copy over tags
+			dto_note.Tags = tomboy_note.Tags.Keys.ToArray ();
+
 			return dto_note;
 		}
 
@@ -225,8 +217,14 @@ namespace Tomboy.Sync.DTO
 
 			tomboy_note.PopulateWith (dto_note);
 
-			// Guid is internal and cannot be set by PopulateWith since it is in another assembly
+			// Guid's set is internal and cannot be set by PopulateWith since it is in another assembly
 			tomboy_note.Guid = dto_note.Guid;
+
+			// copy over tags
+			foreach (var string_tag in dto_note.Tags) {
+				var tomboy_tag = TagManager.Instance.GetOrCreateTag (string_tag);
+				tomboy_note.Tags.Add (string_tag, tomboy_tag);
+			}
 
 			return tomboy_note;
 		}

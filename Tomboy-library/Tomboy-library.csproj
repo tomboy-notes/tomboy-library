@@ -37,12 +37,6 @@
     <Reference Include="Mono.Posix" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Core" />
-    <Reference Include="DevDefined.OAuth">
-      <HintPath>Libs\DevDefined.OAuth.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>Libs\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System.Net" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="ServiceStack.Common">
@@ -86,5 +80,11 @@
   </ItemGroup>
   <ItemGroup>
 &gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/sync_from_scratch
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\DevDefined.OAuth\src\DevDefined.OAuth\DevDefined.OAuth.csproj">
+      <Project>{61B700B6-3911-4CEF-8751-7F42CA765068}</Project>
+      <Name>DevDefined.OAuth</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

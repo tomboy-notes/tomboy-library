@@ -24,6 +24,8 @@ using Tomboy.Sync;
 using System.Text;
 using System.IO;
 using Tomboy.Sync.DTO;
+using Tomboy.Tags;
+using System.Linq;
 
 namespace Tomboy.Sync
 {
@@ -114,8 +116,8 @@ namespace Tomboy.Sync
 
 			Assert.AreEqual (tomboy_note.Guid, dto_note.Guid);
 
-			Assert.Fail ("TODO: Tags must be copied over");
-			Assert.AreEqual (tomboy_note.Tags, dto_note.Tags);
+			var tag_intersection = dto_note.Tags.Intersect (tomboy_note.Tags.Keys);
+			Assert.AreEqual (dto_note.Tags.Count (), tag_intersection.Count ());
 		}
 		[Test]
 		public void ConvertFromDTONoteToTomboyNote()
@@ -133,9 +135,35 @@ namespace Tomboy.Sync
 			Assert.AreEqual (tomboy_note.CreateDate, dto_note.CreateDate);
 			Assert.AreEqual (tomboy_note.MetadataChangeDate, dto_note.MetadataChangeDate);
 
-			// FAILS:
-			Assert.Fail ("TODO: Tags must be copied over");
-			Assert.AreEqual (tomboy_note.Tags, dto_note.Tags);
+			var tag_intersection = dto_note.Tags.Intersect (tomboy_note.Tags.Keys);
+			Assert.AreEqual (dto_note.Tags.Count (), tag_intersection.Count ());
+		}
+
+		[Test]
+		public void ConvertFromDTOWithTags ()
+		{
+			var dto_note = new DTONote ();
+			dto_note.Tags = new string[] { "school", "shopping", "fun" };
+
+			var tomboy_note = dto_note.ToTomboyNote ();
+
+			foreach (string tag in dto_note.Tags) {
+				Assert.Contains (tag, tomboy_note.Tags.Keys);
+			}
+		}
+		[Test]
+		public void ConvertToDTOWithTags ()
+		{
+			var tomboy_note = new Note ();
+			tomboy_note.Tags.Add ("school", new Tag ("school"));
+			tomboy_note.Tags.Add ("shopping", new Tag ("shopping"));
+			tomboy_note.Tags.Add ("fun", new Tag ("fun"));
+
+			var dto_note = tomboy_note.ToDTONote ();
+
+			foreach (string tag in tomboy_note.Tags.Keys) {
+				Assert.Contains (tag, dto_note.Tags);
+			}
 		}
 	}
 }
