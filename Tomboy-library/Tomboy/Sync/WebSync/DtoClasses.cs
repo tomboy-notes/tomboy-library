@@ -119,7 +119,12 @@ namespace Tomboy.Sync.DTO
 	{
 		public DTONote ()
 		{
+			// set some default values
 			this.Tags = new string[] {};
+			var epoch_start = DateTime.MinValue.AddYears (1).ToString (Writer.DATE_TIME_FORMAT);
+			this.MetadataChangeDate = epoch_start;
+			this.ChangeDate = epoch_start;
+			this.CreateDate = epoch_start;
 		}
 		[DataMember (Name = "title")]
 		public string Title { get; set; }
@@ -140,40 +145,17 @@ namespace Tomboy.Sync.DTO
 		[DataMember (Name = "guid")]
 		public string Guid { get ; set; }
 
-		public DateTime CreateDate { get; set; }
 
+		// the date fields are strings, in contract to DateTime
+		// with the Tomboy.Note
 		[DataMember (Name = "create-date")]
-		public string CreateDateFormated {
-			get {
-				return CreateDate.ToString (Tomboy.Writer.DATE_TIME_FORMAT);
-			}
-			set {
-				CreateDate = DateTime.Parse (value);
-			}
-		}
-
-		public DateTime ChangeDate { get; set; }
+		public string CreateDate { get; set; }
 
 		[DataMember (Name = "last-change-date")]
-		public string LastChangeDateFormated {
-			get {
-				return ChangeDate.ToString (Tomboy.Writer.DATE_TIME_FORMAT);
-			}
-			set {
-				ChangeDate = DateTime.Parse (value);
-			}
-		}
+		public string ChangeDate { get; set; }
 
-		public DateTime MetadataChangeDate { get; set; }
 		[DataMember (Name = "last-metadata-change-date")]
-		public string MetadataChangeDateFormated {
-			get {
-				return MetadataChangeDate.ToString (Tomboy.Writer.DATE_TIME_FORMAT);
-			}
-			set {
-				MetadataChangeDate = DateTime.Parse (value);
-			}
-		}
+		public string MetadataChangeDate { get; set; }
 
 		[DataMember (Name = "last-sync-revision")]
 		public long LastSyncRevision { get; set; }
@@ -207,6 +189,11 @@ namespace Tomboy.Sync.DTO
 			// copy over tags
 			dto_note.Tags = tomboy_note.Tags.Keys.ToArray ();
 
+			// correctly format the DateTime to strings
+			dto_note.CreateDate = tomboy_note.CreateDate.ToString (Tomboy.Writer.DATE_TIME_FORMAT);
+			dto_note.ChangeDate = tomboy_note.ChangeDate.ToString (Tomboy.Writer.DATE_TIME_FORMAT);
+			dto_note.MetadataChangeDate = tomboy_note.MetadataChangeDate.ToString (Tomboy.Writer.DATE_TIME_FORMAT);
+
 			return dto_note;
 		}
 
@@ -225,6 +212,11 @@ namespace Tomboy.Sync.DTO
 				var tomboy_tag = TagManager.Instance.GetOrCreateTag (string_tag);
 				tomboy_note.Tags.Add (string_tag, tomboy_tag);
 			}
+
+			// create DateTime from strings
+			tomboy_note.ChangeDate = DateTime.Parse (dto_note.ChangeDate);
+			tomboy_note.CreateDate = DateTime.Parse (dto_note.CreateDate);
+			tomboy_note.MetadataChangeDate = DateTime.Parse (dto_note.MetadataChangeDate);
 
 			return tomboy_note;
 		}
