@@ -163,8 +163,14 @@ namespace Tomboy.Sync
 							xml.ReadToDescendant ("note");
 							do {
 								var guid = xml.GetAttribute ("guid");
-								int rev = int.Parse (xml.GetAttribute ("latest-revision"));
-								manifest.NoteRevisions.Add (guid, rev);
+								var xmlrev = xml.GetAttribute ("latest-revision");
+								if (guid != null && xmlrev != null) {
+									int rev = int.Parse (xmlrev);
+									manifest.NoteRevisions.Add (guid, rev);
+								}
+								else
+									break;
+
 							} while (xml.ReadToNextSibling ("note"));
 							break;
 						case "note-deletions":
@@ -172,7 +178,10 @@ namespace Tomboy.Sync
 							do {
 								var guid = xml.GetAttribute ("guid");
 								string title = xml.GetAttribute ("title");
-								manifest.NoteDeletions.Add (guid, title);
+								if (string.IsNullOrEmpty (title) || string.IsNullOrEmpty(guid))
+									break;
+								else
+									manifest.NoteDeletions.Add (guid, title);
 							} while (xml.ReadToNextSibling ("note"));
 							break;
 						}

@@ -80,6 +80,22 @@ namespace Tomboy.Sync
 			}
 
 		}
+		[Test]
+		public void ReadWriteEmptySyncManifest ()
+		{
+			var empty_manifest = new SyncManifest ();
+
+			// write the sample manifest to XML
+			StringBuilder builder = new StringBuilder ();
+			XmlWriter writer = XmlWriter.Create (builder);
+
+			SyncManifest.Write (writer, empty_manifest);
+
+			// read in the results
+			var textreader = new StringReader (builder.ToString ());
+			var xmlreader = new XmlTextReader (textreader);
+			var manifest = SyncManifest.Read (xmlreader);
+		}
 
 		[Test]
 		public void ConvertUriTests ()
