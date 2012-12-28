@@ -223,12 +223,11 @@ namespace Tomboy.Sync
 				} else {
 					// check for possible conflict
 					var client_note = clientNotes.FirstOrDefault (n => n == new_or_updated_note);
-					// TODO HACK FIXME this is forbidden - we are not allowed to compare time clocks from 
-					// two different network systems since they may drift
-					// use the client manifest instead to check if the note is tainted
-					if (client_note != null && client_note.MetadataChangeDate > new_or_updated_note.MetadataChangeDate) {
-						// fatal: the note has changes on the server (so was changed by another client)
-						// AND has local changes on the client. Either way, we lose data.
+					// FIXME comparing two different dates on the client is subject to bugs
+					// if the client's clock jumps or goes severly wrong and is then adjusted
+					if (client_note != null && client_note.MetadataChangeDate > client.LastSyncDate) {
+						// fatal: the note is marked as newer on the server, but also has changes
+						// on the client - we would lose data, so this is a conflict
 						// TODO conflict resolution
 						throw new NotImplementedException ("TODO conflict resolution: note has changes on client AND server");
 					} else {
