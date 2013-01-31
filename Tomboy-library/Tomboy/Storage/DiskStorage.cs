@@ -85,7 +85,7 @@ namespace Tomboy
 		
 		public void SaveNote (Note note)
 		{
-			string file = Path.Combine (path_to_notes, Utils.GetNoteFileNameFromURI (note));
+			string file = Utils.GetNoteFileNameFromURI (note);
 			Console.WriteLine ("Saving Note {0}, FileName: {1}", note.Title, file);
 			Write (file, note);
 		}
