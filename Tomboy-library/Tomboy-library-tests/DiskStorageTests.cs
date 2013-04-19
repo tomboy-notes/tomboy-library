@@ -60,6 +60,22 @@ namespace Tomboy
 			Note StartHere =  DiskStorage.Read (StartHereNotePath, "tomboy://90d8eb70-989d-4b26-97bc-ba4b9442e51f");
 			Assert.AreEqual (StartHere.Title, "Start Here");
 		}
+
+		[Test()]
+		public void Read_ProperNoteFile_ReadTags ()
+		{
+			//TODO: Has a dependence on Reader.Read, how do we break it?
+			string StartHereNotePath = Path.Combine ("..", "..", "test_notes", "proper_notes", "90d8eb70-989d-4b26-97bc-ba4b9442e51f.note");
+			Note StartHere =  DiskStorage.Read (StartHereNotePath, "tomboy://90d8eb70-989d-4b26-97bc-ba4b9442e51f");
+
+			var tags = StartHere.Tags;
+			Assert.AreEqual (2, tags.Count);
+
+			var tag_keys = tags.Keys;
+			Assert.Contains ("school", tag_keys);
+			Assert.Contains ("system:notebook:Computer Notes", tag_keys);
+
+		}
 		
 		[Test()]
 		public void GetNotes_NotesExist_ReturnsNotes ()

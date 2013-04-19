@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 
 using Tomboy.Tags;
+using System.Linq;
 
 namespace Tomboy
 {
@@ -85,12 +86,25 @@ namespace Tomboy
 				addNotes.Add (addedNote.Title);
 			};
 			note.Text = "Unit test note by NewNote() method \\n Added text";
+			note.Tags.Add ("school", new Tag ("school"));
 			engine.SaveNote (note);
 			string noteContents = System.IO.File.ReadAllText (NOTE_PATH);
 			Assert.IsTrue (noteContents.Contains ("Added text"));
+			Assert.IsTrue (noteContents.Contains ("school"));
 			Assert.IsTrue (addNotes.Contains (note.Title));
 		}
 
+		[Test()]
+		public void Engine_Save_Note_Tags_Updated()
+		{
+			note.Tags.Add ("school", new Tag ("school"));
+			engine.SaveNote (note);
+
+			var storedNotes = engine.GetNotes ().Values;
+			var storedNote = storedNotes.First (n => n == note);
+			Assert.AreEqual (storedNote.Tags.Count, 1);
+			Assert.AreEqual (storedNote.Tags.Keys.First (), "school");
+		}
 		[Test()]
 		public void Engine_Save_Note_CorrectModifiedTime_Success ()
 		{

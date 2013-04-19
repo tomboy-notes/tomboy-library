@@ -26,6 +26,7 @@ using ServiceStack.Common;
 
 namespace Tomboy.Sync.DTO
 {
+	// why is this class needed?
 	[DataContract]
 	public class ApiRequest
 	{

@@ -23,6 +23,7 @@ We've created a note called <link:internal>Using Links in Tomboy</link:internal>
   <y>93</y>
   <tags>
     <tag>system:notebook:Computer Notes</tag>
+    <tag>school</tag>
   </tags>
   <open-on-startup>False</open-on-startup>
 </note>

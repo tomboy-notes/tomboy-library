@@ -24,6 +24,7 @@ using System.IO;
 using Tomboy.Sync.Filesystem;
 using System.Linq;
 using System.Collections.Generic;
+using Tomboy.Tags;
 
 namespace Tomboy.Sync
 {
@@ -140,14 +141,19 @@ namespace Tomboy.Sync
 		protected virtual void CreateSomeSampleNotes (Engine engine)
 		{
 			sampleNotes = new List<Note> ();
-			
-			sampleNotes.Add(new Note () {
+
+			var note1 = new Note () {
 				Title = "Sämplé title 1!",
 				Text = "** This is the text of Sämple Note 1**",
 				CreateDate = DateTime.Now,
 				MetadataChangeDate = DateTime.Now,
 				ChangeDate = DateTime.Now
-			});
+			};
+			// TODO add system tags
+			note1.Tags.Add ("school", new Tag ("school"));
+			note1.Tags.Add ("fun", new Tag ("fun"));
+			note1.Tags.Add ("shopping", new Tag ("shopping"));
+			sampleNotes.Add (note1);
 			
 			sampleNotes.Add(new Note () {
 				Title = "2nd Example",
@@ -246,6 +252,18 @@ namespace Tomboy.Sync
 			foreach (var note in clientEngineOne.GetNotes ().Values) {
 				var note_on_server = server_notes.Single (n => n == note);
 				Assert.AreEqual (note_on_server.Text, note.Text);
+			}
+		}
+		[Test]
+		public void MakeSureAllTagsAreSynced ()
+		{
+			FirstSyncForBothSides ();
+			var server_notes = syncServer.GetAllNotes (true);
+			foreach (var note_on_client in clientEngineOne.GetNotes ().Values) {
+				var note_on_server = server_notes.Single (n => n == note_on_client);
+
+				// tags counts are equal
+				Assert.AreEqual (note_on_server.Tags.Count, note_on_client.Tags.Count);
 			}
 		}
 

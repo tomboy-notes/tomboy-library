@@ -40,9 +40,8 @@ namespace Tomboy.Sync
 		protected virtual void CreateSomeSampleNotes ()
 		{
 			sampleNotes = new List<Note> ();
-		
-			// TODO: add tags to the notes!
 
+			// TODO: add tags to the notes!
 			sampleNotes.Add(new Note () {
 				Title = "Sämplé title 1!",
 				Text = "** This is the text of Sämple Note 1**",

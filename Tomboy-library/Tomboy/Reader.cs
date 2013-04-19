@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 using System;
 using System.Xml;
+using Tomboy.Tags;
 
 namespace Tomboy
 {
@@ -83,6 +84,21 @@ namespace Tomboy
 								note.CreateDate = date;
 							else
 								note.CreateDate = DateTime.Now;
+							break;
+						case "tags":
+							var inner = xml.ReadSubtree ();
+							string tag;
+							inner.ReadStartElement();
+							while(inner.Read ()) {
+								if (inner.NodeType == XmlNodeType.EndElement)
+									break;
+								inner.ReadStartElement();
+								tag = inner.ReadString ();
+								note.Tags.Add (tag, new Tag (tag));
+								inner.ReadEndElement();
+							}
+							inner.ReadEndElement();
+							xml.ReadEndElement();
 							break;
 						case "x":
 							if (int.TryParse (xml.ReadString (), out num))
