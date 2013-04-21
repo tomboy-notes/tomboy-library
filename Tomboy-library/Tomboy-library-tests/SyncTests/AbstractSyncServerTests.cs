@@ -37,12 +37,16 @@ namespace Tomboy.Sync
 		protected ISyncServer syncServer;
 		protected List<Note> sampleNotes;
 
-		protected virtual void CreateSomeSampleNotes ()
+		protected void CreateSomeSampleNotes ()
 		{
-			sampleNotes = new List<Note> ();
+			sampleNotes = GetSomeSampleNotes ();
+		}
+		public static List<Note> GetSomeSampleNotes ()
+		{
+			var sample_notes = new List<Note> ();
 
 			// TODO: add tags to the notes!
-			sampleNotes.Add(new Note () {
+			sample_notes.Add(new Note () {
 				Title = "Sämplé title 1!",
 				Text = "** This is the text of Sämple Note 1**",
 				CreateDate = DateTime.Now,
@@ -50,7 +54,7 @@ namespace Tomboy.Sync
 				ChangeDate = DateTime.Now
 			});
 			
-			sampleNotes.Add(new Note () {
+			sample_notes.Add(new Note () {
 				Title = "2nd Example",
 				Text = "This is the text of the second sample note",
 				CreateDate = new DateTime (1984, 04, 14, 4, 32, 0, DateTimeKind.Utc),
@@ -59,13 +63,15 @@ namespace Tomboy.Sync
 			});
 			
 			// note that DateTime.MinValue is not an allowed timestamp for notes!
-			sampleNotes.Add(new Note () {
+			sample_notes.Add(new Note () {
 				Title = "3rd exampel title",
 				Text = "Another example note",
 				CreateDate = DateTime.MinValue + new TimeSpan (1, 0, 0, 0, 0),
 				ChangeDate = DateTime.MinValue + new TimeSpan (1, 0, 0, 0, 0),
 				MetadataChangeDate = DateTime.MinValue + new TimeSpan (1, 0, 0, 0, 0)
 			});
+
+			return sample_notes;
 		}
 
 		[Test]
