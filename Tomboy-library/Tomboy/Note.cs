@@ -229,9 +229,7 @@ namespace Tomboy
 		}
 		public string Guid {
 			get;
-			// guid should only be set by tomboy-library itself
-			// (i.e. when setting from a websync)
-			internal set;
+			set;
 		}
 		// note that .Equals is required when using i.e. List<T>.Contains ()
 		public override bool Equals (object obj)
