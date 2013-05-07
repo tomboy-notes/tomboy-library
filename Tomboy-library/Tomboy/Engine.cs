@@ -51,6 +51,8 @@ namespace Tomboy
 		/// </param>
 		public Engine (IStorage storage)
 		{
+			if (storage == null)
+				throw new ArgumentNullException ("storage");
 			this.storage = storage;
 			if (notes == null)
 				notes = new Dictionary<string, Note> ();

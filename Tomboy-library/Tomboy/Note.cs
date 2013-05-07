@@ -121,7 +121,7 @@ namespace Tomboy
 				return create_date;
 			}
 			set {
-				create_date = value;
+				create_date = value.ToUniversalTime ();
 			}
 		}
 
@@ -134,8 +134,9 @@ namespace Tomboy
 				return change_date;
 			}
 			set {
-				change_date = value;
-				metadata_change_date = value;
+				// we always convert to utc time
+				change_date = value.ToUniversalTime ();
+				metadata_change_date = change_date;
 			}
 		}
 
@@ -148,7 +149,7 @@ namespace Tomboy
 				return metadata_change_date;
 			}
 			set {
-				metadata_change_date = value;
+				metadata_change_date = value.ToUniversalTime ();
 			}
 		}
 

@@ -28,8 +28,14 @@ namespace Tomboy.Sync
 {
 	public class SyncManifest
 	{
+		private DateTime lastSyncDate;
 		public DateTime LastSyncDate {
-			get; set;
+			get {
+				return lastSyncDate;
+			}
+			set {
+				lastSyncDate = value.ToUniversalTime ();
+			}
 		}
 
 		public long LastSyncRevision {
