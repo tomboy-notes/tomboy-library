@@ -31,7 +31,7 @@ namespace Tomboy.Sync
 		public void TwoWaySyncBasic ()
 		{
 			// initial sync
-			FirstSyncForBothSides ();
+			FirstSyncForBothSidesTest ();
 
 			// revision should have increased from -1 to 0
 			Assert.AreEqual (0, syncServer.LatestRevision);
@@ -95,7 +95,7 @@ namespace Tomboy.Sync
 		[Test]
 		public void TwoWaySyncFetchOnlyRevisions ()
 		{
-			FirstSyncForBothSides ();
+			FirstSyncForBothSidesTest ();
 			// LastSynchronizedRevision is now 0 for clientOne and server
 
 			new SyncManager (this.syncClientTwo, this.syncServer).DoSync ();
@@ -136,7 +136,7 @@ namespace Tomboy.Sync
 		public void TwoWaySync_Deletion ()
 		{
 			// initial sync
-			FirstSyncForBothSides ();
+			FirstSyncForBothSidesTest ();
 			
 			// sync with second client
 			new SyncManager (syncClientTwo, syncServer).DoSync ();
@@ -204,7 +204,7 @@ namespace Tomboy.Sync
 		[Test]
 		public void TwoWayClientDeletedNoteHasUpdatesOnServer ()
 		{
-			FirstSyncForBothSides ();
+			FirstSyncForBothSidesTest ();
 			
 			// sync second client
 			new SyncManager (syncClientTwo, syncServer).DoSync ();

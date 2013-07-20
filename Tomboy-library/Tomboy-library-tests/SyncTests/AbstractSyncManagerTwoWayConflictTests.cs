@@ -28,6 +28,11 @@ namespace Tomboy.Sync
 {
 	public partial class AbstractSyncManagerTests
 	{
+		// TODO 
+		// conflict resolution requires more work (think about GUI interaction)
+		// implement this and re-enable those unit tests
+
+		[Ignore]
 		[Test]
 		public void TwoWayConflictTitleAlreadyExists ()
 		{
@@ -37,7 +42,7 @@ namespace Tomboy.Sync
 			clientEngineTwo.SaveNote (NoteCreator.NewNote ("Conflict Title", "this note originates from clientTwo"));
 
 			// sync clientOne with server
-			FirstSyncForBothSides ();
+			FirstSyncForBothSidesTest ();
 
 			var server_notes = syncServer.GetAllNotes (true);
 			Assert.AreEqual (4, server_notes.Count);
@@ -48,11 +53,12 @@ namespace Tomboy.Sync
 			// TODO Assert the right exception is thrown / have conflict resolution in place
 		}
 
+		[Ignore]
 		[Test]
 		public void TwoWayConflictLocalAndRemoteChanges ()
 		{
 			// initial sync
-			FirstSyncForBothSides ();
+			FirstSyncForBothSidesTest ();
 			
 			// sync with second client
 			new SyncManager (syncClientTwo, syncServer).DoSync ();

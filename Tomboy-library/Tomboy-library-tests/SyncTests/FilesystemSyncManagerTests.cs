@@ -90,7 +90,7 @@ namespace Tomboy.Sync
 		{
 			Assert.That (string.IsNullOrEmpty (clientManifestOne.ServerId));
 
-			base.FirstSyncForBothSides ();
+			base.FirstSyncForBothSidesTest ();
 
 			var local_notes = clientEngineOne.GetNotes ().Values;
 			var server_notes = serverEngine.GetNotes ().Values;

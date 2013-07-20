@@ -34,7 +34,7 @@ namespace Tomboy.Sync
 	/// This class holds tests, that are not dependant on implemenation details. There should be test classes deriving
 	/// (see FilesystemSyncManagerTests) and extend/override these testcases and perform implemenatation specifc tests.
 	/// </summary>
-	public abstract partial class AbstractSyncManagerTests 
+	public abstract class AbstractSyncManagerTestsBase
 	{
 		// our scenarios always involve a server, and up to 2 clients
 		protected ISyncServer syncServer;
@@ -176,8 +176,18 @@ namespace Tomboy.Sync
 			sampleNotes.ToList ().ForEach(n => engine.SaveNote (n));
 		}
 
+		protected void FirstSyncForBothSides ()
+		{
+			SyncManager sync_manager = new SyncManager (this.syncClientOne, this.syncServer);
+			sync_manager.DoSync ();
+		}
+	}
+
+	public abstract partial class AbstractSyncManagerTests : AbstractSyncManagerTestsBase
+	{
+
 		[Test]
-		public void FirstSyncForBothSides ()
+		public void FirstSyncForBothSidesTest ()
 		{
 			// before the sync, the client should have an empty AssociatedServerId
 			Assert.That (string.IsNullOrEmpty (syncClientOne.AssociatedServerId));
@@ -204,7 +214,7 @@ namespace Tomboy.Sync
 		[Test]
 		public void ClientHasAllNotesAfterFirstSync ()
 		{
-			FirstSyncForBothSides ();
+			FirstSyncForBothSidesTest ();
 
 			var client_one_notes = clientEngineOne.GetNotes ().Values;
 			Assert.AreEqual (sampleNotes.Count, client_one_notes.Count);
@@ -219,7 +229,7 @@ namespace Tomboy.Sync
 			// this test makes sure the Dates of the note are not modified by the sync process
 			// which involces heavy copy & creation of notes on all sides
 
-			FirstSyncForBothSides ();
+			FirstSyncForBothSidesTest ();
 
 			var server_notes = syncServer.GetAllNotes (true);
 			var uploaded_notes = syncServer.UploadedNotes;
@@ -246,7 +256,7 @@ namespace Tomboy.Sync
 		[Test]
 		public void MakeSureTextIsSynced ()
 		{
-			FirstSyncForBothSides ();
+			FirstSyncForBothSidesTest ();
 
 			var server_notes = syncServer.GetAllNotes (true);
 			foreach (var note in clientEngineOne.GetNotes ().Values) {
@@ -257,7 +267,7 @@ namespace Tomboy.Sync
 		[Test]
 		public void MakeSureAllTagsAreSynced ()
 		{
-			FirstSyncForBothSides ();
+			FirstSyncForBothSidesTest ();
 			var server_notes = syncServer.GetAllNotes (true);
 			foreach (var note_on_client in clientEngineOne.GetNotes ().Values) {
 				var note_on_server = server_notes.Single (n => n == note_on_client);
@@ -270,14 +280,14 @@ namespace Tomboy.Sync
 		[Test]
 		public void ClientSyncsToNewServer()
 		{
-			FirstSyncForBothSides ();
+			FirstSyncForBothSidesTest ();
 		}
 
 		[Test]
 		public void ClientDeletesNotesAfterFirstSync ()
 		{
 			// perform initial sync
-			FirstSyncForBothSides ();
+			FirstSyncForBothSidesTest ();
 			
 			Assert.AreEqual (3, clientEngineOne.GetNotes ().Count);
 			
@@ -310,7 +320,7 @@ namespace Tomboy.Sync
 		[Test]
 		public void NoSyncingNeededIfNoChangesAreMade ()
 		{
-			FirstSyncForBothSides ();
+			FirstSyncForBothSidesTest ();
 				
 			var server_id = syncClientOne.AssociatedServerId;
 			
@@ -343,7 +353,7 @@ namespace Tomboy.Sync
 			}
 			
 			// perform first sync
-			FirstSyncForBothSides ();
+			FirstSyncForBothSidesTest ();
 
 			Assert.AreEqual (1024, clientEngineOne.GetNotes ().Count);
 			Assert.AreEqual (1024, syncServer.UploadedNotes.Count);
@@ -352,7 +362,7 @@ namespace Tomboy.Sync
 		[Test]
 		public void GetNoteUpdateSinceTest ()
 		{
-			FirstSyncForBothSides ();
+			FirstSyncForBothSidesTest ();
 
 			var notes = syncServer.GetNoteUpdatesSince (-1);
 
