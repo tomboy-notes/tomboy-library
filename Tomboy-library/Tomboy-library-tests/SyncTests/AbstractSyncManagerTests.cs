@@ -362,5 +362,37 @@ namespace Tomboy.Sync
 			notes = syncServer.GetNoteUpdatesSince (0);
 			Assert.AreEqual (0, notes.Count);
 		}
+
+		[Test]
+		public void ClientSyncsMultipleTimes()
+		{
+			// perform initial sync
+			FirstSyncForBothSidesTest ();
+
+			foreach (var note in clientStorageOne.GetNotes ().Values) {
+				note.Title = "New title";
+				clientEngineOne.SaveNote (note);
+			}
+
+			// perform a sync again
+			var sync_manager = new SyncManager (syncClientOne, syncServer);
+			sync_manager.DoSync ();
+
+			foreach (var note in clientStorageOne.GetNotes ().Values) {
+				note.Title = "New title two";
+				clientEngineOne.SaveNote (note);
+			}
+
+			return;
+
+			// perform a sync again
+			sync_manager = new SyncManager (syncClientOne, syncServer);
+			sync_manager.DoSync ();
+
+			foreach (var note in clientStorageOne.GetNotes ().Values) {
+				note.Title = "New title three";
+				clientEngineOne.SaveNote (note);
+			}
+		}
 	}
 }
