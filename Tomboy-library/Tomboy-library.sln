@@ -5,8 +5,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tomboy-library", "Tomboy-li
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tomboy-library-tests", "Tomboy-library-tests\Tomboy-library-tests.csproj", "{216746A7-D297-4108-933A-1E926EB9B167}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevDefined.OAuth", "..\DevDefined.OAuth\src\DevDefined.OAuth\DevDefined.OAuth.csproj", "{61B700B6-3911-4CEF-8751-7F42CA765068}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -24,14 +22,6 @@ Global
 		{216746A7-D297-4108-933A-1E926EB9B167}.Debug|x86.Build.0 = Debug|x86
 		{216746A7-D297-4108-933A-1E926EB9B167}.Release|x86.ActiveCfg = Release|x86
 		{216746A7-D297-4108-933A-1E926EB9B167}.Release|x86.Build.0 = Release|x86
-		{61B700B6-3911-4CEF-8751-7F42CA765068}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{61B700B6-3911-4CEF-8751-7F42CA765068}.Debug|x86.Build.0 = Debug|Any CPU
-		{61B700B6-3911-4CEF-8751-7F42CA765068}.MonoTouch|Any CPU.ActiveCfg = Debug|Any CPU
-		{61B700B6-3911-4CEF-8751-7F42CA765068}.MonoTouch|Any CPU.Build.0 = Debug|Any CPU
-		{61B700B6-3911-4CEF-8751-7F42CA765068}.Release|x86.ActiveCfg = Release|Any CPU
-		{61B700B6-3911-4CEF-8751-7F42CA765068}.Release|x86.Build.0 = Release|Any CPU
-		{61B700B6-3911-4CEF-8751-7F42CA765068}.STATIC_ONLY NO_EXPRESSIONS|Any CPU.ActiveCfg = Debug|Any CPU
-		{61B700B6-3911-4CEF-8751-7F42CA765068}.STATIC_ONLY NO_EXPRESSIONS|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Tomboy-library.csproj
