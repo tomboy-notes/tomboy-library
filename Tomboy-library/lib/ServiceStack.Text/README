@@ -1,5 +1,0 @@
-Unfortunately, ServiceStack from git does not compile completely with mono's
-current xbuild implementation, so we reference the binaries taken from:
-
-	https://github.com/ServiceStack/ServiceStack/downloads
-
