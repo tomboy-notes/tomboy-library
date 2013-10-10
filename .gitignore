@@ -9,7 +9,7 @@ Tomboy-library/Tomboy-library-tests/test_notes/proper_notes/Backup
 
 obj/
 nuget-packages/*
-./release/*
+release/*.dll
 
 # OS annoying files
 .DS_Store
