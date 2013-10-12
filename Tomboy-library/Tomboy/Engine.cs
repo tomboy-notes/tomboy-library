@@ -69,9 +69,9 @@ namespace Tomboy
 
 		#region event handlers
 
-		public static event NoteAddedEventHandler NoteAdded;
-		public static event NoteAddedEventHandler NoteRemoved;
-		public static event NoteAddedEventHandler NoteUpdated;
+		public event NoteAddedEventHandler NoteAdded;
+		public event NoteAddedEventHandler NoteRemoved;
+		public event NoteAddedEventHandler NoteUpdated;
 
 		#endregion event handlers
 
