@@ -69,7 +69,7 @@ namespace Tomboy
 		{
 			/* holds a list of events (notes) received */
 			List<string> addNotes = new List<string> ();
-			Engine.NoteAdded += delegate(Note addedNote) {
+			engine.NoteAdded += delegate(Note addedNote) {
 				addNotes.Add (addedNote.Title);
 			};
 			Note newNote = engine.NewNote ();
@@ -82,7 +82,7 @@ namespace Tomboy
 		{
 			/* holds a list of events (notes) received */
 			List<string> addNotes = new List<string> ();
-			Engine.NoteUpdated += delegate(Note addedNote) {
+			engine.NoteUpdated += delegate(Note addedNote) {
 				addNotes.Add (addedNote.Title);
 			};
 			note.Text = "Unit test note by NewNote() method \\n Added text";
@@ -121,7 +121,7 @@ namespace Tomboy
 		{
 			/* holds a list of events (notes) received */
 			List<string> addNotes = new List<string> ();
-			Engine.NoteRemoved += delegate(Note addedNote) {
+			engine.NoteRemoved += delegate(Note addedNote) {
 				addNotes.Add (addedNote.Title);
 			};
 			Assert.IsTrue (System.IO.File.Exists (NOTE_PATH));
