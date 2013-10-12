@@ -84,7 +84,10 @@ namespace Tomboy.Sync
 
 		public static void Write (string path, SyncManifest manifest)
 		{
-			XmlWriter writer = XmlWriter.Create (path);
+			var settings = new XmlWriterSettings ();
+			settings.Indent = true;
+			settings.IndentChars = "\t";
+			XmlWriter writer = XmlWriter.Create (path, settings);
 			Write (writer, manifest);
 			writer.Close ();
 		}
