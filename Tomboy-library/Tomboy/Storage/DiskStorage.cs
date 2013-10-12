@@ -113,29 +113,29 @@ namespace Tomboy
 		/// <param name='note'>
 		/// Note.
 		/// </param>
-		private void WriteFile (string write_file, Note note)
+		private static void WriteFile (string file, Note note)
 		{
-			string tmp_file = write_file + ".tmp";
+			string tmp_file = file + ".tmp";
 
 			using (var xml = XmlWriter.Create (tmp_file, XmlEncoder.DocumentSettings))
 				Writer.Write (xml, note);
 
-			if (File.Exists (write_file)) {
-				string backup_path = write_file + "~";
+			if (File.Exists (file)) {
+				string backup_path = file + "~";
 				if (File.Exists (backup_path))
 					File.Delete (backup_path);
 
 				// Backup the to a ~ file, just in case
-				File.Move (write_file, backup_path);
+				File.Move (file, backup_path);
 
 				// Move the temp file to write_file
-				File.Move (tmp_file, write_file);
+				File.Move (tmp_file, file);
 
 				// Delete the ~ file
 				File.Delete (backup_path);
 			} else {
 				// Move the temp file to write_file
-				File.Move (tmp_file, write_file);
+				File.Move (tmp_file, file);
 			}
 		}
 		
@@ -212,9 +212,7 @@ namespace Tomboy
 				if (File.Exists (file_backup_path))
 					File.Delete (file_backup_path);
 				File.Move (file_path, file_backup_path);
-			} else {
-				File.Move (file_path, file_backup_path);
-			}
+			} //TODO: what if there isn't a file to delete. We should at least log this in DEBUG
 		}
 
 		public void SetConfigVariable (string key, string value)
