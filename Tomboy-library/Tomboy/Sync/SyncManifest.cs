@@ -56,10 +56,11 @@ namespace Tomboy.Sync
 		}
 
 		/// <summary>
-		/// Gets the note deletions.
+		/// Keep track of notes deleted since the last sync.
 		/// </summary>
 		/// <value>
-		/// The note deletions.
+		/// The key of the Dictionary are the note Guids, while the values are the note title
+		/// (we don't have access to the original note object, since it got deleted).
 		/// </value>
 		public IDictionary<string, string> NoteDeletions {
 			get; private set;
@@ -80,6 +81,14 @@ namespace Tomboy.Sync
 		}
 		#region Xml serialization
 		private const string CURRENT_VERSION = "0.3";
+
+		public static void Write (string path, SyncManifest manifest)
+		{
+			XmlWriter writer = XmlWriter.Create (path);
+			Write (writer, manifest);
+			writer.Close ();
+		}
+
 		/// <summary>
 		/// Write the specified manifest to an XmlWriter.
 		/// </summary>
@@ -134,7 +143,15 @@ namespace Tomboy.Sync
 			}
 			xml.WriteEndElement ();
 		}
-		public static SyncManifest Read (XmlTextReader xml)
+		public static SyncManifest Read (string path)
+		{
+			XmlReader reader = XmlTextReader.Create (path);
+			SyncManifest manifest = Read (reader);
+			reader.Close ();
+
+			return manifest;
+		}
+		public static SyncManifest Read (XmlReader xml)
 		{
 			SyncManifest manifest = new SyncManifest ();
 			string version = String.Empty;
