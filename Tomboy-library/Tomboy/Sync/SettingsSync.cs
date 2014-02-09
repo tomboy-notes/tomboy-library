@@ -96,7 +96,7 @@ namespace Tomboy.Sync
 
 			xml.WriteStartElement (null, "auto-sync", null);
 			string temp = "";
-			(settings.autoSync) ? temp = "True" : temp = "False";
+			temp = (settings.autoSync == true) ? temp = "True" : temp = "False";
 			xml.WriteString (temp);
 			xml.WriteEndElement ();
 
@@ -123,7 +123,7 @@ namespace Tomboy.Sync
 
 			try{
 				while(reader.Read ()){
-					switch(reader.NodeType) {
+					switch(reader.NodeType){
 						case XmlNodeType.Element:
 							switch(reader.Name){
 								case "settings": 
@@ -133,13 +133,14 @@ namespace Tomboy.Sync
 									break;
 								case "auto-sync":
 									string temp = reader.ReadString ();
-									(temp.Equals ("True")) ? settings.autoSync = true : settings.syncURL = false;
+									settings.autoSync = (temp.Equals ("True")) ? settings.autoSync = true : settings.autoSync = false;
 									break;
 							}
+							break;
 					}
 				}
 			}catch(XmlException e){
-				Console.Write(e.ToString);
+				//Console.Write(e.ToString);
 			}
 
 			return settings;
