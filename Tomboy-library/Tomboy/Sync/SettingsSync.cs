@@ -35,9 +35,9 @@ namespace Tomboy.Sync
 		/// Settings Directory : ~/.tomboy/
 		/// Settings File 	   : ~/.tomboy/Settings.xml
 		/// </summary>
-		private string homeDir;
-		private string settingsDir;
-		public string settingsFile{
+		private static string homeDir;
+		private static string settingsDir;
+		public static string settingsFile{
 			get; set;
 		}
 
@@ -62,6 +62,10 @@ namespace Tomboy.Sync
 		/// Initializes all the variables, i.e. creates the settings.xml
 		/// </summary>
 		public SettingsSync(){
+			Init();
+		}
+
+		private static void Init(){
 			homeDir = System.Environment.GetEnvironmentVariable ("HOME");
 			settingsDir = System.IO.Path.Combine (homeDir,".tomboy");
 			System.IO.Directory.CreateDirectory (settingsDir);
@@ -72,7 +76,8 @@ namespace Tomboy.Sync
 		/// Write API provided to clients to use for saving the settings
 		/// </summary>
 		/// <param name="settings">Settings.</param>
-		public void Write(SettingsSync settings){
+		public static void Write(SettingsSync settings){
+			Init();
 			var xmlSettings = new XmlWriterSettings ();
 			xmlSettings.Indent = true;
 			xmlSettings.IndentChars = "\t";
@@ -81,12 +86,17 @@ namespace Tomboy.Sync
 			writer.Close ();
 		}
 
+		public static void CreateSettings() {
+			Init();
+			System.IO.File.Create(settingsFile);
+		}
+
 		/// <summary>
 		/// Write the specified xml and settings.
 		/// </summary>
 		/// <param name="xml">Xml.</param>
 		/// <param name="settings">Settings.</param>
-		private void Write(XmlWriter xml, SettingsSync settings){
+		private static void Write(XmlWriter xml, SettingsSync settings){
 			xml.WriteStartDocument ();
 			xml.WriteStartElement (null, "settings", null);
 
@@ -107,18 +117,29 @@ namespace Tomboy.Sync
 		/// <summary>
 		/// Reads from the Settings.xml file and returns all the settings
 		/// </summary>
-		public SettingsSync Read(){
-			XmlReader reader = XmlTextReader.Create (settingsFile);
-			SettingsSync settings = Read (reader);
-			reader.Close ();
-			return settings;
+		public static SettingsSync Read(){
+			Init();
+			if (System.IO.File.Exists(settingsFile))
+			{
+				XmlReader reader = XmlTextReader.Create(settingsFile);
+				SettingsSync settings = Read(reader);
+				reader.Close();
+				return settings;
+			}
+			else
+			{
+				SettingsSync settings = new SettingsSync();
+				settings.autoSync = true;
+				settings.syncURL = "";
+				return settings;
+			}
 		}
 
 		/// <summary>
 		/// Read the specified reader.
 		/// </summary>
 		/// <param name="reader">Reader.</param>
-		private SettingsSync Read(XmlReader reader){
+		private static SettingsSync Read(XmlReader reader){
 			SettingsSync settings = new SettingsSync ();
 
 			try{
