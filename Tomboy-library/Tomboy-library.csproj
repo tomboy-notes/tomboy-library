@@ -9,6 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Tomboy</RootNamespace>
     <AssemblyName>Tomboy-library</AssemblyName>
+    <ReleaseVersion>0.3.2</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
@@ -92,6 +93,7 @@
     <Compile Include="Tomboy\Sync\WebSync\DtoClasses.cs" />
     <Compile Include="Tomboy\Sync\WebSync\OAuthRestHelper.cs" />
     <Compile Include="Tomboy\Sync\WebSync\WebSyncServer.cs" />
+    <Compile Include="Tomboy\Sync\SettingsSync.cs" />
   </ItemGroup>
   <ItemGroup>
 &gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/sync_from_scratch
