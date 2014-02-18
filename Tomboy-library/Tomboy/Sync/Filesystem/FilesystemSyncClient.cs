@@ -32,16 +32,6 @@ namespace Tomboy.Sync.Filesystem
 		private SyncManifest manifest;
 
 		/// <summary>
-		/// Will create a new sync client, that uses the main Tomboy data storage 
-		/// as source. Note that since the main DiskStorage is static, only one
-		/// FilesystemSyncClient using static storage may exist at a time, else
-		/// expect race canditions.
-		/// </summary>
-		public FilesystemSyncClient (SyncManifest manifest) : this (new Engine (DiskStorage.Instance), manifest)
-		{
-		}
-
-		/// <summary>
 		/// Will create a new sync client using a custom IStorage as data backend.
 		/// When using different IStorage backend, multiple instances of ISyncClient
 		/// are allowed to exist simultaneously.

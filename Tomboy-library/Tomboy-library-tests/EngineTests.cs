@@ -34,13 +34,15 @@ namespace Tomboy
 	{
 		Engine engine;
 		Note note;
+		DiskStorage diskStorage;
 		string NOTE_PATH = "";
 
 		[SetUp] public void Init()
 		{
-			//TODO: The storage instance needs swapping with a stub/mock!
-			DiskStorage.Instance.SetPath ("../../test_notes/proper_notes");
-			engine = new Engine (DiskStorage.Instance);
+			diskStorage = new DiskStorage ();
+			diskStorage.SetPath ("../../test_notes/proper_notes");
+
+			engine = new Engine (diskStorage);
 			// get a new note instance
 			note = engine.NewNote ();
 			note.Title = "Unit Test Note";

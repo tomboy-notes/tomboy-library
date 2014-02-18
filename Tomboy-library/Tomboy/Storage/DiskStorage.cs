@@ -28,8 +28,6 @@ namespace Tomboy
 	public class DiskStorage : IStorage
 	{
 		
-		private static DiskStorage instance = null;
-		private static readonly object lock_ = new object ();
 		private static Reader reader;
 		
 		/// <summary>
@@ -45,21 +43,6 @@ namespace Tomboy
 			reader = new Reader ();
 		}
 
-		public static DiskStorage Instance {
-			get {
-				lock (lock_) {
-					if (instance == null)
-						instance = new DiskStorage ();
-					return instance;
-				}
-			}
-			set {
-				lock (lock_) {
-					instance = value;
-				}
-			}
-		}		
-		
 		/// <summary>
 		/// Sets the path to where Notes are located
 		/// </summary>
