@@ -44,6 +44,29 @@ namespace Tomboy
 
 			Assert.AreEqual ("Start Here", toCheck.Title);
 		}
+		[Test()]
+		public void Read_ProperNoteFile_CorrectText ()
+		{
+			string StartHereNotePath = "../../test_notes/proper_notes/90d8eb70-989d-4b26-97bc-ba4b9442e51f.note";
+			Note toCheck = DiskStorage.Read (StartHereNotePath, "tomboy://90d8eb70-989d-4b26-97bc-ba4b9442e51f");
+
+			Assert.That (toCheck.Text.Contains ("Welcome to Tomboy!"));
+		}
+		[Test()]
+		public void Read_ProperNoteFile_TagsArePreserved ()
+		{
+			string StartHereNotePath = "../../test_notes/proper_notes/90d8eb70-989d-4b26-97bc-ba4b9442e51f.note";
+			Note toCheck = DiskStorage.Read (StartHereNotePath, "tomboy://90d8eb70-989d-4b26-97bc-ba4b9442e51f");
+
+			Assert.That (toCheck.Text.Contains ("<bold>"));
+		}
+		[Test()]
+		public void Read_ProperNoteFile_CreateDateMatches ()
+		{
+			string StartHereNotePath = "../../test_notes/proper_notes/90d8eb70-989d-4b26-97bc-ba4b9442e51f.note";
+			Note toCheck = DiskStorage.Read (StartHereNotePath, "tomboy://90d8eb70-989d-4b26-97bc-ba4b9442e51f");
+			Assert.AreEqual (toCheck.CreateDate.Ticks, 633770466544871750);
+		}
 	}
 }
 
