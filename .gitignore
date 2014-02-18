@@ -14,3 +14,4 @@ release/*.dll
 
 # OS annoying files
 .DS_Store
+*.mdb

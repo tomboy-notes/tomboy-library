@@ -1,7 +1,6 @@
-using Tomboy.Sync.Web.DTO;
-using ServiceStack.DataAnnotations;
-using Tomboy.Sync;
 using DevDefined.OAuth.Storage.Basic;
+using ServiceStack.DataAnnotations;
+using Tomboy.Sync.Web.DTO;
 
 namespace Tomboy.Db {
 

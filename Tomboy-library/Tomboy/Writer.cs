@@ -24,6 +24,34 @@ using Tomboy.Tags;
 
 namespace Tomboy
 {
+	public class XmlSettings
+	{
+		static XmlWriterSettings documentSettings;
+		static XmlWriterSettings fragmentSettings;
+
+		static XmlSettings ()
+		{
+			documentSettings = new XmlWriterSettings ();
+			documentSettings.NewLineChars = "\n";
+			documentSettings.Indent = true;
+
+			fragmentSettings = new XmlWriterSettings ();
+			fragmentSettings.NewLineChars = "\n";
+			fragmentSettings.Indent = true;
+			fragmentSettings.ConformanceLevel = ConformanceLevel.Fragment;
+		}
+
+		public static XmlWriterSettings DocumentSettings
+		{
+			get { return documentSettings; }
+		}
+
+		public static XmlWriterSettings FragmentSettings
+		{
+			get { return fragmentSettings; }
+		}
+	}
+
 	/// <summary>
 	/// Note to XML writer.
 	/// </summary>
