@@ -117,7 +117,7 @@ namespace Tomboy
 		{
 			string tmp_file = file + ".tmp";
 
-			using (var xml = XmlWriter.Create (tmp_file, XmlEncoder.DocumentSettings))
+			using (var xml = XmlWriter.Create (tmp_file, XmlSettings.DocumentSettings))
 				Writer.Write (xml, note);
 
 			if (File.Exists (file)) {
