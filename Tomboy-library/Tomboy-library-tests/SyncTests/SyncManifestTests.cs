@@ -26,10 +26,10 @@ using System.IO;
 using Tomboy.Tags;
 using System.Linq;
 
-namespace Tomboy.Sync.Web
+namespace Tomboy.Sync
 {
 	[TestFixture()]
-	public class SyncObjectsTest
+	public class SyncManifestTests
 	{
 		SyncManifest sampleManifest;
 
