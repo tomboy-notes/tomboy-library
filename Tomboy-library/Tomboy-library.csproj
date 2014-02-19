@@ -91,6 +91,7 @@
     <Compile Include="Tomboy\Sync\WebSync\WebSyncServer.cs" />
     <Compile Include="Tomboy\Sync\SettingsSync.cs" />
     <Compile Include="Tomboy\Storage\DiskStorage.cs" />
+    <Compile Include="Tomboy\Logging.cs" />
   </ItemGroup>
   <ItemGroup>
 &gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/sync_from_scratch
