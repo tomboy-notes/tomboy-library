@@ -64,6 +64,7 @@
     <Folder Include="Tomboy\Sync\" />
     <Folder Include="Tomboy\Sync\Filesystem\" />
     <Folder Include="Tomboy\Sync\WebSync\" />
+    <Folder Include="Tomboy\IoC\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Tomboy\Note.cs" />
@@ -92,6 +93,8 @@
     <Compile Include="Tomboy\Sync\SettingsSync.cs" />
     <Compile Include="Tomboy\Storage\DiskStorage.cs" />
     <Compile Include="Tomboy\Logging.cs" />
+    <Compile Include="Tomboy\IoC\PortableIoC.cs" />
+    <Compile Include="Tomboy\IoC\TomboyContainer.cs" />
   </ItemGroup>
   <ItemGroup>
 &gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/sync_from_scratch

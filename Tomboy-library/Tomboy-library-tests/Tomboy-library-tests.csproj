@@ -47,6 +47,7 @@
     <Compile Include="SyncTests\AbstractSyncServerTests.cs" />
     <Compile Include="NoteTests.cs" />
     <Compile Include="SyncTests\SyncManifestTests.cs" />
+    <Compile Include="IoCTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
