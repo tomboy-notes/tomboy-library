@@ -34,6 +34,7 @@ namespace Tomboy
 			documentSettings = new XmlWriterSettings ();
 			documentSettings.NewLineChars = "\n";
 			documentSettings.Indent = true;
+			documentSettings.IndentChars = "\t";
 
 			fragmentSettings = new XmlWriterSettings ();
 			fragmentSettings.NewLineChars = "\n";
