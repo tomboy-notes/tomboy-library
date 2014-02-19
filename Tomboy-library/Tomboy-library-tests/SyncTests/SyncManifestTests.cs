@@ -108,8 +108,7 @@ namespace Tomboy.Sync
 			}
 			
 			Assert.AreEqual (2, manifest.LastSyncRevision);
-			// TODO why does this fail??
-			// Assert.AreEqual (DateTime.Parse ("2014-02-19T13:48:43.8263650+00:00"), manifest.LastSyncDate);
+			Assert.AreEqual (DateTime.Parse ("2014-02-19T13:48:43.8263650+00:00").ToUniversalTime (), manifest.LastSyncDate);
 			Assert.AreEqual ("1111-2222-3333-4444", manifest.ServerId);
 			Assert.AreEqual (3, manifest.NoteRevisions.Count ());
 			Assert.AreEqual (1, manifest.NoteRevisions.Where (kvp => kvp.Key == "1234-5678-9012-3456" && kvp.Value == 4).Count ());
