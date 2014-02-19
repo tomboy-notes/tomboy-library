@@ -23,6 +23,7 @@
 using System;
 using System.Xml;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Tomboy.Sync
 {
@@ -146,9 +147,9 @@ namespace Tomboy.Sync
 			}
 			xml.WriteEndElement ();
 		}
-		public static SyncManifest Read (string path)
+		public static SyncManifest Read (Stream inputstream)
 		{
-			XmlReader reader = XmlTextReader.Create (path);
+			XmlReader reader = XmlReader.Create (inputstream);
 			SyncManifest manifest = Read (reader);
 			reader.Close ();
 

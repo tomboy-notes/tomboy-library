@@ -44,7 +44,7 @@ namespace Tomboy
 		/// <param name='uri'>
 		/// URI.
 		/// </param>
-		public static Note Read (XmlTextReader xml, string uri)
+		public static Note Read (XmlReader xml, string uri)
 		{
 			Note note = new Note (uri);
 			DateTime date;
