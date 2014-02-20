@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using Tomboy.Tags;
 using System.Linq;
 using ServiceStack.Common;
+using Tomboy.Xml;
 
 namespace Tomboy.Sync.Web.DTO
 {
@@ -120,7 +121,7 @@ namespace Tomboy.Sync.Web.DTO
 		{
 			// set some default values
 			this.Tags = new string[] {};
-			var epoch_start = DateTime.MinValue.AddYears (1).ToString (Writer.DATE_TIME_FORMAT);
+			var epoch_start = DateTime.MinValue.AddYears (1).ToString (XmlSettings.DATE_TIME_FORMAT);
 			this.MetadataChangeDate = epoch_start;
 			this.ChangeDate = epoch_start;
 			this.CreateDate = epoch_start;
@@ -189,9 +190,9 @@ namespace Tomboy.Sync.Web.DTO
 			dto_note.Tags = tomboy_note.Tags.Keys.ToArray ();
 
 			// correctly format the DateTime to strings
-			dto_note.CreateDate = tomboy_note.CreateDate.ToString (Tomboy.Writer.DATE_TIME_FORMAT);
-			dto_note.ChangeDate = tomboy_note.ChangeDate.ToString (Tomboy.Writer.DATE_TIME_FORMAT);
-			dto_note.MetadataChangeDate = tomboy_note.MetadataChangeDate.ToString (Tomboy.Writer.DATE_TIME_FORMAT);
+			dto_note.CreateDate = tomboy_note.CreateDate.ToString (XmlSettings.DATE_TIME_FORMAT);
+			dto_note.ChangeDate = tomboy_note.ChangeDate.ToString (XmlSettings.DATE_TIME_FORMAT);
+			dto_note.MetadataChangeDate = tomboy_note.MetadataChangeDate.ToString (XmlSettings.DATE_TIME_FORMAT);
 
 			return dto_note;
 		}

@@ -35,7 +35,7 @@
     <Compile Include="EngineTests.cs" />
     <Compile Include="TesterNote.cs" />
     <Compile Include="DiskStorageTests.cs" />
-    <Compile Include="ReaderTests.cs" />
+    <Compile Include="NoteXmlTests.cs" />
     <Compile Include="TagManagerTests.cs" />
     <Compile Include="SearchTests.cs" />
     <Compile Include="Dummies\DummyStorage.cs" />

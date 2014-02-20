@@ -22,13 +22,12 @@ using System.Xml;
 using System.Xml.Linq;
 using System.IO;
 using System.Collections.Generic;
+using Tomboy.Xml;
 
 namespace Tomboy
 {
 	public class DiskStorage : IStorage
 	{
-		
-		private static Reader reader;
 		
 		/// <summary>
 		/// The path_to_notes.
@@ -40,7 +39,6 @@ namespace Tomboy
 
 		public DiskStorage ()
 		{
-			reader = new Reader ();
 		}
 
 		/// <summary>
@@ -75,7 +73,7 @@ namespace Tomboy
 		/// <summary>
 		/// Write the specified write_file and note to storage
 		/// </summary>
-        /// <param name='filename'>
+		/// <param name='filename'>
 		/// Write_file.
 		/// </param>
 		/// <param name='note'>
@@ -89,17 +87,17 @@ namespace Tomboy
 		/// <summary>
 		/// Writes the file to the actual file system.
 		/// </summary>
-        /// <param name = "file"></param>
+		/// <param name = "file"></param>
 		/// <param name='note'>
 		/// Note.
 		/// </param>
-        /// <param name = "note"></param>
+		/// <param name = "note"></param>
 		private static void WriteFile (string file, Note note)
 		{
 			string tmp_file = file + ".tmp";
 
-			using (var xml = XmlWriter.Create (tmp_file, XmlSettings.DocumentSettings))
-				Writer.Write (xml, note);
+			using (var fs = File.OpenWrite (tmp_file))
+				XmlNoteWriter.Write (note, fs);
 
 			if (File.Exists (file)) {
 				string backup_path = file + "~";
@@ -176,9 +174,10 @@ namespace Tomboy
 			/* Reader.Read should be called by all storage classes.
 			 * The Reader is responsible for taking the XML data and turning it into a Note object
 			 */
-			using (var xml = new XmlTextReader (new StreamReader (readFile, System.Text.Encoding.UTF8)) {Namespaces = false})
-				note = Reader.Read (xml, uri);
-
+			using (var fs = File.OpenRead (readFile)) {
+				note = XmlNoteReader.Read (fs, uri);
+			}
+			
 			return note;
 		}
 

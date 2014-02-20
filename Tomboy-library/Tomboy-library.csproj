@@ -65,6 +65,7 @@
     <Folder Include="Tomboy\Sync\Filesystem\" />
     <Folder Include="Tomboy\Sync\WebSync\" />
     <Folder Include="Tomboy\IoC\" />
+    <Folder Include="Tomboy\Xml\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Tomboy\Note.cs" />
@@ -72,8 +73,6 @@
     <Compile Include="Tomboy\Storage\IStorage.cs" />
     <Compile Include="Tomboy\TomboyException.cs" />
     <Compile Include="Tomboy\Utils.cs" />
-    <Compile Include="Tomboy\Reader.cs" />
-    <Compile Include="Tomboy\Writer.cs" />
     <Compile Include="Tomboy\Deleter.cs" />
     <Compile Include="Tomboy\NoteCreator.cs" />
     <Compile Include="Tomboy\Notebooks\Notebook.cs" />
@@ -95,6 +94,9 @@
     <Compile Include="Tomboy\Logging.cs" />
     <Compile Include="Tomboy\IoC\PortableIoC.cs" />
     <Compile Include="Tomboy\IoC\TomboyContainer.cs" />
+    <Compile Include="Tomboy\Xml\XmlNoteReader.cs" />
+    <Compile Include="Tomboy\Xml\XmlNoteWriter.cs" />
+    <Compile Include="Tomboy\Xml\XmlUtil.cs" />
   </ItemGroup>
   <ItemGroup>
 &gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/sync_from_scratch

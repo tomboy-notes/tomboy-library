@@ -27,6 +27,7 @@ using System.IO;
 using System.Xml.Linq;
 using System.Linq;
 using System.Text;
+using Tomboy.Xml;
 
 namespace Tomboy.Sync
 {
@@ -94,7 +95,7 @@ namespace Tomboy.Sync
 			var xdoc = new XDocument ();
 			xdoc.Add (new XElement ("manifest",
 				new XAttribute ("version", CURRENT_VERSION),
-				new XElement ("last-sync-date", manifest.LastSyncDate.ToString (Writer.DATE_TIME_FORMAT)),
+				new XElement ("last-sync-date", manifest.LastSyncDate.ToString (XmlSettings.DATE_TIME_FORMAT)),
 				new XElement ("last-sync-rev", manifest.LastSyncRevision),
 				new XElement ("server-id", manifest.ServerId)
 				)
@@ -207,16 +208,5 @@ namespace Tomboy.Sync
 			}
 		}
 		#endregion Xml serialization
-	}
-	
-	static class XmlHelper
-	{
-		public static void SetDefaultXmlNamespace(this XElement xelem, XNamespace xmlns)
-		{
-			if (xelem.Name.NamespaceName == string.Empty)
-				xelem.Name = xmlns + xelem.Name.LocalName;
-			foreach (var e in xelem.Elements())
-				e.SetDefaultXmlNamespace (xmlns);
-		}
 	}
 }
