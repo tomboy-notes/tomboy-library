@@ -87,7 +87,8 @@ namespace Tomboy.Sync.Filesystem
 		{
 			var notes = engine.GetNotes ().Select (kvp => kvp.Value).ToList ();
 			if (!include_note_content) {
-				notes.ForEach (note => note.Text = "");
+				foreach (var note in notes)
+					note.Text = "";
 			}
 			return notes;
 		}
@@ -108,20 +109,20 @@ namespace Tomboy.Sync.Filesystem
 			var notes_to_delete = engine.GetNotes ().Values
 				.Where (n => deleteNotesGuids.Contains (n.Guid));
 			// delete those selected notes from our local store
-			notes_to_delete.ToList ().ForEach (note => {
+			foreach (var note in notes_to_delete.ToList ()) {
 				engine.DeleteNote (note);
 				this.DeletedServerNotes.Add (note.Guid);
-			});
+			}
 		}
 
 		public void UploadNotes (IList<Note> notes)
 		{
-			notes.ToList ().ForEach (note => {
+			foreach (var note in notes.ToList ()) {
 				engine.SaveNote (note, false);
 				UploadedNotes.Add (note);
 				// set the note to the new revision
 				manifest.NoteRevisions [note.Guid] = newRevision;
-			});
+			}
 		}
 
 		public IList<Note> UploadedNotes { get; private set; }
