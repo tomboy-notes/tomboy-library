@@ -1,6 +1,6 @@
-using DevDefined.OAuth.Storage.Basic;
 using ServiceStack.DataAnnotations;
 using Tomboy.Sync.Web.DTO;
+using Tomboy.OAuth;
 
 namespace Tomboy.Db {
 
@@ -25,7 +25,7 @@ namespace Tomboy.Db {
 	}
 
 
-	public class DBAccessToken : AccessToken
+	public class DBAccessToken : OAuthToken
 	{
 		[PrimaryKey]
 		public new string Token { get; set; }

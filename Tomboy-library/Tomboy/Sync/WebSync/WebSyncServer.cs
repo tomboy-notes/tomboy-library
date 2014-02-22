@@ -20,9 +20,9 @@
 using System;
 using System.Collections.Generic;
 using Tomboy.Sync.Web.DTO;
-using DevDefined.OAuth.Framework;
 using System.Linq;
 using ServiceStack.ServiceClient.Web;
+using Tomboy.OAuth;
 
 namespace Tomboy.Sync.Web
 {
@@ -40,12 +40,12 @@ namespace Tomboy.Sync.Web
 		private string oauthAuthorizeUrl;
 		private string oauthAccessTokenUrl;
 
-		private IToken accessToken;
+		private IOAuthToken accessToken;
 
 		private string ServerUrl;
 
 		// TODO access_Token must be better handled
-		public WebSyncServer (string server_url, IToken access_token)
+		public WebSyncServer (string server_url, IOAuthToken access_token)
 		{
 			ServerUrl = server_url;
 			rootApiUrl = server_url + "/api/1.0";
@@ -58,7 +58,7 @@ namespace Tomboy.Sync.Web
 		private JsonServiceClient GetJsonClient ()
 		{
 			var restClient = new JsonServiceClient ();
-			restClient.SetAccessToken (accessToken);
+			restClient.SetAccessToken (this.accessToken);
 
 			return restClient;
 		}
