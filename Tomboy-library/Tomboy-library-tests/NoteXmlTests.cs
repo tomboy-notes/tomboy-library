@@ -124,6 +124,19 @@ namespace Tomboy
 			Assert.AreEqual (sampleNote.CreateDate, toCheck.CreateDate);
 			// TODO compare all fields
 		}
+		
+		[Test]
+		public void WriteNotesWithCustomNamespaceTags()
+		{
+			// this tests checks if the XML writing engine can handle embedded tags with custom namespaces in the 
+			// note body. The size and link prefixed tags are CUSTOM namespaces. For valid XML, these have to be
+			// defined, and this is what we test.
+			string StartHereNotePath = "../../test_notes/proper_notes/90d8eb70-989d-4b26-97bc-ba4b9442e51f.note";
+			Note sampleNote = DiskStorage.Read (StartHereNotePath, "tomboy://90d8eb70-989d-4b26-97bc-ba4b9442e51f");
+			
+			sampleNote.Text = "<size:huge>About</size:huge><link:url>http://www.google.com</link:url>";
+			string note_xml = XmlNoteWriter.Write (sampleNote);
+		}
 	}
 }
 

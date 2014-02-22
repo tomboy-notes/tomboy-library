@@ -49,17 +49,25 @@ namespace Tomboy.Xml
 		/// </param>
 		public static void Write (Note note, Stream output)
 		{
+			// we need this dummy tag that introduces our custom namespaces to avoid exception in XElement.Parse()
+			string dummy_tag_open = "<dummy xmlns:link=\"http://beatniksoftware.com/tomboy/link\" xmlns:size=\"http://beatniksoftware.com/tomboy/size\"  >";
+
 			var xdoc = new XDocument ();
+			
+			// add the root node with namespaces
 			xdoc.Add (new XElement ("note",
 				new XAttribute ("version", XmlNoteReader.CURRENT_VERSION),
 				new XAttribute (XNamespace.Xmlns + "link", "http://beatniksoftware.com/tomboy/link"),
-				new XAttribute (XNamespace.Xmlns + "size", "http://beatniksoftware.com/tomboy/size"),
+				new XAttribute (XNamespace.Xmlns + "size", "http://beatniksoftware.com/tomboy/size")
+			));
+			
+			xdoc.Root.Add(
 				new XElement ("title", note.Title),
 				new XElement ("text",
 					new XAttribute (XNamespace.Xml + "space", "preserve"),
 					new XElement ("note-content",
 						new XAttribute ("version", "0.1"),
-						XElement.Parse("<dummy>" + note.Text + "</dummy>").Nodes()
+						XElement.Parse(dummy_tag_open + note.Text + "</dummy>").Nodes()
 					)
 				),
 				new XElement ("create-date", note.CreateDate),
@@ -69,7 +77,7 @@ namespace Tomboy.Xml
 				new XElement ("height", note.Height),
 				new XElement ("x", note.X),
 				new XElement ("y", note.Y)
-			));
+			);
 			
 			xdoc.Element ("note").Add (new XElement ("tags",
 				note.Tags.Keys.Select (k => new XElement ("tag", note.Tags[k].Name))
