@@ -18,7 +18,7 @@ MIN_MONO_VERSION=3.0.0
 
 pack: build
 	@echo "Packing all assembly deps into the final .dll"
-	$(MONO) ./tools/ILRepack.exe /out:$(RELEASEDIR)/$(PACKED_LIB) $(BINDIR)/ServiceStack.*.dll $(BINDIR)/DevDefined.*.dll
+	$(MONO) ./tools/ILRepack.exe /out:$(RELEASEDIR)/$(PACKED_LIB) $(BINDIR)/ServiceStack.*.dll 
 	@echo ""
 	@echo "**********"
 	@echo "Success! Find your executable in $(RELEASEDIR)/$(PACKED_LIB)"
