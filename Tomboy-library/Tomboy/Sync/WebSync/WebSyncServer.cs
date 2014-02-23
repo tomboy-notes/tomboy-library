@@ -2,7 +2,7 @@
 //  Author:
 //       Timo Dörr <timo@latecrew.de>
 //
-//  Copyright (c) 2012 Timo Dörr
+//  Copyright (c) 2012-2014 Timo Dörr
 //
 //  This library is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as
@@ -23,9 +23,25 @@ using Tomboy.Sync.Web.DTO;
 using System.Linq;
 using ServiceStack.ServiceClient.Web;
 using Tomboy.OAuth;
+using System.Net;
 
 namespace Tomboy.Sync.Web
 {
+	/// <summary>
+	/// OAuth authorization callback. Will provide the callbackUrl that is sent back by the server. Usually, this url
+	/// has to be opened in a browser to present it to the user. The user will perform authentication, and if succesfull,
+	/// be redirected to the callbackUrl previously provided (NOT the callbackurl passed as parameter to this delegate).
+	/// 
+	/// This is the pattern that you basically should follow when implementing this delegate:
+	/// 0. Setup a HttpListener or similiar on localhost, that you control and generate a link to that server - should be done
+	///    BEFORE this delegate is called. This url is passed to <see cref="PerformTokenExchange"/>.
+	/// 1. Once the callback fires, open a browser and point to the supplied callbackUrl argument (NOT the url to your HttpListener)
+	/// 2. After the user successfully authenticated, he will be redirected to your HttpListener's url, and will have a ?oauth_verifier
+	///    append to the query string of the url
+	/// 3. You make sure to extract that oauth_verifier value and return it in this callback
+	/// </summary>
+	public delegate string OAuthAuthorizationCallback (string callbackUrl);
+	
 	/// <summary>
 	/// Proxy class (as in the proxy design pattern) that encapsules communication with a Tomboy sync 
 	/// server (like Rainy or Snowy).
@@ -36,25 +52,79 @@ namespace Tomboy.Sync.Web
 		private string userServiceUrl;
 		private string notesServiceUrl;
 
-		private string oauthRequestTokenUrl;
-		private string oauthAuthorizeUrl;
-		private string oauthAccessTokenUrl;
-
 		private IOAuthToken accessToken;
 
-		private string ServerUrl;
-
-		// TODO access_Token must be better handled
-		public WebSyncServer (string server_url, IOAuthToken access_token)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Tomboy.Sync.Web.WebSyncServer"/> class.
+		/// </summary>
+		/// <param name="serverUrl">Server URL (without the api/1.0 part).</param>
+		/// <param name="accessToken">An pre-obtained access token for OAuth.
+		/// Use <see cref="PerformTokenExchange"/> or <see cref="PerformNonInteractiveTokenExchange"/>.
+		/// </param>
+		public WebSyncServer (string serverUrl, IOAuthToken accessToken)
 		{
-			ServerUrl = server_url;
-			rootApiUrl = server_url + "/api/1.0";
-			accessToken = access_token;
+			rootApiUrl = serverUrl + "/api/1.0";
+			this.accessToken = accessToken;
 
 			this.DeletedServerNotes = new List<string> ();
 			this.UploadedNotes = new List<Note> ();
 		}
+		public static IOAuthToken PerformTokenExchange (string serverUrl, string oauthCallbackUrl, OAuthAuthorizationCallback callback)
+		{
+			var oauth_connection = new OAuthConnection (serverUrl);
 
+			string link_to_open_for_user = "";
+			link_to_open_for_user = oauth_connection.GetAuthorizationUrl (oauthCallbackUrl);
+
+			string verifier = callback (link_to_open_for_user);
+			bool result = oauth_connection.GetAccessAfterAuthorization (verifier);
+			if (result == false)
+				throw new UnauthorizedAccessException ();
+
+			var token = oauth_connection.AccessToken;
+			return token;
+		}
+		/// <summary>
+		/// Performs the fast token exchange. IMPORTANT: Fast Exchange is not covered by the Tomboy API
+		/// specification and is UNSTANDARDIZED API some server expose (currently only Rainy).
+		/// </summary>
+		/// <description>>
+		/// For fast (or direct) token exchange, the username and password is appended to the server url
+		/// i.e: If a regular sync server's url is http://localhost:8080/, the username and password
+		/// are appended to the url: http://localhost:8080/username/password/. The server detects this
+		/// and does not direct the client to a login page, but directly grants a valid OAuth token.
+		/// this is ideal for programmatic logins without user interaction (i.e. unit tests).
+		/// </description>
+		/// <returns>An AccessToken that can be used for all further requests.</returns>
+		/// <param name="serverUrl">Server URL (without username or password appended).</param>
+		/// <param name="username">Username.</param>
+		/// <param name="password">Password.</param>
+		public static IOAuthToken PerformFastTokenExchange (string serverUrl, string username, string password)
+		{
+			OAuthAuthorizationCallback cb = (callbackUrl) => {
+				// point to browser
+				HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create (callbackUrl);
+				req.AllowAutoRedirect = false;
+				// the oauth_verifier we need, is part of the querystring in the (redirection)
+	                        // 'Location:' header
+				string location = ((HttpWebResponse)req.GetResponse ()).Headers ["Location"];
+	                        var query = string.Join ("", location.Split ('?').Skip (1));
+				var oauth_data = System.Web.HttpUtility.ParseQueryString (query);
+				string oauth_verifier = oauth_data["oauth_verifier"];
+
+				// get the oauth_verifier somehow and return
+				return oauth_verifier;
+			};
+
+			// fictional url as we don't need to be callbacked
+			string cburl = "http://localhost:56894/tomboy-fast-token-exchange/";
+
+			string fast_url = serverUrl;
+			if (!fast_url.EndsWith ("/"))
+				fast_url += "/";
+			fast_url += username + "/" + password + "/";
+			return PerformTokenExchange (fast_url, cburl , cb);
+		}
 		private JsonServiceClient GetJsonClient ()
 		{
 			var restClient = new JsonServiceClient ();
@@ -76,10 +146,6 @@ namespace Tomboy.Sync.Web
 			if (api_response.ApiVersion != "1.0") {
 				throw new NotImplementedException ("unknown ApiVersion: " + api_response.ApiVersion);
 			}
-
-			this.oauthRequestTokenUrl = api_response.OAuthRequestTokenUrl;
-			this.oauthAuthorizeUrl = api_response.OAuthAuthorizeUrl;
-			this.oauthAccessTokenUrl = api_response.OAuthAccessTokenUrl;
 
 			var user_response = restClient.Get<UserResponse> (this.userServiceUrl);
 			this.notesServiceUrl = user_response.NotesRef.ApiRef;

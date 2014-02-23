@@ -26,21 +26,22 @@ using Tomboy.Sync.Web.DTO;
 using System.Net;
 using Tomboy.OAuth;
 using System.Linq;
+using Tomboy.Sync.Web;
 
 namespace Tomboy
 {
 	[TestFixture ()]
 	public class OAuthTests
 	{
-		string serverBaseUrl = "https://rpi.orion.latecrew.de/";
-		string serverFastAuthUrl;
+		string serverUrl = "https://rpi.orion.latecrew.de/";
+		string testUser = "testuser";
+		string testPass ="testpass";
 		JsonServiceClient client;
 
 		[SetUp]
 		public void Setup ()
 		{
 			ServicePointManager.CertificatePolicy = new DummyCertificateManager ();
-			serverFastAuthUrl = serverBaseUrl + "testuser/testpass/";
 		}
 		
 		[TearDown]
@@ -55,45 +56,22 @@ namespace Tomboy
 			Assert.That (token.Token.Length > 20);
 			Assert.That (token.Secret.Length > 12);	
 		}
-		public IOAuthToken TokenExchange ()
+		private IOAuthToken TokenExchange ()
 		{
-			var oauth = new OAuthConnection (serverFastAuthUrl);
-			var client = new JsonServiceClient ();
-			
-		
-			string callback_url = "https://localhost:8081/";
-		
-			string link_to_open_for_user = "";
-			link_to_open_for_user = oauth.GetAuthorizationUrl (callback_url);
-			
-			// so, we don't want to present the user an url in the unit test
-			HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create (link_to_open_for_user);
-			req.AllowAutoRedirect = false;
-			// the oauth_verifier we need, is part of the querystring in the (redirection)
-                        // 'Location:' header
-                        string location = ((HttpWebResponse)req.GetResponse ()).Headers ["Location"];
-                        var query = string.Join ("", location.Split ('?').Skip (1));
-			var oauth_data = System.Web.HttpUtility.ParseQueryString (query);
-			string verifier = oauth_data["oauth_verifier"];
-			
-			bool result = oauth.GetAccessAfterAuthorization (verifier);
-			var token = oauth.AccessToken;
-
-			
-			return token;
+			return WebSyncServer.PerformFastTokenExchange (serverUrl, testUser, testPass);
 		}
 		
 		[Test ()]
 		public void SimpleAuthenticatedRequest ()
 		{
-			client = new JsonServiceClient (serverBaseUrl);
-			var oauth = new OAuthConnection (serverBaseUrl);
+			client = new JsonServiceClient (serverUrl);
+			var oauth = new OAuthConnection (serverUrl);
 			var access_token = TokenExchange ();
 			client.LocalHttpWebRequestFilter += webservice_request => {
 				var auth_header = OAuthConnection.GenerateAuthorizationHeader (access_token, webservice_request.RequestUri, RequestMethod.GET, "");
 				webservice_request.Headers.Add ("Authorization", auth_header);
 			};
-			var resp = client.Get<UserResponse> (serverBaseUrl + "/api/1.0/testuser");
+			var resp = client.Get<UserResponse> (serverUrl + "/api/1.0/" + testUser);
 		}
 	}
 }
