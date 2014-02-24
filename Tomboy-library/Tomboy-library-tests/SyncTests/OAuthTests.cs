@@ -69,7 +69,7 @@ namespace Tomboy
 			var access_token = TokenExchange ();
 			client.LocalHttpWebRequestFilter += webservice_request => {
 				var auth_header = OAuthConnection.GenerateAuthorizationHeader (access_token, webservice_request.RequestUri, RequestMethod.GET, "");
-				webservice_request.Headers.Add ("Authorization", auth_header);
+				webservice_request.Headers ["Authorization"] = auth_header;
 			};
 			var resp = client.Get<UserResponse> (serverUrl + "/api/1.0/" + testUser);
 		}

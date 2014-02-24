@@ -54,7 +54,7 @@ namespace Tomboy.Sync.Web
 				var auth_header = OAuthConnection.GenerateAuthorizationHeader (access_token,
 					webservice_request.RequestUri, method, null);
 				
-				webservice_request.Headers.Add ("Authorization", auth_header);
+				webservice_request.Headers ["Authorization"] = auth_header;
 			};
 		}
 	}

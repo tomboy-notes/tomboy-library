@@ -273,9 +273,8 @@ namespace Tomboy.OAuth
 
 			var headerParams =
 				parameters.Implode (",", q => string.Format ("{0}=\"{1}\"", q.Name, q.Value));
-			webRequest.Headers.Add ("Authorization",
-			                        String.Format ("OAuth realm=\"{0}\",{1}",
-			                                       Realm, headerParams));
+			webRequest.Headers ["Authorization"] = String.Format ("OAuth realm=\"{0}\",{1}",
+			                                       Realm, headerParams);
             if (postData == null) {
                 postData = string.Empty;
             }
