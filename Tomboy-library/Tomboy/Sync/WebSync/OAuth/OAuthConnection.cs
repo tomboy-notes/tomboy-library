@@ -87,7 +87,7 @@ namespace Tomboy.OAuth
 		void GetRootApiRef ()
 		{
 			var rest_client = new JsonServiceClient ();
-                        apiRoot = rest_client.Get<ApiResponse> (rootUrl+ "api/1.0/");
+			apiRoot = rest_client.Get<ApiResponse> (rootUrl+ "api/1.0/");
 		}
 		
 		public string GetAuthorizationUrl (string callbackUrl)

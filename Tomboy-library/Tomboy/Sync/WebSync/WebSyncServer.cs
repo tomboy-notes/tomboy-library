@@ -119,8 +119,9 @@ namespace Tomboy.Sync.Web
 			// fictional url as we don't need to be callbacked
 			string cburl = "http://localhost:56894/tomboy-fast-token-exchange/";
 
-			string fast_url = serverUrl;
-			if (!fast_url.EndsWith ("/"))
+			// add + "" to break the reference and force value copy
+			string fast_url = serverUrl + "";
+			if (!serverUrl.EndsWith ("/"))
 				fast_url += "/";
 			fast_url += username + "/" + password + "/";
 			return PerformTokenExchange (fast_url, cburl , cb);
