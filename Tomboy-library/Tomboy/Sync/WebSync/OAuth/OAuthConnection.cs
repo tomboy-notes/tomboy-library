@@ -40,6 +40,7 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using ServiceStack.ServiceClient.Web;
 using Tomboy.Sync.Web.DTO;
+using ServiceStack;
 
 namespace Tomboy.OAuth
 {
@@ -110,7 +111,7 @@ namespace Tomboy.OAuth
 				Token = qs ["oauth_token"],
 				Secret = qs ["oauth_token_secret"]
 			};
-			var link = string.Format ("{0}?oauth_token={1}&oauth_callback={2}", apiRoot.OAuthAuthorizeUrl, RequestToken.Token, HttpUtility.UrlEncode (CallbackUrl));
+			var link = string.Format ("{0}?oauth_token={1}&oauth_callback={2}", apiRoot.OAuthAuthorizeUrl, RequestToken.Token, Uri.EscapeUriString (CallbackUrl));
 			return link;
 		}
 
@@ -217,8 +218,9 @@ namespace Tomboy.OAuth
 
 
 			parameters.Add (new QueryParameter<string> ("oauth_signature",
-			                                            HttpUtility.UrlEncode (sig),
-			                                            s => string.IsNullOrEmpty (s)));
+				Uri.EscapeUriString (sig),
+			        s => string.IsNullOrEmpty (s))
+			);
 			parameters.Sort ();
 
 			var ret = MakeWebRequest (method, url, parameters, postData);
