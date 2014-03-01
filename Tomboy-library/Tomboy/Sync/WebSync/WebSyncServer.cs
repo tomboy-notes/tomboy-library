@@ -24,6 +24,7 @@ using System.Linq;
 using ServiceStack.ServiceClient.Web;
 using Tomboy.OAuth;
 using System.Net;
+using System.Net.Http;
 
 namespace Tomboy.Sync.Web
 {
@@ -102,12 +103,16 @@ namespace Tomboy.Sync.Web
 		public static IOAuthToken PerformFastTokenExchange (string serverUrl, string username, string password)
 		{
 			OAuthAuthorizationCallback cb = (callbackUrl) => {
+				var http_handler = new HttpClientHandler () {
+					AllowAutoRedirect = false
+				};
+				var http_client = new HttpClient (http_handler);
+				var request = http_client.GetAsync (callbackUrl);
+				
 				// point to browser
-				HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create (callbackUrl);
-				req.AllowAutoRedirect = false;
 				// the oauth_verifier we need, is part of the querystring in the (redirection)
 	                        // 'Location:' header
-				string location = ((HttpWebResponse)req.GetResponse ()).Headers ["Location"];
+				string location = request.Result.Headers.GetValues ("Location").Single ();
 	                        var query = string.Join ("", location.Split ('?').Skip (1));
 				var oauth_data = System.Web.HttpUtility.ParseQueryString (query);
 				string oauth_verifier = oauth_data["oauth_verifier"];

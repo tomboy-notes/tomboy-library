@@ -78,7 +78,4 @@
     <Folder Include="SyncTests\" />
     <Folder Include="Dummies\" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="SyncTests\WebSyncServerTests.cs" />
-  </ItemGroup>
 </Project>

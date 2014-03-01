@@ -27,9 +27,23 @@ using System.Net;
 using Tomboy.OAuth;
 using System.Linq;
 using Tomboy.Sync.Web;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Tomboy
 {
+	public class DummyCertificateManager : ICertificatePolicy
+	{
+
+		public bool CheckValidationResult (ServicePoint sp, 
+						   X509Certificate certificate,
+						   WebRequest request,
+						   int error)
+
+		{
+			return true;
+		}
+	}
+	
 	[TestFixture ()]
 	public class OAuthTests
 	{

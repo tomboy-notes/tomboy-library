@@ -35,12 +35,13 @@ using System.IO;
 using System.Text;
 
 using Tomboy;
-using System.Web;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using ServiceStack.ServiceClient.Web;
 using Tomboy.Sync.Web.DTO;
 using ServiceStack;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace Tomboy.OAuth
 {
@@ -126,7 +127,7 @@ namespace Tomboy.OAuth
 				throw new Exception ("received empty response for OAuth authorization");
 			}
 			//Store the Token and Token Secret
-			var qs = HttpUtility.ParseQueryString (response);
+			var qs = System.Web.HttpUtility.ParseQueryString (response);
 			AccessToken = new OAuthToken ();
 			if (!string.IsNullOrEmpty (qs ["oauth_token"]))
 				AccessToken.Token = qs ["oauth_token"];
@@ -266,35 +267,39 @@ namespace Tomboy.OAuth
 			var responseData = string.Empty;
 
 			// TODO: Set UserAgent, Timeout, KeepAlive, Proxy?
-			var webRequest =  HttpWebRequest.Create (url);
-			webRequest.Method = method.ToString ();
-			//webRequest.ServicePoint.Expect100Continue = false;
-
+			var http_client = new HttpClient ();
+			var message = new HttpRequestMessage ();
+			message.RequestUri = new Uri (url);
+			switch (method) {
+			case RequestMethod.GET:
+				message.Method = System.Net.Http.HttpMethod.Get;
+				break;
+			case RequestMethod.POST:
+				message.Method = System.Net.Http.HttpMethod.Post;
+				break;
+			default: throw new NotImplementedException ();
+			}
+			
 			var headerParams =
 				parameters.Implode (",", q => string.Format ("{0}=\"{1}\"", q.Name, q.Value));
-			webRequest.Headers ["Authorization"] = String.Format ("OAuth realm=\"{0}\",{1}",
-			                                       Realm, headerParams);
-            if (postData == null) {
-                postData = string.Empty;
-            }
+			string authorization_header = String.Format ("OAuth realm=\"{0}\",{1}",
+				Realm, headerParams);
+			
+			message.Headers.Add ("Authorization", authorization_header);
 
+			if (postData == null) {
+				postData = string.Empty;
+			}
+
+			HttpResponseMessage resp;
 			if (method == RequestMethod.PUT ||
 			     method == RequestMethod.POST) {
-				webRequest.ContentType = "application/json";
-				// TODO: Error handling?
-				using (var requestWriter = new StreamWriter (webRequest.GetRequestStream ()))
-					requestWriter.Write (postData);
+				var content = new StringContent (postData, Encoding.UTF8, "application/json");
+				message.Content = content;
 			}
+			resp = http_client.SendAsync (message).Result;
 
-			try {
-				using (var responseReader = new StreamReader (webRequest.GetResponse ().GetResponseStream ())) {
-			      		responseData = responseReader.ReadToEnd ();
-				}
-			} catch (Exception e) {
-				throw;
-			}
-
-			return responseData;
+			return resp.Content.ReadAsStringAsync ().Result;
 		}
 
 		private string BuildUri (string baseUri, IDictionary<string, string> queryParameters)
@@ -314,17 +319,5 @@ namespace Tomboy.OAuth
 			return urlBuilder.ToString ();
 		}
 		#endregion
-	}
-	public class DummyCertificateManager : ICertificatePolicy
-	{
-
-		public bool CheckValidationResult (ServicePoint sp, 
-						   X509Certificate certificate,
-						   WebRequest request,
-						   int error)
-
-		{
-			return true;
-		}
 	}
 }

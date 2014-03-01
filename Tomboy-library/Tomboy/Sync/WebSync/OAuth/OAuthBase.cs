@@ -32,9 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
-using System.Web;
 
 namespace Tomboy.OAuth
 {
@@ -97,7 +95,7 @@ namespace Tomboy.OAuth
 		private IEnumerable<IQueryParameter<string>> CreateQueryParametersIterator (string parameters)
 		{
 			if (parameters == null) throw new ArgumentNullException ("parameters");
-			var parameterDictionary = HttpUtility.ParseQueryString (parameters).ToDictionary ();
+			var parameterDictionary = System.Web.HttpUtility.ParseQueryString (parameters).ToDictionary ();
 
 			foreach (var kvp in parameterDictionary)
 				yield return new QueryParameter<string> (kvp.Key, kvp.Value, s => string.IsNullOrEmpty (s));
