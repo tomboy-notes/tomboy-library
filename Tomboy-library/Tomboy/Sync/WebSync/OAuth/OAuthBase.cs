@@ -68,26 +68,6 @@ namespace Tomboy.OAuth
 		private string unreservedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
 
 		/// <summary>
-		/// Helper function to compute a hash value.
-		/// </summary>
-		/// <param name="hashAlgorithm">
-		/// 	The hashing algoirhtm used. If that algorithm needs some initialization, like HMAC and its derivatives,
-		/// 	they should be initialized prior to passing it to this function.
-		/// </param>
-		/// <param name="data">The data to hash.</param>
-		/// <returns>A Base64 string of the hash value.</returns>
-		private string ComputeHash (HashAlgorithm hashAlgorithm, string data)
-		{
-			if (hashAlgorithm == null) throw new ArgumentNullException ("hashAlgorithm");
-			if (string.IsNullOrEmpty (data)) throw new ArgumentNullException ("data");
-
-			byte[] dataBuffer = System.Text.Encoding.ASCII.GetBytes (data);
-			byte[] hashBytes = hashAlgorithm.ComputeHash (dataBuffer);
-
-			return Convert.ToBase64String (hashBytes);
-		}
-
-		/// <summary>
 		/// URL encodes a string using OAuth's encoding scheme (slightly different from HttpUtility's UrlEncode).
 		/// </summary>
 		/// <param name="value">The string to URL encode.</param>
@@ -187,22 +167,6 @@ namespace Tomboy.OAuth
 		}
 
 		/// <summary>
-		/// Generate the signature value based on the given signature base and hash algorithm.
-		/// </summary>
-		/// <param name="signatureBase">
-		/// 	The signature based as produced by the GenerateSignatureBase method or by any other means.
-		/// </param>
-		/// <param name="hash">
-		/// 	The hash algorithm used to perform the hashing. If the hashing algorithm requires
-		/// 	initialization or a key it should be set prior to calling this method.
-		/// </param>
-		/// <returns>A Base64 string of the hash value.</returns>
-		private string GenerateSignatureUsingHash (string signatureBase, HashAlgorithm hash)
-		{
-			return ComputeHash (hash, signatureBase);
-		}
-
-		/// <summary>
 		/// Generates a signature using the HMAC-SHA1 algorithm
 		/// </summary>
 		/// <param name="url">The full URL that needs to be signed including its non-OAuth URL parameters.</param>
@@ -218,8 +182,10 @@ namespace Tomboy.OAuth
 		                                    string callbackUrl, out string normalizedUrl,
 		                                    out List<IQueryParameter<string>> parameters)
 		{
+			// TODO use HMACSHA1 instead of PLAINTEXT
+			// for non-ssl connection.
 			return GenerateSignature (url, consumerKey, consumerSecret, token, verifier, method, timeStamp, nonce,
-			                          SignatureType.HMACSHA1, callbackUrl, out normalizedUrl, out parameters);
+			                          SignatureType.PLAINTEXT, callbackUrl, out normalizedUrl, out parameters);
 		}
 
 		/// <summary>
@@ -245,22 +211,25 @@ namespace Tomboy.OAuth
 			{
 				case SignatureType.PLAINTEXT:
 					var signature = UrlEncode (string.Format ("{0}&{1}", consumerSecret, token.Secret));
+					GenerateSignatureBase (url, consumerKey, token, verifier, method, timeStamp, nonce, SignatureType.PLAINTEXT,
+						callbackUrl, out normalizedUrl, out parameters);
 					return signature;
 				case SignatureType.HMACSHA1:
-					string signatureBase = GenerateSignatureBase (url, consumerKey, token, verifier, method,
-					                                              timeStamp, nonce, SignatureType.HMACSHA1, callbackUrl,
-					                                              out normalizedUrl, out parameters);
-
-					var hmacsha1 = new HMACSHA1 ();
-					hmacsha1.Key = Encoding.ASCII.GetBytes (string.Format ("{0}&{1}",
-						UrlEncode (consumerSecret),
-						string.IsNullOrEmpty (token.Secret) ? "" : UrlEncode(token.Secret)));
-
-					var hashedSignature = GenerateSignatureUsingHash (signatureBase, hmacsha1);
-
-//					log.LogDebug ("HMAC-SHA1 encoded signature {0} of consumer secret and token secret.", hashedSignature);
-					return hashedSignature;
-				case SignatureType.RSASHA1:
+//					string signatureBase = GenerateSignatureBase (url, consumerKey, token, verifier, method,
+//					                                              timeStamp, nonce, SignatureType.HMACSHA1, callbackUrl,
+//					                                              out normalizedUrl, out parameters);
+//
+//					var hmacsha1 = new HMACSHA1 ();
+//					hmacsha1.Key = Encoding.ASCII.GetBytes (string.Format ("{0}&{1}",
+//						UrlEncode (consumerSecret),
+//						string.IsNullOrEmpty (token.Secret) ? "" : UrlEncode(token.Secret)));
+//
+//					var hashedSignature = GenerateSignatureUsingHash (signatureBase, hmacsha1);
+//
+////					log.LogDebug ("HMAC-SHA1 encoded signature {0} of consumer secret and token secret.", hashedSignature);
+//					return hashedSignature;
+					throw new NotImplementedException ();
+			case SignatureType.RSASHA1:
 					throw new NotImplementedException ();
 				default:
 					throw new ArgumentException ("Unknown signature type", "signatureType");

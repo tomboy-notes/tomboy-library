@@ -44,7 +44,6 @@ using ServiceStack;
 
 namespace Tomboy.OAuth
 {
-	// TODO: Rename to OAuthConnection ?
 	public class OAuthConnection : OAuthBase
 	{
 		bool useNonInteractiveAuth;
