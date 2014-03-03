@@ -2,9 +2,9 @@
 //  OAuthTests.cs
 //
 //  Author:
-//       td <>
+//       Timo Dörr <timo@latecrew.de>
 //
-//  Copyright (c) 2014 td
+//  Copyright (c) 2014 Timo Dörr
 //
 //  This library is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as
@@ -43,7 +43,11 @@ namespace Tomboy
 			return true;
 		}
 	}
-	
+
+	// please enable this test ONLY when debugging/testing OAuth and consider
+	// using your own SyncServer instance (i.e. Rainy) to keep load on the public
+	// demo server low.
+	[Ignore]
 	[TestFixture ()]
 	public class OAuthTests
 	{
