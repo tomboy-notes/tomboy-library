@@ -35,17 +35,11 @@ namespace Tomboy
 		void Debug (params object[] message);
 	}
 
-	public class ConsoleLogger : ILogger
+	public class DummyLogger : ILogger
 	{
-		enum LogLevel { INFO, WARN, ERROR, FATAL, DEBUG };
-		void printNotice (LogLevel loglevel, params object[] message)
+		protected enum LogLevel { INFO, WARN, ERROR, FATAL, DEBUG };
+		protected virtual void printNotice (LogLevel loglevel, params object[] message)
 		{
-			string level = loglevel.ToString ();
-			string mainstring = message.First ().ToString ();
-			object[] prams = message.Skip (1).ToArray<object> ();
-
-			var output_message = string.Format (mainstring, prams);
-			Console.WriteLine ("[{0}] {1}", level, output_message);
 		}
 
 		#region ILogger implementation
@@ -70,6 +64,22 @@ namespace Tomboy
 			printNotice (LogLevel.DEBUG, message);
 		}
 		#endregion
+	}
+	
+	public class ConsoleLogger : DummyLogger
+	{
+		public ConsoleLogger ()
+		{
+		}
+		protected override void printNotice (DummyLogger.LogLevel loglevel, params object[] message)
+		{
+			string level = loglevel.ToString ();
+			string mainstring = message.First ().ToString ();
+			object[] prams = message.Skip (1).ToArray<object> ();
+
+			var output_message = string.Format (mainstring, prams);
+			Console.WriteLine ("[{0}] {1}", level, output_message);
+		}
 	}
 
 }

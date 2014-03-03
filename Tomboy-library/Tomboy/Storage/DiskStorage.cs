@@ -36,9 +36,11 @@ namespace Tomboy
 		private string pathToNotes = null;
 		private string backupPathNotes = null;
 		private string configPath = null;
+		public ILogger Logger { get; set; }
 
 		public DiskStorage ()
 		{
+			this.Logger = new DummyLogger ();
 		}
 
 		/// <summary>
@@ -66,7 +68,7 @@ namespace Tomboy
 		public void SaveNote (Note note)
 		{
 			string file = Utils.GetNoteFileNameFromURI (note);
-			Console.WriteLine ("Saving Note {0}, FileName: {1}", note.Title, file);
+			Logger.Info ("Saving Note {0}, FileName: {1}", note.Title, file);
 			Write (file, note);
 		}
 		
@@ -130,7 +132,7 @@ namespace Tomboy
 				 */
 				string [] files = Directory.GetFiles (pathToNotes, "*.note");
 				if (files.Length == 0)
-					Console.WriteLine ("No notes found in note folder.");
+					Logger.Warn ("No notes found in note folder.");
 				
 				foreach (string file_path in files) {
 					try {
@@ -138,16 +140,16 @@ namespace Tomboy
 						if (note != null)
 							notes.Add (note.Uri, note);
 					} catch (XmlException e) {
-						Console.WriteLine ("Failed to read Note {0}", file_path); /* so we know what note we cannot read */
-						Console.WriteLine (e);
+						Logger.Error ("Failed to read Note {0}", file_path); /* so we know what note we cannot read */
+						Logger.Error (e);
 					} catch (IOException e) {
-						Console.WriteLine (e);
+						Logger.Error (e);
 					} catch (UnauthorizedAccessException e) {
-						Console.WriteLine (e);
+						Logger.Error (e);
 					}				
 				}
 			} catch (DirectoryNotFoundException) {
-				Console.WriteLine ("Note folder does not yet exist.");
+				Logger.Warn ("Note folder does not yet exist.");
 			}
 			return notes;
 		}
@@ -164,7 +166,7 @@ namespace Tomboy
         /// <param name = "uri"></param>
 		public static Note Read (string readFile, string uri)
 		{
-			Console.WriteLine ("Reading Note {0}", readFile);
+//			Logger.Info ("Reading Note {0}", readFile);
 			return ReadFile (readFile, uri);
 		}
 

@@ -26,6 +26,7 @@ using NUnit.Framework;
 
 using Tomboy.Tags;
 using System.Linq;
+using PortableIoC;
 
 namespace Tomboy
 {
@@ -39,7 +40,13 @@ namespace Tomboy
 
 		[SetUp] public void Init()
 		{
-			diskStorage = new DiskStorage ();
+			IPortableIoC container = new PortableIoc ();
+			container.Register<DiskStorage> (c => {
+				return new DiskStorage () {
+					Logger = new ConsoleLogger ()
+				};
+			});
+			diskStorage = container.Resolve<DiskStorage> ();
 			diskStorage.SetPath ("../../test_notes/proper_notes");
 
 			engine = new Engine (diskStorage);
