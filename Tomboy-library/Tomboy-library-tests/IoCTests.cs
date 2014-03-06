@@ -30,9 +30,10 @@ namespace Tomboy
 		[Test()]
 		public void SimpleRegisterAndResolve ()
 		{
-			var container = TomboyContainer.Container;
-			container.Register<ILogger> (c => new ConsoleLogger ());
-			var logger = container.Resolve<ILogger> ();
+			var ioc = new TomboyComposition ().DefaultComposition ();
+			ioc.Unregister<ILogger> ();
+			ioc.Register<ILogger> (c => new ConsoleLogger ());
+			var logger = ioc.Resolve<ILogger> ();
 
 			Assert.AreEqual (logger.GetType (), typeof(ConsoleLogger));
 		}

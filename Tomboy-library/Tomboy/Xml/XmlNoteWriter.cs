@@ -33,9 +33,9 @@ namespace Tomboy.Xml
 	/// <summary>
 	/// Note to XML writer.
 	/// </summary>
-	public class XmlNoteWriter
+	public static class XmlNoteWriter
 	{
-		private const string CURRENT_VERSION = "0.3";
+		public const string CURRENT_VERSION = "0.3";
 
 		
 		/// <summary>

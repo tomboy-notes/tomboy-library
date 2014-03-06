@@ -21,15 +21,19 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 using PortableIoC;
+using Tomboy.Xml;
 
 namespace Tomboy
 {
-	public static class TomboyContainer
+	public class TomboyComposition
 	{
-		public static IPortableIoC Container;
-		static TomboyContainer ()
+		public TomboyComposition ()
 		{
-			Container = new PortableIoC.PortableIoc ();
+		}
+		public IPortableIoC DefaultComposition ()
+		{
+			var ioc = new PortableIoc ();
+			return ioc;
 		}
 	}
 }

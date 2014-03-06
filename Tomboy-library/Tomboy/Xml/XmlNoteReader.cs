@@ -33,7 +33,7 @@ namespace Tomboy.Xml
 	/// Reader is responsible for consuming Notes in XML format
 	/// and returning the Note as a object.
 	/// </summary>
-	public class XmlNoteReader
+	public static class XmlNoteReader
 	{
 		/// <summary>
 		/// Current XML version
