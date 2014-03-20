@@ -1,0 +1,12 @@
+/Users/td/Projects/tomboy-library/DevDefined.OAuth/src/DevDefined.OAuth/bin/Debug/DevDefined.OAuth.dll.mdb
+/Users/td/Projects/tomboy-library/DevDefined.OAuth/src/DevDefined.OAuth/bin/Debug/DevDefined.OAuth.dll
+/Users/td/Projects/tomboy-library/DevDefined.OAuth/src/DevDefined.OAuth/obj/Debug/DevDefined.OAuth.dll
+/Users/td/Projects/tomboy-library/DevDefined.OAuth/src/DevDefined.OAuth/obj/Debug/DevDefined.OAuth.dll.mdb
+/Users/rashid/Mono_Projects/tomboy/tomboy-library/DevDefined.OAuth/src/DevDefined.OAuth/bin/Debug/DevDefined.OAuth.dll.mdb
+/Users/rashid/Mono_Projects/tomboy/tomboy-library/DevDefined.OAuth/src/DevDefined.OAuth/bin/Debug/DevDefined.OAuth.dll
+/Users/rashid/Mono_Projects/tomboy/tomboy-library/DevDefined.OAuth/src/DevDefined.OAuth/obj/Debug/DevDefined.OAuth.dll
+/Users/rashid/Mono_Projects/tomboy/tomboy-library/DevDefined.OAuth/src/DevDefined.OAuth/obj/Debug/DevDefined.OAuth.dll.mdb
+/Users/rashid/Mono_Projects/tomboy_old_files/tomboy/tomboy-library/DevDefined.OAuth/src/DevDefined.OAuth/bin/Debug/DevDefined.OAuth.dll.mdb
+/Users/rashid/Mono_Projects/tomboy_old_files/tomboy/tomboy-library/DevDefined.OAuth/src/DevDefined.OAuth/bin/Debug/DevDefined.OAuth.dll
+/Users/rashid/Mono_Projects/tomboy_old_files/tomboy/tomboy-library/DevDefined.OAuth/src/DevDefined.OAuth/obj/Debug/DevDefined.OAuth.dll
+/Users/rashid/Mono_Projects/tomboy_old_files/tomboy/tomboy-library/DevDefined.OAuth/src/DevDefined.OAuth/obj/Debug/DevDefined.OAuth.dll.mdb
