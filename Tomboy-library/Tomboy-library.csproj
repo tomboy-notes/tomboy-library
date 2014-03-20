@@ -73,8 +73,6 @@
     <Compile Include="Tomboy\Storage\DiskStorage.cs" />
     <Compile Include="Tomboy\TomboyException.cs" />
     <Compile Include="Tomboy\Utils.cs" />
-    <Compile Include="Tomboy\XmlEncoder.cs" />
-    <Compile Include="Tomboy\XmlDecoder.cs" />
     <Compile Include="Tomboy\Reader.cs" />
     <Compile Include="Tomboy\Writer.cs" />
     <Compile Include="Tomboy\Deleter.cs" />
