@@ -23,6 +23,11 @@
 using System;
 using System.Xml;
 using System.Collections.Generic;
+using System.IO;
+using System.Xml.Linq;
+using System.Linq;
+using System.Text;
+using Tomboy.Xml;
 
 namespace Tomboy.Sync
 {
@@ -82,144 +87,125 @@ namespace Tomboy.Sync
 		#region Xml serialization
 		private const string CURRENT_VERSION = "0.3";
 
-		public static void Write (string path, SyncManifest manifest)
-		{
-			var settings = new XmlWriterSettings ();
-			settings.Indent = true;
-			settings.IndentChars = "\t";
-			XmlWriter writer = XmlWriter.Create (path, settings);
-			Write (writer, manifest);
-			writer.Close ();
-		}
-
 		/// <summary>
-		/// Write the specified manifest to an XmlWriter.
+		/// Write the specified manifest to an ouput stream.
 		/// </summary>
-		public static void Write (XmlWriter xml, SyncManifest manifest)
+		public static void Write (SyncManifest manifest, Stream output)
 		{
-			xml.WriteStartDocument ();
-			xml.WriteStartElement (null, "manifest", "http://beatniksoftware.com/tomboy");
-			xml.WriteAttributeString (null,
-			                         "version",
-			                         null,
-			                         CURRENT_VERSION);
-
-			if (manifest.LastSyncDate > DateTime.MinValue) {
-				xml.WriteStartElement (null, "last-sync-date", null);
-				xml.WriteString (
-					XmlConvert.ToString (manifest.LastSyncDate, Writer.DATE_TIME_FORMAT));
-				xml.WriteEndElement ();
-			}
-
-			xml.WriteStartElement (null, "last-sync-rev", null);
-			xml.WriteString (manifest.LastSyncRevision.ToString ());
-			xml.WriteEndElement ();
-
-			xml.WriteStartElement (null, "server-id", null);
-			xml.WriteString (manifest.ServerId);
-			xml.WriteEndElement ();
-
-			WriteNoteRevisions (xml, manifest);
-			WriteNoteDeletions (xml, manifest);
-
-			xml.WriteEndDocument ();
-		}
-		private static void WriteNoteRevisions (XmlWriter xml, SyncManifest manifest)
-		{
-			xml.WriteStartElement (null, "note-revisions", null);
-			foreach (var revision in manifest.NoteRevisions) {
-				xml.WriteStartElement (null, "note", null);
-				xml.WriteAttributeString ("guid", revision.Key);
-				xml.WriteAttributeString ("latest-revision", revision.Value.ToString ());
-				xml.WriteEndElement ();
-			}
-			xml.WriteEndElement ();
-		}
-		private static void WriteNoteDeletions (XmlWriter xml, SyncManifest manifest)
-		{
-			xml.WriteStartElement (null, "note-deletions", null);
-			foreach (var deletion in manifest.NoteDeletions) {
-				xml.WriteStartElement (null, "note", null);
-				xml.WriteAttributeString ("guid", deletion.Key);
-				xml.WriteAttributeString ("title", deletion.Value);
-				xml.WriteEndElement ();
-			}
-			xml.WriteEndElement ();
-		}
-		public static SyncManifest Read (string path)
-		{
-			XmlReader reader = XmlTextReader.Create (path);
-			SyncManifest manifest = Read (reader);
-			reader.Close ();
-
-			return manifest;
-		}
-		public static SyncManifest Read (XmlReader xml)
-		{
-			SyncManifest manifest = new SyncManifest ();
-			string version = String.Empty;
+			var xdoc = new XDocument ();
+			xdoc.Add (new XElement ("manifest",
+				new XAttribute ("version", CURRENT_VERSION),
+				new XElement ("last-sync-date", manifest.LastSyncDate.ToString (XmlSettings.DATE_TIME_FORMAT)),
+				new XElement ("last-sync-rev", manifest.LastSyncRevision),
+				new XElement ("server-id", manifest.ServerId)
+				)
+			);
 			
-			try {
-				while (xml.Read ()) {
-					switch (xml.NodeType) {
-					case XmlNodeType.Element:
-						switch (xml.Name) {
-						case "manifest":
-							version = xml.GetAttribute ("version");
-							break;
-						case "server-id":
+			xdoc.Element ("manifest").Add (new XElement ("note-revisions",
+				manifest.NoteRevisions.Select (r => {
+					return new XElement ("note",
+						new XAttribute ("guid", r.Key),
+						new XAttribute ("latest-revision", r.Value)
+					);
+				})
+			));
+				
+			xdoc.Element ("manifest").Add (new XElement ("note-deletions",
+				manifest.NoteDeletions.Select (d => {
+					return new XElement ("note",
+						new XAttribute ("guid", d.Key),
+						new XAttribute ("title", d.Value)
+					);
+				})
+			));
+		
+			// this has to be performed at last..	
+			xdoc.Root.SetDefaultXmlNamespace ("http://beatniksoftware.com/tomboy");		
 
-							// <text> is just a wrapper around <note-content>
-							// NOTE: Use .text here to avoid triggering a save.
-							manifest.ServerId = xml.ReadString ();
-							break;
-						case "last-sync-date":
-							DateTime date;
-							if (DateTime.TryParse (xml.ReadString (), out date))
-								manifest.LastSyncDate = date;
-							else
-								manifest.LastSyncDate = DateTime.UtcNow;
-							break;
-						case "last-sync-rev":
-							int num;
-							if (int.TryParse (xml.ReadString (), out num))
-								manifest.LastSyncRevision = num;
-							break;
-						case "note-revisions":
-							xml.ReadToDescendant ("note");
-							do {
-								var guid = xml.GetAttribute ("guid");
-								var xmlrev = xml.GetAttribute ("latest-revision");
-								if (guid != null && xmlrev != null) {
-									int rev = int.Parse (xmlrev);
-									manifest.NoteRevisions.Add (guid, rev);
-								}
-								else
-									break;
-
-							} while (xml.ReadToNextSibling ("note"));
-							break;
-						case "note-deletions":
-							xml.ReadToDescendant ("note");
-							do {
-								var guid = xml.GetAttribute ("guid");
-								string title = xml.GetAttribute ("title");
-								if (string.IsNullOrEmpty (title) || string.IsNullOrEmpty(guid))
-									break;
-								else
-									manifest.NoteDeletions.Add (guid, title);
-							} while (xml.ReadToNextSibling ("note"));
-							break;
-						}
-						break;
-							
+			using (var writer = XmlWriter.Create (output, XmlSettings.DocumentSettings)) {
+				xdoc.WriteTo (writer);
+			}
+		}
+		/// <summary>
+		/// Returns a XML string representation of the SyncManifest.
+		/// </summary>
+		/// <param name="manifest">Manifest.</param>
+		public static string Write (SyncManifest manifest)
+		{
+			using (var ms = new MemoryStream ()) {
+				using (var writer = new StreamWriter (ms, Encoding.UTF8)) {
+					SyncManifest.Write (manifest, ms);	
+					ms.Position = 0;
+					using (var reader = new StreamReader (ms, Encoding.UTF8)) {
+						return reader.ReadToEnd();
 					}
 				}
-			} catch (XmlException) {
-				//TODO: Log the error
-				return null;
 			}
-			return manifest;
+		}
+		public static SyncManifest Read (Stream stream)
+		{
+			SyncManifest manifest = new SyncManifest ();
+			
+			try {
+				var xdoc = XDocument.Load (stream);
+				var elements = xdoc.Root.Elements ().ToList<XElement> ();
+	
+				string version = 
+					(from el in xdoc.Elements() where el.Name.LocalName == "manifest"
+					 select el.Attribute ("version").Value).Single ();
+				if (version != CURRENT_VERSION)
+					throw new TomboyException ("Syncmanifest is of unknown version");
+	
+				manifest.LastSyncDate =
+					(from  el in elements
+					where el.Name.LocalName == "last-sync-date"
+						select DateTime.Parse (el.Value)).Single ();
+	
+				manifest.ServerId = 
+					(from el in elements where el.Name.LocalName == "server-id"
+					 select el.Value).Single();
+	
+				manifest.LastSyncRevision =
+					(from el in elements where el.Name.LocalName == "last-sync-rev"
+					 select long.Parse (el.Value)).Single ();
+	
+				var notes_for_deletion = 
+					from el in elements where el.Name.LocalName == "note-deletions"
+					from note in el.Elements ()  
+					let guid = (string) note.Attribute ("guid").Value 
+					let title = (string) note.Attribute ("title").Value
+					select new KeyValuePair<string, string> (guid, title);
+	
+				foreach (var kvp in notes_for_deletion)
+					manifest.NoteDeletions.Add (kvp);
+	
+				var notes_revisions =
+					from el in elements where el.Name.LocalName == "note-revisions"
+					from note in el.Elements()
+					let guid = (string) note.Attribute ("guid").Value
+					let revision = long.Parse (note.Attribute ("latest-revision").Value)
+					select new KeyValuePair<string, long> (guid, revision);
+					
+				foreach (var kvp in notes_revisions)
+					manifest.NoteRevisions.Add (kvp);
+	
+				return manifest;
+			}
+			catch (Exception e) {
+				// TODO handle exception
+				throw e;
+			}
+		}
+		public static SyncManifest Read (string xmlstring)
+		{
+			using (var memstream = new MemoryStream ()) {	
+				using (var streamwriter = new StreamWriter (memstream, Encoding.UTF8)) {
+					streamwriter.Write (xmlstring);
+					streamwriter.Flush ();
+					memstream.Position = 0;
+					return Read (memstream);
+				}
+			}
 		}
 		#endregion Xml serialization
 	}

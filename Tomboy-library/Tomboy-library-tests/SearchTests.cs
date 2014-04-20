@@ -33,7 +33,7 @@ namespace Tomboy
 		[SetUp()]
 		public void Init ()
 		{
-			IStorage storage = DiskStorage.Instance;
+			IStorage storage = new DiskStorage ();
 			storage.SetPath ("../../test_notes/proper_notes");
 			engine = new Engine (storage);
 		}

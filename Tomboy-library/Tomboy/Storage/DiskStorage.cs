@@ -22,15 +22,12 @@ using System.Xml;
 using System.Xml.Linq;
 using System.IO;
 using System.Collections.Generic;
+using Tomboy.Xml;
 
 namespace Tomboy
 {
 	public class DiskStorage : IStorage
 	{
-		
-		private static DiskStorage instance = null;
-		private static readonly object lock_ = new object ();
-		private static Reader reader;
 		
 		/// <summary>
 		/// The path_to_notes.
@@ -39,27 +36,13 @@ namespace Tomboy
 		private string pathToNotes = null;
 		private string backupPathNotes = null;
 		private string configPath = null;
+		public ILogger Logger { get; set; }
 
 		public DiskStorage ()
 		{
-			reader = new Reader ();
+			this.Logger = new DummyLogger ();
 		}
 
-		public static DiskStorage Instance {
-			get {
-				lock (lock_) {
-					if (instance == null)
-						instance = new DiskStorage ();
-					return instance;
-				}
-			}
-			set {
-				lock (lock_) {
-					instance = value;
-				}
-			}
-		}		
-		
 		/// <summary>
 		/// Sets the path to where Notes are located
 		/// </summary>
@@ -85,14 +68,14 @@ namespace Tomboy
 		public void SaveNote (Note note)
 		{
 			string file = Utils.GetNoteFileNameFromURI (note);
-			Console.WriteLine ("Saving Note {0}, FileName: {1}", note.Title, file);
+			Logger.Info ("Saving Note {0}, FileName: {1}", note.Title, file);
 			Write (file, note);
 		}
 		
 		/// <summary>
 		/// Write the specified write_file and note to storage
 		/// </summary>
-        /// <param name='filename'>
+		/// <param name='filename'>
 		/// Write_file.
 		/// </param>
 		/// <param name='note'>
@@ -106,17 +89,17 @@ namespace Tomboy
 		/// <summary>
 		/// Writes the file to the actual file system.
 		/// </summary>
-        /// <param name = "file"></param>
+		/// <param name = "file"></param>
 		/// <param name='note'>
 		/// Note.
 		/// </param>
-        /// <param name = "note"></param>
+		/// <param name = "note"></param>
 		private static void WriteFile (string file, Note note)
 		{
 			string tmp_file = file + ".tmp";
 
-			using (var xml = XmlWriter.Create (tmp_file, XmlSettings.DocumentSettings))
-				Writer.Write (xml, note);
+			using (var fs = File.OpenWrite (tmp_file))
+				XmlNoteWriter.Write (note, fs);
 
 			if (File.Exists (file)) {
 				string backup_path = file + "~";
@@ -149,7 +132,7 @@ namespace Tomboy
 				 */
 				string [] files = Directory.GetFiles (pathToNotes, "*.note");
 				if (files.Length == 0)
-					Console.WriteLine ("No notes found in note folder.");
+					Logger.Warn ("No notes found in note folder.");
 				
 				foreach (string file_path in files) {
 					try {
@@ -157,16 +140,16 @@ namespace Tomboy
 						if (note != null)
 							notes.Add (note.Uri, note);
 					} catch (XmlException e) {
-						Console.WriteLine ("Failed to read Note {0}", file_path); /* so we know what note we cannot read */
-						Console.WriteLine (e);
+						Logger.Error ("Failed to read Note {0}", file_path); /* so we know what note we cannot read */
+						Logger.Error (e);
 					} catch (IOException e) {
-						Console.WriteLine (e);
+						Logger.Error (e);
 					} catch (UnauthorizedAccessException e) {
-						Console.WriteLine (e);
+						Logger.Error (e);
 					}				
 				}
 			} catch (DirectoryNotFoundException) {
-				Console.WriteLine ("Note folder does not yet exist.");
+				Logger.Warn ("Note folder does not yet exist.");
 			}
 			return notes;
 		}
@@ -183,7 +166,7 @@ namespace Tomboy
         /// <param name = "uri"></param>
 		public static Note Read (string readFile, string uri)
 		{
-			Console.WriteLine ("Reading Note {0}", readFile);
+//			Logger.Info ("Reading Note {0}", readFile);
 			return ReadFile (readFile, uri);
 		}
 
@@ -193,9 +176,10 @@ namespace Tomboy
 			/* Reader.Read should be called by all storage classes.
 			 * The Reader is responsible for taking the XML data and turning it into a Note object
 			 */
-			using (var xml = new XmlTextReader (new StreamReader (readFile, System.Text.Encoding.UTF8)) {Namespaces = false})
-				note = Reader.Read (xml, uri);
-
+			using (var fs = File.OpenRead (readFile)) {
+				note = XmlNoteReader.Read (fs, uri);
+			}
+			
 			return note;
 		}
 

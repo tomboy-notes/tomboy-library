@@ -26,6 +26,7 @@ using NUnit.Framework;
 
 using Tomboy.Tags;
 using System.Linq;
+using PortableIoC;
 
 namespace Tomboy
 {
@@ -34,13 +35,21 @@ namespace Tomboy
 	{
 		Engine engine;
 		Note note;
+		DiskStorage diskStorage;
 		string NOTE_PATH = "";
 
 		[SetUp] public void Init()
 		{
-			//TODO: The storage instance needs swapping with a stub/mock!
-			DiskStorage.Instance.SetPath ("../../test_notes/proper_notes");
-			engine = new Engine (DiskStorage.Instance);
+			IPortableIoC container = new PortableIoc ();
+			container.Register<DiskStorage> (c => {
+				return new DiskStorage () {
+					Logger = new ConsoleLogger ()
+				};
+			});
+			diskStorage = container.Resolve<DiskStorage> ();
+			diskStorage.SetPath ("../../test_notes/proper_notes");
+
+			engine = new Engine (diskStorage);
 			// get a new note instance
 			note = engine.NewNote ();
 			note.Title = "Unit Test Note";

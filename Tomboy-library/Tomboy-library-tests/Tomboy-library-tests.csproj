@@ -9,6 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Tomboylibrarytests</RootNamespace>
     <AssemblyName>Tomboy-library-tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
@@ -35,7 +36,7 @@
     <Compile Include="EngineTests.cs" />
     <Compile Include="TesterNote.cs" />
     <Compile Include="DiskStorageTests.cs" />
-    <Compile Include="ReaderTests.cs" />
+    <Compile Include="NoteXmlTests.cs" />
     <Compile Include="TagManagerTests.cs" />
     <Compile Include="SearchTests.cs" />
     <Compile Include="Dummies\DummyStorage.cs" />
@@ -46,16 +47,26 @@
     <Compile Include="SyncTests\FilesystemSyncServerTests.cs" />
     <Compile Include="SyncTests\AbstractSyncServerTests.cs" />
     <Compile Include="NoteTests.cs" />
-    <Compile Include="SyncTests\SyncObjects.cs" />
+    <Compile Include="SyncTests\SyncManifestTests.cs" />
+    <Compile Include="IoCTests.cs" />
+    <Compile Include="SyncTests\OAuthTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Core" />
-    <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
-      <Private>False</Private>
+    <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77" />
+    <Reference Include="ServiceStack.Common">
+      <HintPath>..\..\nuget-packages\ServiceStack.Common.3.9.66\lib\net35\ServiceStack.Common.dll</HintPath>
     </Reference>
+    <Reference Include="ServiceStack.Interfaces">
+      <HintPath>..\..\nuget-packages\ServiceStack.Common.3.9.66\lib\net35\ServiceStack.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text">
+      <HintPath>..\..\nuget-packages\ServiceStack.Text.3.9.66\lib\net35\ServiceStack.Text.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Tomboy-library.csproj">

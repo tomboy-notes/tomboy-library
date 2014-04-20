@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Tomboy</RootNamespace>
     <AssemblyName>Tomboy-library</AssemblyName>
-    <ReleaseVersion>0.3.2</ReleaseVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
@@ -56,6 +56,8 @@
     <Reference Include="ServiceStack.Interfaces">
       <HintPath>..\nuget-packages\ServiceStack.Common.3.9.66\lib\net35\ServiceStack.Interfaces.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tomboy\" />
@@ -65,16 +67,15 @@
     <Folder Include="Tomboy\Sync\" />
     <Folder Include="Tomboy\Sync\Filesystem\" />
     <Folder Include="Tomboy\Sync\WebSync\" />
+    <Folder Include="Tomboy\IoC\" />
+    <Folder Include="Tomboy\Xml\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Tomboy\Note.cs" />
     <Compile Include="Tomboy\Engine.cs" />
     <Compile Include="Tomboy\Storage\IStorage.cs" />
-    <Compile Include="Tomboy\Storage\DiskStorage.cs" />
     <Compile Include="Tomboy\TomboyException.cs" />
     <Compile Include="Tomboy\Utils.cs" />
-    <Compile Include="Tomboy\Reader.cs" />
-    <Compile Include="Tomboy\Writer.cs" />
     <Compile Include="Tomboy\Deleter.cs" />
     <Compile Include="Tomboy\NoteCreator.cs" />
     <Compile Include="Tomboy\Notebooks\Notebook.cs" />
@@ -93,14 +94,21 @@
     <Compile Include="Tomboy\Sync\WebSync\WebSyncServer.cs" />
     <Compile Include="Tomboy\Sync\SettingsSync.cs" />
     <Compile Include="Tomboy\Sync\ExportNotes.cs" />
+    <Compile Include="Tomboy\Storage\DiskStorage.cs" />
+    <Compile Include="Tomboy\Logging.cs" />
+    <Compile Include="Tomboy\IoC\PortableIoC.cs" />
+    <Compile Include="Tomboy\Xml\XmlNoteReader.cs" />
+    <Compile Include="Tomboy\Xml\XmlNoteWriter.cs" />
+    <Compile Include="Tomboy\Xml\XmlUtil.cs" />
+    <Compile Include="Tomboy\Sync\WebSync\OAuth\Extensions.cs" />
+    <Compile Include="Tomboy\Sync\WebSync\OAuth\OAuthBase.cs" />
+    <Compile Include="Tomboy\Sync\WebSync\OAuth\OAuthTypes.cs" />
+    <Compile Include="Tomboy\Sync\WebSync\OAuth\OAuthUtil.cs" />
+    <Compile Include="Tomboy\Sync\WebSync\OAuth\QueryParameters.cs" />
+    <Compile Include="Tomboy\Sync\WebSync\OAuth\OAuthConnection.cs" />
+    <Compile Include="Tomboy\IoC\TomboyComposition.cs" />
   </ItemGroup>
   <ItemGroup>
 &gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/sync_from_scratch
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DevDefined.OAuth\src\DevDefined.OAuth\DevDefined.OAuth.csproj">
-      <Project>{61B700B6-3911-4CEF-8751-7F42CA765068}</Project>
-      <Name>DevDefined.OAuth</Name>
-    </ProjectReference>
   </ItemGroup>
 </Project>
