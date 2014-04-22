@@ -44,7 +44,7 @@ namespace Tomboy
 		public string ConfigPath { get; private set; }
 		public ILogger Logger { get; set; }
 
-		[Obsolete ("use constructor with path argument")];
+		[Obsolete ("use constructor with path argument")]
 		public DiskStorage ()
 		{
 			this.Logger = new DummyLogger ();
@@ -60,7 +60,7 @@ namespace Tomboy
 		/// <param name='path'>
 		/// Path.
 		/// </param>
-		[Obsolete ("use constructor with path argument")];
+		[Obsolete ("use constructor with path argument")]
 		// this will be private in the future. It makes no sense to change the path later on.
 		// Currently changing the path a second time will result in undefined behavior.
 		public void SetPath (string path)
