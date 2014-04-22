@@ -84,8 +84,7 @@ namespace Tomboy.Sync
 
 		protected virtual void InitClientOne ()
 		{
-			clientStorageOne = new DiskStorage ();
-			clientStorageOne.SetPath (clientStorageDirOne);
+			clientStorageOne = new DiskStorage (clientStorageDirOne);
 			clientEngineOne = new Engine (clientStorageOne);
 			clientManifestOne = new SyncManifest ();
 			syncClientOne = new FilesystemSyncClient (clientEngineOne, clientManifestOne);
@@ -93,8 +92,7 @@ namespace Tomboy.Sync
 		protected virtual void InitClientTwo ()
 		{
 			clientManifestTwo = new SyncManifest ();
-			clientStorageTwo = new DiskStorage ();
-			clientStorageTwo.SetPath (clientStorageDirTwo);
+			clientStorageTwo = new DiskStorage (clientStorageDirTwo);
 			clientEngineTwo = new Engine (clientStorageTwo);
 			syncClientTwo = new FilesystemSyncClient (clientEngineTwo, clientManifestTwo);
 		}
@@ -108,8 +106,7 @@ namespace Tomboy.Sync
 				CleanupClientDirectoryOne ();
 			}
 			
-			clientStorageOne = new DiskStorage ();
-			clientStorageOne.SetPath (clientStorageDirOne);
+			clientStorageOne = new DiskStorage (clientStorageDirOne);
 			clientEngineOne = new Engine (clientStorageOne);
 			syncClientOne = new FilesystemSyncClient (clientEngineOne, clientManifestOne);
 		}
@@ -120,8 +117,7 @@ namespace Tomboy.Sync
 				clientManifestTwo = new SyncManifest ();
 				CleanupClientDirectoryTwo ();
 			}
-			clientStorageTwo = new DiskStorage ();
-			clientStorageTwo.SetPath (clientStorageDirTwo);
+			clientStorageTwo = new DiskStorage (clientStorageDirTwo);
 			clientEngineTwo = new Engine (clientStorageTwo);
 			syncClientTwo = new FilesystemSyncClient (clientEngineTwo, clientManifestTwo);
 		}

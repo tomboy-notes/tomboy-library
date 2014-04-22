@@ -41,8 +41,7 @@ namespace Tomboy.Sync
 			var current_dir = Directory.GetCurrentDirectory ();
 			serverStorageDir = Path.Combine (current_dir, "../../syncserver/");
 			                      
-			serverStorage = new DiskStorage ();
-			serverStorage.SetPath (serverStorageDir);
+			serverStorage = new DiskStorage (serverStorageDir);
 
 			serverEngine = new Engine (serverStorage);
 

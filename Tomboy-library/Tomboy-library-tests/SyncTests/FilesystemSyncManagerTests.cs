@@ -59,8 +59,7 @@ namespace Tomboy.Sync
 
 		private void InitServer ()
 		{
-			serverStorage = new DiskStorage ();
-			serverStorage.SetPath (serverStorageDir);
+			serverStorage = new DiskStorage (serverStorageDir);
 			serverEngine = new Engine (serverStorage);
 			serverManifest = new SyncManifest ();
 			syncServer = new FilesystemSyncServer (serverEngine, serverManifest);
@@ -79,8 +78,7 @@ namespace Tomboy.Sync
 				serverManifest = new SyncManifest ();
 				CleanupServerDirectory ();
 			}
-			serverStorage = new DiskStorage ();
-			serverStorage.SetPath (serverStorageDir);
+			serverStorage = new DiskStorage (serverStorageDir);
 			serverEngine = new Engine (serverStorage);
 			syncServer = new FilesystemSyncServer (serverEngine, serverManifest);
 		}
@@ -196,7 +194,7 @@ namespace Tomboy.Sync
 		}
 
 		[Test]
-		public void TwoWaySyncFetchOnlyRevisions ()
+		public new void TwoWaySyncFetchOnlyRevisions ()
 		{
 			base.TwoWaySyncFetchOnlyRevisions ();
 

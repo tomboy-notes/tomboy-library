@@ -3,6 +3,7 @@
 //  
 //  Copyright (c) 2012 jjennings
 //  Robert Nordan
+//  Copyright (c) 2014 Timo Dörr
 // 
 // This library is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as
@@ -26,21 +27,31 @@ using Tomboy.Xml;
 
 namespace Tomboy
 {
+	/// <summary>
+	/// Disk storage. As with every IStorage, only responsible for storing the notes. Higher level function such as
+	/// updating a note's change date upon save or seamless en- & decryption is NOT performed - that is
+	/// the <see cref="Engine"/> responsibility that wraps the IStorage.
+	/// </summary>
 	public class DiskStorage : IStorage
 	{
 		
 		/// <summary>
 		/// The path_to_notes.
 		/// </summary>
-		/// <description>/home/user/.local/share/tomboy</description>
-		private string pathToNotes = null;
-		private string backupPathNotes = null;
-		private string configPath = null;
+		/// <example>/home/user/.local/share/tomboy</example>
+		public string PathToNotes { get; private set; }
+		public string BackupPath { get; private set; }
+		public string ConfigPath { get; private set; }
 		public ILogger Logger { get; set; }
 
+		[Obsolete ("use constructor with path argument")];
 		public DiskStorage ()
 		{
 			this.Logger = new DummyLogger ();
+		}
+		public DiskStorage (string path) : this ()
+		{
+			this.SetPath (path);
 		}
 
 		/// <summary>
@@ -49,20 +60,23 @@ namespace Tomboy
 		/// <param name='path'>
 		/// Path.
 		/// </param>
+		[Obsolete ("use constructor with path argument")];
+		// this will be private in the future. It makes no sense to change the path later on.
+		// Currently changing the path a second time will result in undefined behavior.
 		public void SetPath (string path)
 		{
-			pathToNotes = path;
-			if (!Directory.Exists (pathToNotes)) {
-				Directory.CreateDirectory (pathToNotes);
+			PathToNotes = path;
+			if (!Directory.Exists (PathToNotes)) {
+				Directory.CreateDirectory (PathToNotes);
 			}
 			// where notes are backed up too.
-			backupPathNotes = Path.Combine (pathToNotes, "Backup");
-			configPath = Path.Combine (pathToNotes, "config.xml");
+			BackupPath = Path.Combine (PathToNotes, "Backup");
+			ConfigPath = Path.Combine (PathToNotes, "config.xml");
 		}
 
 		public void SetBackupPath (string path)
 		{
-			backupPathNotes = path;
+			BackupPath = path;
 		}
 		
 		public void SaveNote (Note note)
@@ -83,7 +97,7 @@ namespace Tomboy
 		/// </param>
 		public void Write (string filename, Note note)
 		{
-			WriteFile (Path.Combine (pathToNotes, filename), note);
+			WriteFile (Path.Combine (PathToNotes, filename), note);
 		}
 		
 		/// <summary>
@@ -123,14 +137,14 @@ namespace Tomboy
 		public Dictionary<string,Note> GetNotes ()
 		{
 			Dictionary<string,Note> notes = new Dictionary<string,Note> ();
-			if (pathToNotes == null)
+			if (PathToNotes == null)
 				throw new TomboyException ("No Notes path has been defined");
 			
 			try {
 				/* For anyone wanting to implement another / different backend,
 				 * this could be changed in the implementing class to retreive whatever notes
 				 */
-				string [] files = Directory.GetFiles (pathToNotes, "*.note");
+				string [] files = Directory.GetFiles (PathToNotes, "*.note");
 				if (files.Length == 0)
 					Logger.Warn ("No notes found in note folder.");
 				
@@ -185,11 +199,11 @@ namespace Tomboy
 
 		public void DeleteNote (Note note)
 		{
-			string file_path = Path.Combine (pathToNotes, Utils.GetNoteFileNameFromURI (note));
-			string file_backup_path = Path.Combine (backupPathNotes, Utils.GetNoteFileNameFromURI (note));
+			string file_path = Path.Combine (PathToNotes, Utils.GetNoteFileNameFromURI (note));
+			string file_backup_path = Path.Combine (BackupPath, Utils.GetNoteFileNameFromURI (note));
 		
-			if (!Directory.Exists (backupPathNotes))
-				Directory.CreateDirectory (backupPathNotes);
+			if (!Directory.Exists (BackupPath))
+				Directory.CreateDirectory (BackupPath);
 			// not for sure why the note would NOT exist. This is from old code. jlj	
 			if (File.Exists (file_path)) {
 				if (File.Exists (file_backup_path))
@@ -201,11 +215,11 @@ namespace Tomboy
 		public void SetConfigVariable (string key, string value)
 		{
 			XDocument config;
-			if (!File.Exists (configPath)) {
+			if (!File.Exists (ConfigPath)) {
 				config = new XDocument ();
 				config.Add (new XElement ("root"));
 			} else {
-				config = XDocument.Load (configPath);
+				config = XDocument.Load (ConfigPath);
 			}
 
 			if (config.Root.Element (key) != null) {
@@ -214,15 +228,15 @@ namespace Tomboy
 				config.Root.Add (new XElement (key, value));
 			}
 
-			config.Save (configPath);
+			config.Save (ConfigPath);
 		}
 
 		public string GetConfigVariable (string key) 
 		{
-			if (!File.Exists (configPath)) {
+			if (!File.Exists (ConfigPath)) {
 				throw new TomboyException ("Config file does not exist");
 			}
-			XDocument config = XDocument.Load (configPath);
+			XDocument config = XDocument.Load (ConfigPath);
 
 			try {
 				return config.Root.Element (key).Value;
@@ -234,15 +248,15 @@ namespace Tomboy
 		public string Backup ()
 		{
 			string msg = "";
-			if (!Directory.Exists (backupPathNotes))
-				Directory.CreateDirectory (backupPathNotes);
-			string[] files = Directory.GetFiles (pathToNotes, "*.note", SearchOption.TopDirectoryOnly);
+			if (!Directory.Exists (BackupPath))
+				Directory.CreateDirectory (BackupPath);
+			string[] files = Directory.GetFiles (PathToNotes, "*.note", SearchOption.TopDirectoryOnly);
 			if (files.Length == 0) {
 				msg += "No files were found to backup";
 			} else {
 				int count = 0;
 				foreach (var item in files) {
-					File.Copy (item, Path.Combine (backupPathNotes, Path.GetFileName (item)));
+					File.Copy (item, Path.Combine (BackupPath, Path.GetFileName (item)));
 					count ++;
 				}
 				msg += "A total of " + count + " files were backed up";

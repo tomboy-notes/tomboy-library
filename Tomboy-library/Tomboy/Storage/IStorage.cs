@@ -25,6 +25,10 @@ namespace Tomboy
 {
 	/// <summary>
 	/// Handles interaction with backend system is used to store notes.
+	/// An IStorage is only responsible for storing the notes. Higher level functionality such as
+	/// updating a note's change date upon save or seamless en- & decryption is should NOT be performed - that is
+	/// the <see cref="Engine"/> responsibility that wraps any IStorage.
+	/// </summary>
 	/// </summary>
 	public interface IStorage
 	{
@@ -35,20 +39,6 @@ namespace Tomboy
 		/// A Generic list of Notes
 		/// </returns>
 		Dictionary<string, Note> GetNotes ();
-		
-		/// <summary>
-		/// Sets the path to where Notes are located
-		/// </summary>
-		/// <param name='path'>
-		/// Path.
-		/// </param>
-		void SetPath (string path);
-
-		/// <summary>
-		/// Sets the backup path.
-		/// By default the storage implementor sets the path unless otherwise specified by this method.
-		/// </summary>
-		void SetBackupPath (string path);
 		
 		/// <summary>
 		/// Saves the note.

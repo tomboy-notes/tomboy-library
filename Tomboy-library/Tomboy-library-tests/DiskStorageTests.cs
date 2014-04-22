@@ -44,8 +44,7 @@ namespace Tomboy
 			}
 			catch (System.IO.DirectoryNotFoundException) {} //This is expected provided the test passed last time.
 
-			IStorage storage = new DiskStorage ();
-			storage.SetPath (NOTE_FOLDER_INVALID);
+			IStorage storage = new DiskStorage (NOTE_FOLDER_INVALID);
 
 			Assert.IsTrue (System.IO.Directory.Exists (NOTE_FOLDER_INVALID));
 			System.IO.Directory.Delete (NOTE_FOLDER_INVALID);
@@ -80,8 +79,7 @@ namespace Tomboy
 		[Test()]
 		public void GetNotes_NotesExist_ReturnsNotes ()
 		{
-			IStorage storage = new DiskStorage ();
-			storage.SetPath (NOTE_FOLDER_PROPER_NOTES);
+			IStorage storage = new DiskStorage (NOTE_FOLDER_PROPER_NOTES);
 			Dictionary<string, Note> notes = storage.GetNotes ();
 			Assert.IsNotNull (notes);
 			Assert.IsTrue (notes.Count > 0);			
@@ -90,8 +88,7 @@ namespace Tomboy
 		[Test()]
 		public void GetNotes_NoteFolderDoesNotExist_ReturnsNone ()
 		{
-			IStorage storage = new DiskStorage ();
-			storage.SetPath (NOTE_FOLDER_INVALID);
+			IStorage storage = new DiskStorage (NOTE_FOLDER_INVALID);
 			Dictionary<string, Note> notes = storage.GetNotes ();
 			Assert.IsNotNull (notes);
 			Assert.IsTrue (notes.Count == 0);			
@@ -100,8 +97,7 @@ namespace Tomboy
 		[Test()]
 		public void GetNotes_NoteExistsWithSpecificKey_ReturnsNoteWithSpecificKey ()
 		{			
-			IStorage storage = new DiskStorage ();
-			storage.SetPath (NOTE_FOLDER_PROPER_NOTES);
+			IStorage storage = new DiskStorage (NOTE_FOLDER_PROPER_NOTES);
 			Dictionary<string, Note> notes = storage.GetNotes ();
 			Assert.IsTrue (notes.ContainsKey ("note://tomboy/90d8eb70-989d-4b26-97bc-ba4b9442e51f"));
 		}
@@ -109,8 +105,7 @@ namespace Tomboy
 		[Test()]
 		public void GetNotes_NoteDoesNotExistWithSpecificKey_DoesNotReturnNoteWithSpecificKey ()
 		{			
-			IStorage storage = new DiskStorage ();
-			storage.SetPath (NOTE_FOLDER_PROPER_NOTES);
+			IStorage storage = new DiskStorage (NOTE_FOLDER_PROPER_NOTES);
 			Dictionary<string, Note> notes = storage.GetNotes ();
 			Assert.IsFalse (notes.ContainsKey ("not-a-key"));
 		}
@@ -154,8 +149,7 @@ namespace Tomboy
 		[Test()]
 		public void SetConfigVariable_NoConfigFile_CreatesFileAndVariable ()
 		{
-			IStorage storage = new DiskStorage ();
-			storage.SetPath (NOTE_FOLDER_TEMP);
+			IStorage storage = new DiskStorage (NOTE_FOLDER_TEMP);
 
 			string config_name = "config.xml";
 			string config_path = Path.Combine (NOTE_FOLDER_TEMP, config_name);
@@ -173,8 +167,7 @@ namespace Tomboy
 		[Test()]
 		public void SetConfigVariable_ConfigFileExists_CreatesVariable ()
 		{
-			IStorage storage = new DiskStorage ();
-			storage.SetPath (NOTE_FOLDER_PROPER_NOTES);
+			IStorage storage = new DiskStorage (NOTE_FOLDER_PROPER_NOTES);
 			string config_name = "config.xml";
 			string config_path = Path.Combine (NOTE_FOLDER_PROPER_NOTES, config_name);
 
@@ -190,8 +183,7 @@ namespace Tomboy
 		[Test()]
 		public void SetConfigVariable_ConfigFileExists_UpdatesVariable ()
 		{
-			IStorage storage = new DiskStorage ();
-			storage.SetPath (NOTE_FOLDER_PROPER_NOTES);
+			IStorage storage = new DiskStorage (NOTE_FOLDER_PROPER_NOTES);
 			string config_name = "config.xml";
 			string config_path = Path.Combine (NOTE_FOLDER_PROPER_NOTES, config_name);
 
@@ -207,8 +199,7 @@ namespace Tomboy
 		[Test()]
 		public void ReadConfigVariable_ConfigFileExists_ReturnsVariable ()
 		{
-			IStorage storage = new DiskStorage ();
-			storage.SetPath (NOTE_FOLDER_PROPER_NOTES);
+			IStorage storage = new DiskStorage (NOTE_FOLDER_PROPER_NOTES);
 
 			Assert.AreEqual ("testval", storage.GetConfigVariable ("testvar"));
 		}
@@ -217,8 +208,7 @@ namespace Tomboy
 		[ExpectedException (typeof (TomboyException))]
 		public void ReadConfigVariable_NoConfigFile_ThrowsException ()
 		{
-			IStorage storage = new DiskStorage ();
-			storage.SetPath (NOTE_FOLDER_TEMP);
+			IStorage storage = new DiskStorage (NOTE_FOLDER_TEMP);
 
 			storage.GetConfigVariable ("whatever");
 		}
@@ -227,8 +217,7 @@ namespace Tomboy
 		[ExpectedException (typeof (TomboyException))]
 		public void ReadConfigVariable_NoVariableExists_ThrowsException ()
 		{
-			IStorage storage = new DiskStorage ();
-			storage.SetPath (NOTE_FOLDER_PROPER_NOTES);
+			IStorage storage = new DiskStorage (NOTE_FOLDER_TEMP);
 
 			storage.GetConfigVariable ("whatever");
 		}
