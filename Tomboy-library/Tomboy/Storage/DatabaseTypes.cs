@@ -1,17 +1,16 @@
 using ServiceStack.DataAnnotations;
 using Tomboy.Sync.Web.DTO;
 using Tomboy.OAuth;
+using System;
 
 namespace Tomboy.Db {
 
 	public class DBNote : DTONote 
 	{
 		[PrimaryKey]
-		// Guid is not feasible for primary key as on an account move as user
-		// might duplicate notes across different accounts
 		public virtual string CompoundPrimaryKey {
 			get {
-				return Username + "_" + Guid;
+				return Guid;
 			}
 		}
 
@@ -34,9 +33,19 @@ namespace Tomboy.Db {
 		// will be set by the user 
 		public string DeviceName { get; set; }
 
+		// TODO these shouldn't be in the library, its Rainy specific
+		public string UserName { get; set; }
+		public string[] Roles { get; set; }
 		// the TokenKey encrypts the master_key; the so encrypted master_key
 		// is sent back as access token to the user
 		public string TokenKey { get; set; }
+
+		public string Realm { get; set; }
+
+		public string ConsumerKey { get; set; }
+
+		public DateTime ExpiryDate { get; set; }
+
 	}
 	public static class DbClassConverter
 	{

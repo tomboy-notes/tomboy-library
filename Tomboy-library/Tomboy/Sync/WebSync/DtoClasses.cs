@@ -88,6 +88,15 @@ namespace Tomboy.Sync.Web.DTO
 		public string CurrentSyncGuid { get; set; }
 	}
 
+	// this is bad style in the REST API definition v1.0 and should be fixed:
+	// Response needs to be an array that can only include a single element ...
+	[DataContract]
+	public class GetSingleNoteResponse
+	{
+		[DataMember (Name = "note")]
+		public IList<DTONote> Note { get; set; }
+	}
+
 	[DataContract]
 	public class GetNotesRequest
 	{
