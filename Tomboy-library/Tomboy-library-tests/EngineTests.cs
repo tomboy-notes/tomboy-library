@@ -42,12 +42,11 @@ namespace Tomboy
 		{
 			IPortableIoC container = new PortableIoc ();
 			container.Register<DiskStorage> (c => {
-				return new DiskStorage () {
+				return new DiskStorage ("../../test_notes/proper_notes") {
 					Logger = new ConsoleLogger ()
 				};
 			});
 			diskStorage = container.Resolve<DiskStorage> ();
-			diskStorage.SetPath ("../../test_notes/proper_notes");
 
 			engine = new Engine (diskStorage);
 			// get a new note instance

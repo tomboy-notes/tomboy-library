@@ -113,8 +113,7 @@ namespace Tomboy
 		[Test()]
 		public void WriteNote_NoteFileDoesNotExist_NoteFileIsCreated ()
 		{	
-			DiskStorage storage = new DiskStorage ();
-			storage.SetPath (NOTE_FOLDER_TEMP);
+			DiskStorage storage = new DiskStorage (NOTE_FOLDER_TEMP);
 
 			string note_name = "90d8eb70-989d-4b26-97bc-ba4b9442e51d.note";
 			string note_path = Path.Combine (NOTE_FOLDER_TEMP, note_name);
@@ -129,10 +128,8 @@ namespace Tomboy
 		[Test()]
 		public void WriteNote_NoteFileExists_NoteFileIsOverwritten ()
 		{	
+			DiskStorage storage = new DiskStorage (NOTE_FOLDER_TEMP);
 
-			DiskStorage storage = new DiskStorage ();
-			storage.SetPath (NOTE_FOLDER_TEMP);
-			
 			string note_name = "existing_note.note";
 			string note_path = Path.Combine (NOTE_FOLDER_TEMP, note_name);
 
