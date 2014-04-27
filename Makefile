@@ -6,7 +6,7 @@ RELEASEDIR=$(shell pwd)/release
 MONO=$(shell which mono)
 XBUILD=$(shell which xbuild)
 
-#XBUILD_ARGS='/p:TargetFrameworkProfile=""'
+XBUILD_ARGS='/p:Configuration=Release'
 MKBUNDLE=$(shell which mkbundle)
 
 UNPACKED_LIB=$(BINDIR)/Tomboy-library.dll
