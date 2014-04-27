@@ -74,6 +74,8 @@ namespace Tomboy.Sync.Filesystem
 			// required for testing, as we will always reuse the same object instance
 			newRevision++;
 
+			this.LastSyncDate = DateTime.UtcNow;
+
 			return true;
 		}
 
@@ -142,6 +144,15 @@ namespace Tomboy.Sync.Filesystem
 			}
 			private set {
 				manifest.LastSyncRevision = value;
+			}
+		}
+
+		public DateTime LastSyncDate {
+			get {
+				return manifest.LastSyncDate;
+			}
+			private set {
+				manifest.LastSyncDate = value;
 			}
 		}
 

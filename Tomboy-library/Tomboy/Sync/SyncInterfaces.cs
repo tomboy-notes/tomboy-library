@@ -68,7 +68,7 @@ namespace Tomboy.Sync
 		// the global sync revision the server is on
 		long LatestRevision { get; } // NOTE: Only reliable during a transaction
 
-		//SyncLockInfo CurrentSyncLock { get; }
+		DateTime LastSyncDate { get; }
 
 		// get the Id of the sync the client associated with
 		// note that multiple clients can refer to the same Id

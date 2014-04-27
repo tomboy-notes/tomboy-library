@@ -265,6 +265,10 @@ namespace Tomboy.Sync.Web
 			get ; private set;
 		}
 
+		public DateTime LastSyncDate {
+			get; private set;
+		}
+
 		public string Id {
 			get; private set;
 		}
