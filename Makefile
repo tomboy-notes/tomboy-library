@@ -1,6 +1,6 @@
 RELEASEVER=0.1.0
 ZIPDIR=tomboy-$(RELEASEVER)
-BINDIR=$(shell pwd)/Tomboy-library/bin/Debug
+BINDIR=$(shell pwd)/Tomboy-library/bin/Release
 RELEASEDIR=$(shell pwd)/release
 
 MONO=$(shell which mono)
