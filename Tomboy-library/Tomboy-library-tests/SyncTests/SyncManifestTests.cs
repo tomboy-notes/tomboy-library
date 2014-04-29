@@ -132,6 +132,14 @@ namespace Tomboy.Sync
 			VerifyManifestsAreTheSame (sampleManifest, manifest);
 		}
 		[Test]
+		public void ReadSyncManifestWithoutLastSyncDateSucceeds ()
+		{
+			using (var fs = File.OpenRead ("../../test_manifest/sample_manifest_without_lastsyncdate.xml")) {
+				var manifest = SyncManifest.Read (fs);
+				Assert.AreEqual (DateTime.MinValue, manifest.LastSyncDate);
+			}
+		}
+		[Test]
 		public void WriteSyncManifestToString ()
 		{ 
 			string xml_manifest = SyncManifest.Write (sampleManifest);

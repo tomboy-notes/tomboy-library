@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<manifest version="0.3" xmlns="http://beatniksoftware.com/tomboy">
+	<last-sync-rev>2</last-sync-rev>
+	<server-id>1111-2222-3333-4444</server-id>
+	<note-revisions>
+		<note guid="1234-5678-9012-3456" latest-revision="4" />
+		<note guid="1111-2222-3333-4444" latest-revision="9293" />
+		<note guid="6666-2222-3333-4444" latest-revision="17" />
+	</note-revisions>
+	<note-deletions>
+		<note guid="1111-11111-1111-1111" title="Deleted note 1" />
+		<note guid="1111-11111-2222-2222" title="Gelöschte Notiz 2" />
+	</note-deletions>
+</manifest>
