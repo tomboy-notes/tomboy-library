@@ -155,12 +155,15 @@ namespace Tomboy.Sync
 					 select el.Attribute ("version").Value).Single ();
 				if (version != CURRENT_VERSION)
 					throw new TomboyException ("Syncmanifest is of unknown version");
-	
-				manifest.LastSyncDate =
-					(from  el in elements
-					where el.Name.LocalName == "last-sync-date"
-						select DateTime.Parse (el.Value)).Single ();
-	
+                try{
+                manifest.LastSyncDate =
+                	(from  el in elements
+                	where el.Name.LocalName == "last-sync-date"
+                		select DateTime.Parse (el.Value)).Single ();
+                }catch(InvalidOperationException e){
+                    manifest.LastSyncDate = DateTime.Now;
+                }
+
 				manifest.ServerId = 
 					(from el in elements where el.Name.LocalName == "server-id"
 					 select el.Value).Single();
