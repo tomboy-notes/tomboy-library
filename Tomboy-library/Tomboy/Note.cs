@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using Tomboy.Tags;
+using Tomboy.Notebooks;
 
 namespace Tomboy
 {
@@ -39,6 +40,7 @@ namespace Tomboy
 		private DateTime metadata_change_date = DateTime.MinValue;
 		private int x, y;
 		private Dictionary<string, Tag> tags = new Dictionary<string, Tag> ();
+        private Notebook notebook;
 		/// <summary>
 		/// The open the Note on startup.
 		/// </summary>
@@ -232,6 +234,16 @@ namespace Tomboy
 			get;
 			set;
 		}
+
+        public string Notebook {
+            get {
+                notebook.Name;
+            }
+            set {
+                notebook.Name = value;   
+            }
+        }
+
 		// note that .Equals is required when using i.e. List<T>.Contains ()
 		public override bool Equals (object obj)
 		{
