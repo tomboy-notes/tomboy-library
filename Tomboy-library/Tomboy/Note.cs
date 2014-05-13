@@ -237,7 +237,7 @@ namespace Tomboy
 
         public string Notebook {
             get {
-                notebook.Name;
+                return notebook.Name;
             }
             set {
                 notebook.Name = value;   
