@@ -86,9 +86,13 @@ namespace Tomboy.Xml
 					from tag in el.Elements ()
 					select tag.Value;
 					
-				foreach (string tag in tags)
-					note.Tags.Add (tag, new Tag (tag));
-				
+				foreach (string tag in tags) {
+					if(tag.StartsWith("notebook"))
+						note.Tags.Add ("notebook", new Tag(tag));
+					else
+						note.Tags.Add (tag, new Tag (tag));
+				}
+
 				note.CreateDate =
 					(from el in elements where el.Name.LocalName == "create-date"
 					select DateTime.Parse (el.Value)).Single ();
@@ -116,10 +120,6 @@ namespace Tomboy.Xml
 				note.Y =
 					(from el in elements where el.Name.LocalName == "y"
 					select int.Parse (el.Value)).FirstOrDefault ();
-
-                note.Notebook =
-                    (from el in elements where el.Name.LocalName == "notebook"
-                        select el.Value).FirstOrDefault ();
 			}
 			catch (Exception e) {
 				throw e;

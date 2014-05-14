@@ -40,7 +40,8 @@ namespace Tomboy
 		private DateTime metadata_change_date = DateTime.MinValue;
 		private int x, y;
 		private Dictionary<string, Tag> tags = new Dictionary<string, Tag> ();
-        private Notebook notebook;
+        	private Notebook notebook;
+		private TagManager tagManager;
 		/// <summary>
 		/// The open the Note on startup.
 		/// </summary>
@@ -49,7 +50,7 @@ namespace Tomboy
 		public Note ()
 		{
 			this.Guid = System.Guid.NewGuid ().ToString ();
-            notebook = new Notebook();
+			notebook = new Notebook ();
 
 		}
 		public Note (string uri) : this ()
@@ -237,14 +238,27 @@ namespace Tomboy
 			set;
 		}
 
-        public string Notebook {
-            get {
-                return notebook.Name;
-            }
-            set {
-                notebook.Name = value;   
-            }
-        }
+        	public string Notebook {
+           		get {
+				if (tags.ContainsKey ("notebook")) {
+					Tag notebook = tags ["notebook"];
+					string notebookName = notebook.NormalizedName;
+					string[] names = notebookName.Split (':');
+					notebookName = names [1];
+					return Char.ToUpper (notebookName [0]) + notebookName.Substring (1).ToLower ();
+				} else {
+					return null;
+				}
+
+            		}
+            		set {
+				if (tags.ContainsKey ("notebook")) {
+					tags.Remove ("notebook");
+				}
+				Tag notebook = new Tag ("notebook:"+value);
+				tags.Add ("notebook", notebook);
+            		}
+        	}
 
 		// note that .Equals is required when using i.e. List<T>.Contains ()
 		public override bool Equals (object obj)
