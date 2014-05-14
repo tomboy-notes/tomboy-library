@@ -40,8 +40,6 @@ namespace Tomboy
 		private DateTime metadata_change_date = DateTime.MinValue;
 		private int x, y;
 		private Dictionary<string, Tag> tags = new Dictionary<string, Tag> ();
-        	private Notebook notebook;
-		private TagManager tagManager;
 		/// <summary>
 		/// The open the Note on startup.
 		/// </summary>
@@ -50,7 +48,6 @@ namespace Tomboy
 		public Note ()
 		{
 			this.Guid = System.Guid.NewGuid ().ToString ();
-			notebook = new Notebook ();
 
 		}
 		public Note (string uri) : this ()
