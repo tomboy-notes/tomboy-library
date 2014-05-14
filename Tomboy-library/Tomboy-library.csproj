@@ -26,6 +26,8 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\UnitTesting</OutputPath>
     <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>DEBUG</DefineConstants>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -106,6 +108,7 @@
     <Compile Include="Tomboy\Sync\WebSync\OAuth\QueryParameters.cs" />
     <Compile Include="Tomboy\Sync\WebSync\OAuth\OAuthConnection.cs" />
     <Compile Include="Tomboy\IoC\TomboyComposition.cs" />
+    <Compile Include="Tomboy\Sync\WebSync\DeveloperServiceClient.cs" />
   </ItemGroup>
   <ItemGroup>
 &gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/sync_from_scratch
