@@ -76,7 +76,8 @@ namespace Tomboy.Xml
 				new XElement ("width", note.Width),
 				new XElement ("height", note.Height),
 				new XElement ("x", note.X),
-				new XElement ("y", note.Y)
+                new XElement ("y", note.Y),
+                new XElement ("notebook", note.Notebook)
 			);
 			
 			xdoc.Element ("note").Add (new XElement ("tags",

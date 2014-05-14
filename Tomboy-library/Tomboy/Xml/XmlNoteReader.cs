@@ -116,6 +116,10 @@ namespace Tomboy.Xml
 				note.Y =
 					(from el in elements where el.Name.LocalName == "y"
 					select int.Parse (el.Value)).FirstOrDefault ();
+
+                note.Notebook =
+                    (from el in elements where el.Name.LocalName == "notebook"
+                        select el.Value).FirstOrDefault ();
 			}
 			catch (Exception e) {
 				throw e;
