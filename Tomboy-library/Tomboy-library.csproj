@@ -36,24 +36,27 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="ServiceStack.Common">
-      <HintPath>..\nuget-packages\ServiceStack.Common.3.9.66\lib\net35\ServiceStack.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="ServiceStack.OrmLite.Sqlite">
-      <HintPath>..\nuget-packages\ServiceStack.OrmLite.Sqlite.Mono.3.9.66\lib\net35\ServiceStack.OrmLite.Sqlite.dll</HintPath>
-    </Reference>
-    <Reference Include="ServiceStack.OrmLite">
-      <HintPath>..\nuget-packages\ServiceStack.OrmLite.Sqlite.Mono.3.9.66\lib\net35\ServiceStack.OrmLite.dll</HintPath>
-    </Reference>
     <Reference Include="Mono.Data.Sqlite">
-      <HintPath>..\nuget-packages\ServiceStack.OrmLite.Sqlite.Mono.3.9.66\lib\net35\Mono.Data.Sqlite.dll</HintPath>
+      <HintPath>..\nuget-packages\ServiceStack.OrmLite.Sqlite.Mono.3.9.71\lib\net35\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="ServiceStack.Interfaces">
-      <HintPath>..\nuget-packages\ServiceStack.Common.3.9.66\lib\net35\ServiceStack.Interfaces.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="ServiceStack.Common">
+      <HintPath>..\nuget-packages\ServiceStack.Common.3.9.71\lib\net35\ServiceStack.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Interfaces">
+      <HintPath>..\nuget-packages\ServiceStack.Common.3.9.71\lib\net35\ServiceStack.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.OrmLite.Sqlite">
+      <HintPath>..\nuget-packages\ServiceStack.OrmLite.Sqlite.Mono.3.9.71\lib\net35\ServiceStack.OrmLite.Sqlite.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.OrmLite">
+      <HintPath>..\nuget-packages\ServiceStack.OrmLite.Sqlite.Mono.3.9.71\lib\net35\ServiceStack.OrmLite.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text">
+      <HintPath>..\nuget-packages\ServiceStack.Text.3.9.71\lib\net35\ServiceStack.Text.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tomboy\" />
