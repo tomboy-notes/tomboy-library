@@ -49,6 +49,8 @@ namespace Tomboy
 		public Note ()
 		{
 			this.Guid = System.Guid.NewGuid ().ToString ();
+            notebook = new Notebook();
+
 		}
 		public Note (string uri) : this ()
 		{

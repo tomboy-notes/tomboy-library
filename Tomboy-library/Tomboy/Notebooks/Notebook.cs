@@ -33,7 +33,7 @@ namespace Tomboy.Notebooks
 		/// <summary>
 		/// Default constructor not used
 		/// </summary>
-		protected Notebook ()
+        public Notebook ()
 		{
 		}
 		
