@@ -249,13 +249,17 @@ namespace Tomboy
 
             		}
             		set {
-				if (tags.ContainsKey ("notebook")) {
-					tags.Remove ("notebook");
-				}
+				RemoveNotebook ();
 				Tag notebook = new Tag ("notebook:"+value);
 				tags.Add ("notebook", notebook);
             		}
         	}
+
+		public void RemoveNotebook () {
+			if (tags.ContainsKey ("notebook")) {
+				tags.Remove ("notebook");
+			}
+		}
 
 		// note that .Equals is required when using i.e. List<T>.Contains ()
 		public override bool Equals (object obj)
