@@ -25,6 +25,8 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\UnitTesting</OutputPath>
     <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>DEBUG</DefineConstants>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -45,6 +47,7 @@
     <Compile Include="SyncTests\SyncManifestTests.cs" />
     <Compile Include="IoCTests.cs" />
     <Compile Include="SyncTests\OAuthTests.cs" />
+    <Compile Include="SyncTests\AbstractSyncManagerTestsBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
