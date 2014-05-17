@@ -76,7 +76,7 @@ namespace Tomboy.Xml
 				new XElement ("width", note.Width),
 				new XElement ("height", note.Height),
 				new XElement ("x", note.X),
-                		new XElement ("y", note.Y)
+				new XElement ("y", note.Y)
 			);
 			
 			xdoc.Element ("note").Add (new XElement ("tags",
@@ -84,8 +84,8 @@ namespace Tomboy.Xml
 			));
 						
 			using (var writer = XmlWriter.Create (output, XmlSettings.DocumentSettings)) {
-                                xdoc.WriteTo (writer);
-                        }
+				xdoc.WriteTo (writer);
+			}
 		}
 		public static string Write (Note note)
 		{

@@ -235,8 +235,8 @@ namespace Tomboy
 			set;
 		}
 
-        	public string Notebook {
-           		get {
+		public string Notebook {
+			get {
 				if (tags.ContainsKey ("notebook")) {
 					Tag notebook = tags ["notebook"];
 					string notebookName = notebook.NormalizedName;
@@ -247,13 +247,13 @@ namespace Tomboy
 					return null;
 				}
 
-            		}
-            		set {
+			}
+			set {
 				RemoveNotebook ();
 				Tag notebook = new Tag ("notebook:"+value);
 				tags.Add ("notebook", notebook);
-            		}
-        	}
+			}
+		}
 
 		public void RemoveNotebook () {
 			if (tags.ContainsKey ("notebook")) {
