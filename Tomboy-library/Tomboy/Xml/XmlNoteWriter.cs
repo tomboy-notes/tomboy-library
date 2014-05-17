@@ -84,8 +84,8 @@ namespace Tomboy.Xml
 			));
 						
 			using (var writer = XmlWriter.Create (output, XmlSettings.DocumentSettings)) {
-                                xdoc.WriteTo (writer);
-                        }
+				xdoc.WriteTo (writer);
+			}
 		}
 		public static string Write (Note note)
 		{

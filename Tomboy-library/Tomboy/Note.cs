@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using Tomboy.Tags;
+using Tomboy.Notebooks;
 
 namespace Tomboy
 {
@@ -47,6 +48,7 @@ namespace Tomboy
 		public Note ()
 		{
 			this.Guid = System.Guid.NewGuid ().ToString ();
+
 		}
 		public Note (string uri) : this ()
 		{
@@ -232,6 +234,33 @@ namespace Tomboy
 			get;
 			set;
 		}
+
+		public string Notebook {
+			get {
+				if (tags.ContainsKey ("notebook")) {
+					Tag notebook = tags ["notebook"];
+					string notebookName = notebook.NormalizedName;
+					string[] names = notebookName.Split (':');
+					notebookName = names [1];
+					return Char.ToUpper (notebookName [0]) + notebookName.Substring (1).ToLower ();
+				} else {
+					return null;
+				}
+
+			}
+			set {
+				RemoveNotebook ();
+				Tag notebook = new Tag ("notebook:"+value);
+				tags.Add ("notebook", notebook);
+			}
+		}
+
+		public void RemoveNotebook () {
+			if (tags.ContainsKey ("notebook")) {
+				tags.Remove ("notebook");
+			}
+		}
+
 		// note that .Equals is required when using i.e. List<T>.Contains ()
 		public override bool Equals (object obj)
 		{

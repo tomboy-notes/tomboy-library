@@ -154,6 +154,31 @@ namespace Tomboy
 				return SearchEngine.SearchContent (searchTerm.ToLowerInvariant (), this.notes);
 			}
 		}
+			
+		public Dictionary<string, Note> GetNotesForNotebook(string notebook)
+		{
+			Dictionary<string, Note> results = new Dictionary<string, Note>();
+
+			if (this.notes == null || this.notes.Count == 0)
+				results = GetNotes();
+
+			if (notebook.Equals("All Notebooks", StringComparison.Ordinal))
+				results = GetNotes();
+
+			else
+			{
+				Dictionary<string, Note> allNotes = GetNotes();
+
+				foreach (KeyValuePair<string, Note> note in allNotes)
+				{
+					if (note.Value.Notebook != null)
+						if (note.Value.Notebook.Equals(notebook, StringComparison.Ordinal))
+							results.Add(note.Key, note.Value);
+				}
+			}
+
+			return results;
+		}
 		
 		/// <summary>
 		/// Generates a New Note instance
