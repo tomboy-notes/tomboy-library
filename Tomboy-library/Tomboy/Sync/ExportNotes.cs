@@ -25,31 +25,58 @@
 // THE SOFTWARE.
 using System;
 using System.IO;
+using System.Collections.Generic;
 
 namespace Tomboy
 {
     public class ExportNotes
     {
+
         public ExportNotes()
         {
 
         }
 
-        public static void Export(string rootDirectory)
+		public static void Export(string rootDirectory, Engine appEngine)
         {
-            ProcessDirectory(rootDirectory);
+			ProcessDirectory(rootDirectory, appEngine);
         }
 
-        private static void ProcessDirectory(string targetDirectory)
+		private static void ProcessDirectory(string targetDirectory, Engine appEngine)
         {
-            string[] fileEntries = System.IO.Directory.GetFiles(targetDirectory);
+			DiskStorage noteStorage = new DiskStorage (targetDirectory);
+			Engine noteEngine = new Engine (noteStorage);
+			Dictionary<string,Note> notes = new Dictionary<string,Note>();
+			try {
+				notes = noteEngine.GetNotes ();
+			} catch (ArgumentException) {
+				Console.WriteLine ("Found an exception with {0}",targetDirectory);
+			}
 
-            foreach (string filename in fileEntries)
-                ProcessFile(filename);
+			foreach (Note note in notes.Values) {
+				Note newNote = appEngine.NewNote ();
+				newNote.ChangeDate = note.ChangeDate;
+				newNote.CreateDate = note.CreateDate;
+				newNote.CursorPosition = note.CursorPosition;
+				newNote.Height = note.Height;
+				newNote.MetadataChangeDate = note.MetadataChangeDate;
+				newNote.Notebook = note.Notebook;
+				newNote.OpenOnStartup = note.OpenOnStartup;
+				newNote.SelectionBoundPosition = note.SelectionBoundPosition;
+				newNote.Tags = note.Tags;
+				newNote.Text = note.Text;
+				newNote.Title = note.Title;
+				newNote.Width = note.Width;
+				newNote.X = note.X;
+				newNote.Y = note.Y;
+				appEngine.SaveNote (newNote, false);
+
+				Console.WriteLine ("Imported the Note {0}",newNote.Title);
+			}
 
             string [] subdirectoryEntries = System.IO.Directory.GetDirectories(targetDirectory);
             foreach(string subdirectory in subdirectoryEntries)
-                ProcessDirectory(subdirectory);
+				ProcessDirectory(subdirectory, appEngine);
         }
 
         private static void ProcessFile(string path) 
@@ -57,6 +84,8 @@ namespace Tomboy
             var storage_path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "Library", "Application Support", "Tomboy");
             var file_name = Path.GetFileName(path);
             var dest_file = Path.Combine(storage_path, file_name);
+			if (file_name.Contains ("manifest"))
+				return;
             File.Copy(path, dest_file, true);
             Console.WriteLine("Copied File '{0}'.", path);       
         }
