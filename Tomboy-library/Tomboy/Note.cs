@@ -198,6 +198,9 @@ namespace Tomboy
 			get {
 				return tags;
 			}
+			set {
+				tags = value;
+			}
 		}
 
 		public void SetPositionExtent (int x, int y, int width, int height)
@@ -241,7 +244,10 @@ namespace Tomboy
 					Tag notebook = tags ["notebook"];
 					string notebookName = notebook.NormalizedName;
 					string[] names = notebookName.Split (':');
-					notebookName = names [1];
+					if (names.Length == 3)
+						notebookName = names [2];
+					else
+						notebookName = names [1];
 					return Char.ToUpper (notebookName [0]) + notebookName.Substring (1).ToLower ();
 				} else {
 					return null;
@@ -250,7 +256,7 @@ namespace Tomboy
 			}
 			set {
 				RemoveNotebook ();
-				Tag notebook = new Tag ("notebook:"+value);
+				Tag notebook = new Tag ("system:notebook:"+value);
 				tags.Add ("notebook", notebook);
 			}
 		}
