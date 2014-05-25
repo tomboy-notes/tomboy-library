@@ -29,24 +29,25 @@ using System.Collections.Generic;
 
 namespace Tomboy
 {
-    public class ExportNotes
-    {
+	public class ExportNotes
+	{
 
-        public ExportNotes()
-        {
+		public ExportNotes()
+		{
 
-        }
+		}
 
 		public static void Export(string rootDirectory, Engine appEngine)
-        {
+		{
 			ProcessDirectory(rootDirectory, appEngine);
         }
 
 		private static void ProcessDirectory(string targetDirectory, Engine appEngine)
-        {
+		{
 			DiskStorage noteStorage = new DiskStorage (targetDirectory);
 			Engine noteEngine = new Engine (noteStorage);
 			Dictionary<string,Note> notes = new Dictionary<string,Note>();
+
 			try {
 				notes = noteEngine.GetNotes ();
 			} catch (ArgumentException) {
@@ -54,6 +55,7 @@ namespace Tomboy
 			}
 
 			foreach (Note note in notes.Values) {
+
 				Note newNote = appEngine.NewNote ();
 				newNote.ChangeDate = note.ChangeDate;
 				newNote.CreateDate = note.CreateDate;
@@ -74,21 +76,21 @@ namespace Tomboy
 				Console.WriteLine ("Imported the Note {0}",newNote.Title);
 			}
 
-            string [] subdirectoryEntries = System.IO.Directory.GetDirectories(targetDirectory);
-            foreach(string subdirectory in subdirectoryEntries)
+			string [] subdirectoryEntries = System.IO.Directory.GetDirectories(targetDirectory);
+			foreach(string subdirectory in subdirectoryEntries)
 				ProcessDirectory(subdirectory, appEngine);
-        }
+		}
 
-        private static void ProcessFile(string path) 
-        {
-            var storage_path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "Library", "Application Support", "Tomboy");
-            var file_name = Path.GetFileName(path);
-            var dest_file = Path.Combine(storage_path, file_name);
+		private static void ProcessFile(string path) 
+		{
+			var storage_path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "Library", "Application Support", "Tomboy");
+			var file_name = Path.GetFileName(path);
+			var dest_file = Path.Combine(storage_path, file_name);
 			if (file_name.Contains ("manifest"))
 				return;
-            File.Copy(path, dest_file, true);
-            Console.WriteLine("Copied File '{0}'.", path);       
-        }
-    }
+			File.Copy(path, dest_file, true);
+			Console.WriteLine("Copied File '{0}'.", path);       
+		}
+	}
 }
 
