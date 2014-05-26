@@ -1,5 +1,6 @@
 Tomboy-library
 ====
+![travis build status](https://travis-ci.org/tomboy-notes/tomboy-library.svg?branch=master)
 
 Several in the Tomboy community decided to write a core library
 for tomboy. The library should allow others to interact with notes
