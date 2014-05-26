@@ -40,7 +40,7 @@ namespace Tomboy
 		public static void Export(string rootDirectory, Engine appEngine)
 		{
 			ProcessDirectory(rootDirectory, appEngine);
-        }
+		}
 
 		private static void ProcessDirectory(string targetDirectory, Engine appEngine)
 		{
@@ -89,8 +89,7 @@ namespace Tomboy
 			if (file_name.Contains ("manifest"))
 				return;
 			File.Copy(path, dest_file, true);
-			Console.WriteLine("Copied File '{0}'.", path);       
-		}
+			Console.WriteLine("Copied File '{0}'.", path);}
 	}
 }
 
