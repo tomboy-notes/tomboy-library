@@ -1,12 +1,14 @@
 RELEASEVER=0.1.0
 ZIPDIR=tomboy-$(RELEASEVER)
-BINDIR=$(shell pwd)/Tomboy-library/bin/Release
+CONFIGURATION=Release
+BINDIR=$(shell pwd)/Tomboy-library/bin/$(CONFIGURATION)
 RELEASEDIR=$(shell pwd)/release
 
+NUNIT_RUNNER="nuget-packages/NUnit.Runners.2.6.3/tools/nunit-console.exe"
 MONO=$(shell which mono)
 XBUILD=$(shell which xbuild)
 
-XBUILD_ARGS='/p:Configuration=Release'
+XBUILD_ARGS='/p:Configuration=$(CONFIGURATION)'
 MKBUNDLE=$(shell which mkbundle)
 
 UNPACKED_LIB=$(BINDIR)/Tomboy-library.dll
@@ -25,10 +27,6 @@ pack: build
 	@echo "**********"
 	@echo ""
 
-checkout:
-	# Fetching submodules
-	@git submodule update --init --recursive
-
 deps:
 	# if the next steps fails telling about security authentication, make sure
 	# you have imported trusted ssl CA certs with this command and re-run:
@@ -39,9 +37,12 @@ deps:
 	@mono tools/NuGet.exe install -o nuget-packages packages.config
 	@echo "Successfully fetched dependencies."
 
-build: checkout deps
+build: deps
 
 	$(XBUILD) $(XBUILD_ARGS) Tomboy-library.sln
+
+test: deps build
+	@mono $(NUNIT_RUNNER) ./Tomboy-library/Tomboy-library-tests/bin/$(CONFIGURATION)/Tomboy-library-tests.dll
 
 release: clean pack
 	cp -R $(RELEASEDIR) $(ZIPDIR)

@@ -5,6 +5,7 @@
 #Ignore build output folders
 bin/
 test-results/
+TestResult.xml
 Tomboy-library/Tomboy-library-tests/test_notes/proper_notes/Backup
 
 DevDefined.OAuth/src/DevDefined.OAuth/obj/
