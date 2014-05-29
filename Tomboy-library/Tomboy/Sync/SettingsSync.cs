@@ -57,6 +57,21 @@ namespace Tomboy.Sync
 			get; set;
 		}
 
+		public string webSyncURL {
+			get;
+			set;
+		}
+
+		public string token {
+			get;
+			set;
+		}
+
+		public string secret {
+			get;
+			set;
+		}
+
 		/// <summary>
 		/// Constructor for the SettingsSync.
 		/// Initializes all the variables, i.e. creates the settings.xml
@@ -103,6 +118,21 @@ namespace Tomboy.Sync
 			xml.WriteStartElement (null, "sync-url", null);
 			xml.WriteString (settings.syncURL);
 			xml.WriteEndElement ();
+
+			if (settings.webSyncURL.Length > 0) {
+
+				xml.WriteStartElement (null, "web-sync-url", null);
+				xml.WriteString (settings.webSyncURL);
+				xml.WriteEndElement ();
+
+				xml.WriteStartElement (null, "token", null);
+				xml.WriteString (settings.token);
+				xml.WriteEndElement ();
+
+				xml.WriteStartElement (null, "secret", null);
+				xml.WriteString (settings.secret);
+				xml.WriteEndElement ();
+			}
 
 			xml.WriteStartElement (null, "auto-sync", null);
 			string temp = "";
@@ -155,6 +185,15 @@ namespace Tomboy.Sync
 								case "auto-sync":
 									string temp = reader.ReadString ();
 									settings.autoSync = (temp.Equals ("True")) ? settings.autoSync = true : settings.autoSync = false;
+									break;
+								case "web-sync-url":
+									settings.webSyncURL = reader.ReadString ();
+									break;
+								case "token":
+									settings.token = reader.ReadString ();
+									break;
+								case "secret":
+									settings.secret = reader.ReadString ();
 									break;
 							}
 							break;
