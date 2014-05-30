@@ -240,30 +240,45 @@ namespace Tomboy
 
 		public string Notebook {
 			get {
-				if (tags.ContainsKey ("notebook")) {
-					Tag notebook = tags ["notebook"];
-					string notebookName = notebook.NormalizedName;
+				string notebook = getNotebook ();
+				if (!String.IsNullOrEmpty (notebook)) {
+
+					string notebookName = tags [notebook].NormalizedName;
 					string[] names = notebookName.Split (':');
+
 					if (names.Length == 3)
 						notebookName = names [2];
-					else
+					else if (names.Length == 2)
 						notebookName = names [1];
 					return Char.ToUpper (notebookName [0]) + notebookName.Substring (1).ToLower ();
 				} else {
-					return null;
+					return "All Notebooks";
 				}
-
 			}
 			set {
 				RemoveNotebook ();
-				Tag notebook = new Tag ("system:notebook:"+value);
-				tags.Add ("notebook", notebook);
+				Tag notebook;
+				if (String.IsNullOrEmpty (value) || String.IsNullOrWhiteSpace (value))
+					notebook = new Tag ("system:notebook:All Notebooks");
+				else
+					notebook = new Tag ("system:notebook:"+value);
+				tags.Add (notebook.Name, notebook);
 			}
 		}
 
+		public string getNotebook () {
+			foreach (string tag in tags.Keys) {
+				if (tag.StartsWith ("system:notebook"))
+					return tag;
+			}
+			return null;
+		}
+
 		public void RemoveNotebook () {
-			if (tags.ContainsKey ("notebook")) {
-				tags.Remove ("notebook");
+			string notebook = getNotebook ();
+			if (!String.IsNullOrEmpty (notebook)) {
+				if (tags.ContainsKey (notebook))
+					tags.Remove (notebook);
 			}
 		}
 

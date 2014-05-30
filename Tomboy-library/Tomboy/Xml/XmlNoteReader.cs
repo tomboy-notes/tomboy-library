@@ -87,10 +87,10 @@ namespace Tomboy.Xml
 					select tag.Value;
 					
 				foreach (string tag in tags) {
-					if(tag.StartsWith("system:notebook") || tag.StartsWith ("notebook"))
-						note.Tags.Add ("notebook", new Tag(tag));
-					else
-						note.Tags.Add (tag, new Tag (tag));
+					//if(tag.StartsWith("system:notebook") || tag.StartsWith ("notebook"))
+					//	note.Tags.Add ("notebook", new Tag(tag));
+					//else
+					note.Tags.Add (tag, new Tag (tag));
 				}
 
 				note.CreateDate =
