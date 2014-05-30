@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using Tomboy.Tags;
+using System.Linq;
 
 namespace Tomboy
 {
@@ -30,14 +31,14 @@ namespace Tomboy
 	public class Engine
 	{
 
-		#region private fields
+		#region fields
 		/* holds whatever storage interface will be used */
 		private IStorage storage;
 		private static TagManager tagMgr = TagManager.Instance;
 
 		/* holds the current notes
 		 * This will change as notes are added or removed */
-		private Dictionary<string, Note> notes;
+		public Dictionary<string, Note> Notes { get; private set; }
 
 		#endregion
 
@@ -54,10 +55,14 @@ namespace Tomboy
 			if (storage == null)
 				throw new ArgumentNullException ("storage");
 			this.storage = storage;
-			if (notes == null)
-				notes = new Dictionary<string, Note> ();
+			this.Notes = new Dictionary<string, Note> ();
+			var temp_notes = this.storage.GetNotes ();
+			foreach (string item in temp_notes.Keys) {
+				this.Notes.Add (item, temp_notes [item]);
+				tagMgr.AddTagMap (temp_notes [item]);
+			}
 		}
-		#endregion Constructors
+		#endregion
 
 		#region delegate
 
@@ -65,7 +70,7 @@ namespace Tomboy
 		public delegate void NoteRemovedEventHandler (Note note);
 		public delegate void NoteUpdatedEventHandler (Note note);
 
-		#endregion delegate
+		#endregion
 
 		#region event handlers
 
@@ -73,7 +78,7 @@ namespace Tomboy
 		public event NoteAddedEventHandler NoteRemoved;
 		public event NoteAddedEventHandler NoteUpdated;
 
-		#endregion event handlers
+		#endregion
 
 		#region public methods
 
@@ -97,23 +102,10 @@ namespace Tomboy
 		/// <returns>
 		/// Dictionary<string, Note>
 		/// </returns>
+		[Obsolete("Use the property 'Notes' on the Engine instead")]
 		public Dictionary<string, Note> GetNotes ()
 		{
-			// TODO this has to be performance optimized
-			// reading in all notes from disk every time GetNotes () is called is not
-			// a very good idea.
-			Dictionary<string, Note> temp_notes = this.storage.GetNotes ();
-			if (this.notes == null)
-				this.notes = temp_notes;
-			else {
-				foreach (string item in temp_notes.Keys) {
-					if (!this.notes.ContainsKey (item)) {
-						this.notes.Add (item, temp_notes[item]);
-						tagMgr.AddTagMap (temp_notes[item]);
-					}
-				}
-			}
-			return this.notes;
+			return this.Notes;
 		}
 
 		/// <summary>
@@ -127,7 +119,7 @@ namespace Tomboy
 		/// </param>
 		public Note GetNote (string title)
 		{
-			foreach (KeyValuePair<string, Note> n in this.notes){
+			foreach (KeyValuePair<string, Note> n in this.Notes){
 				if (String.Compare (n.Value.Title, title, StringComparison.InvariantCultureIgnoreCase) == 0)
 				    return n.Value;
 			}
@@ -145,39 +137,23 @@ namespace Tomboy
 		/// </param>
 		public Dictionary<string, Note> GetNotes (string searchTerm, bool searchContent)
 		{
-			if (this.notes == null || this.notes.Count == 0)
-				GetNotes ();
-
 			if (!searchContent) {
-				return SearchEngine.SearchTitles (searchTerm.ToLowerInvariant (), this.notes);
+				return SearchEngine.SearchTitles (searchTerm.ToLowerInvariant (), this.Notes);
 			} else {
-				return SearchEngine.SearchContent (searchTerm.ToLowerInvariant (), this.notes);
+				return SearchEngine.SearchContent (searchTerm.ToLowerInvariant (), this.Notes);
 			}
 		}
 			
 		public Dictionary<string, Note> GetNotesForNotebook(string notebook)
 		{
-			Dictionary<string, Note> results = new Dictionary<string, Note>();
-
-			if (this.notes == null || this.notes.Count == 0)
-				results = GetNotes();
-
-			if (notebook.Equals("All Notebooks", StringComparison.Ordinal))
-				results = GetNotes();
-
-			else
-			{
-				Dictionary<string, Note> allNotes = GetNotes();
-
-				foreach (KeyValuePair<string, Note> note in allNotes)
-				{
-					if (note.Value.Notebook != null)
-						if (note.Value.Notebook.Equals(notebook, StringComparison.Ordinal))
-							results.Add(note.Key, note.Value);
-				}
+			if (notebook.Equals ("All Notebooks", StringComparison.Ordinal)) {
+				return this.Notes;
+			} else {
+				var results = this.Notes.Values.Where(
+					n => n.Notebook != null && n.Notebook.Equals (notebook, StringComparison.Ordinal)
+				).ToDictionary(n => n.Guid, n => n);
+				return results;
 			}
-
-			return results;
 		}
 		
 		/// <summary>
@@ -191,10 +167,8 @@ namespace Tomboy
 			// We maybe need a way to detect if we've tried loading the notes yet.
 			// basically it's possible to call NewNote () and not have loaded the notes database yet.
 			// this would then generate a 0 note list.
-			if (this.notes == null || this.notes.Count == 0)
-				GetNotes ();
-			Note note = NoteCreator.NewNote (notes.Count);
-			notes.Add (note.Uri, note);
+			Note note = NoteCreator.NewNote (Notes.Count);
+			Notes.Add (note.Uri, note);
 			if (NoteAdded != null)
 				NoteAdded (note);
 			return note;
@@ -218,9 +192,9 @@ namespace Tomboy
 			}
 
 			/* Update the dictionary of notes */
-			if (notes.ContainsKey (note.Uri))
-				notes.Remove (note.Uri);
-			notes.Add (note.Uri, note);
+			if (Notes.ContainsKey (note.Uri))
+				Notes.Remove (note.Uri);
+			Notes.Add (note.Uri, note);
 			tagMgr.AddTagMap (note);
 			/* Save Note to Storage */
 			this.storage.SaveNote (note);
@@ -236,8 +210,8 @@ namespace Tomboy
 		/// </param>
 		public void DeleteNote (Note note)
 		{
-			if (notes.ContainsKey (note.Uri))
-				notes.Remove (note.Uri);
+			if (Notes.ContainsKey (note.Uri))
+				Notes.Remove (note.Uri);
 			tagMgr.RemoveNote (note);
 			this.storage.DeleteNote (note);
 			if (NoteRemoved != null)
