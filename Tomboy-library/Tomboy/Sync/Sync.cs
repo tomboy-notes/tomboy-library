@@ -269,7 +269,7 @@ namespace Tomboy.Sync
 				return;
 			}
 
-            serverNotesMetadata = server.GetAllNotes (false);
+			serverNotesMetadata = server.GetAllNotes (false);
 
 			IList<Note> server_updated_notes = server.GetNoteUpdatesSince (client.LastSynchronizedRevision);
 			// make sure all affected notes are saved, as there might be unsaved note windows open
