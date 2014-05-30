@@ -144,6 +144,40 @@ namespace Tomboy.Sync
 		}
 
 		[Test]
+		public void ServerSyncedWithNewClient ()
+		{
+			/*
+			 * FIXME: The use case: user has 2 file system clients and one file system server.
+			 * User syncs the first client with a server, and the client 2 is empty.
+			 * User syncs the second client with the server, but does not receive the text
+			 * of the note.
+			 * 
+			 * */
+			var sync_manager = new SyncManager (syncClientOne, syncServer);
+			sync_manager.DoSync ();
+
+			var server_notes = serverEngine.GetNotes ();
+			foreach (Note note in server_notes.Values) {
+				Assert.That (!String.IsNullOrEmpty (note.Text));
+				Assert.That (!String.IsNullOrWhiteSpace (note.Text));
+				Console.WriteLine ("Title - {0}\nText - {1} ", note.Title, note.Text);
+			}
+
+			ClearClientTwo (reset: true);
+
+			sync_manager = new SyncManager (syncClientTwo, syncServer);
+			sync_manager.DoSync ();
+
+			var client_notes = clientEngineTwo.GetNotes ();
+
+			foreach (Note note in client_notes.Values) {
+				Assert.That (!String.IsNullOrEmpty (note.Text));
+				Assert.That (!String.IsNullOrWhiteSpace (note.Text));
+				Console.WriteLine ("Title - {0}\nText - {1} ", note.Title, note.Text);
+			}
+		}
+
+		[Test]
 		public new void ClientSyncsToNewServer()
 		{
 			base.ClientSyncsToNewServer ();

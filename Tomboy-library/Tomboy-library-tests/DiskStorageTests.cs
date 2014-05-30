@@ -73,7 +73,6 @@ namespace Tomboy
 			var tag_keys = tags.Keys;
 			Assert.Contains ("school", tag_keys);
 			Assert.Contains ("notebook", tag_keys);
-
 		}
 		
 		[Test()]
