@@ -72,7 +72,7 @@ namespace Tomboy.Xml
 				),
 				new XElement ("create-date", note.CreateDate),
 				new XElement ("last-change-date", note.ChangeDate),
-				new XElement ("last-metadata-change-date", note.ChangeDate),
+				new XElement ("last-metadata-change-date", note.MetadataChangeDate),
 				new XElement ("width", note.Width),
 				new XElement ("height", note.Height),
 				new XElement ("x", note.X),

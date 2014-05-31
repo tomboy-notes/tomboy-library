@@ -124,6 +124,7 @@ namespace Tomboy
 			Assert.AreEqual (sampleNote.Text, toCheck.Text);
 			Assert.AreEqual (sampleNote.ChangeDate, toCheck.ChangeDate);
 			Assert.AreEqual (sampleNote.CreateDate, toCheck.CreateDate);
+			Assert.AreEqual (sampleNote.MetadataChangeDate, toCheck.MetadataChangeDate);
 			// TODO compare all fields
 		}
 		
