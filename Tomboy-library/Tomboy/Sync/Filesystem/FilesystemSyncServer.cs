@@ -87,12 +87,9 @@ namespace Tomboy.Sync.Filesystem
 
 		public IList<Note> GetAllNotes (bool include_note_content)
 		{
-			var notes = engine.GetNotes ().Select (kvp => kvp.Value).ToList ();
+			var notes = engine.GetNotes ().Select (kvp => kvp.Value.Clone ()).ToList ();
 			if (!include_note_content) {
-				// TODO to match the API, we shouldn't include text. However at this point
-				// we already have the text and would need to overwrite it. This requires
-				// us to CLONE the note, as we can't change the .Text property in-place!
-				// Maybe one day we have Note implement ICloneable?
+				notes.ForEach (n => n.Text = "");
 			}
 			return notes;
 		}

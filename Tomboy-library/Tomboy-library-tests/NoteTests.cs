@@ -83,6 +83,20 @@ namespace Tomboy
 			Assert.AreEqual (note1, note2);
 			Assert.That (note1 == note2);
 		}
+		[Test]
+		public void NoteCloneHasSameGuid ()
+		{
+			Note note1 = new Note ();
+			Note note2 = (Note) note1.Clone ();
+			Assert.AreEqual (note1.Guid, note2.Guid);
+		}
+		[Test]
+		public void NoteCloneIsDifferentObjectRefernce ()
+		{
+			Note note1 = new Note ();
+			Note note2 = (Note) note1.Clone ();
+			Assert.AreNotSame (note1, note2);
+		}
 	}
 }
 

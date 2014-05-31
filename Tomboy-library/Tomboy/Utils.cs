@@ -20,6 +20,7 @@
 
 using System;
 using System.IO;
+using Tomboy.Xml;
 
 namespace Tomboy
 {
@@ -62,7 +63,12 @@ namespace Tomboy
 			name += ".note";
 			return name;
 		}
-	
+
+		public static Note Clone (this Note note)
+		{
+			string note_xml = XmlNoteWriter.Write (note);
+			return XmlNoteReader.Read (note_xml, Utils.GetURI (note.Guid));
+		}
 	}
 }
 
