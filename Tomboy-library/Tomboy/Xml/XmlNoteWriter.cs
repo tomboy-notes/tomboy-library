@@ -82,7 +82,9 @@ namespace Tomboy.Xml
 			xdoc.Element ("note").Add (new XElement ("tags",
 				note.Tags.Keys.Select (k => new XElement ("tag", note.Tags[k].Name))
 			));
-						
+
+			xdoc.Root.SetDefaultXmlNamespace ("http://beatniksoftware.com/tomboy");
+
 			using (var writer = XmlWriter.Create (output, XmlSettings.DocumentSettings)) {
 				xdoc.WriteTo (writer);
 			}
