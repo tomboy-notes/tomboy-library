@@ -42,7 +42,7 @@ namespace Tomboy.Xml
 		// NOTE: If this changes from a standard format, make sure to update
 		//       XML parsing to have a DateTime.TryParseExact
 		public static string DATE_TIME_FORMAT = "yyyy-MM-ddTHH:mm:ss.fffffffzzz";
-	
+
 		static XmlWriterSettings documentSettings;
 		static XmlWriterSettings fragmentSettings;
 

@@ -100,7 +100,7 @@ namespace Tomboy.Sync
 				new XElement ("server-id", manifest.ServerId)
 				)
 			);
-			
+
 			xdoc.Element ("manifest").Add (new XElement ("note-revisions",
 				manifest.NoteRevisions.Select (r => {
 					return new XElement ("note",
@@ -109,7 +109,7 @@ namespace Tomboy.Sync
 					);
 				})
 			));
-				
+
 			xdoc.Element ("manifest").Add (new XElement ("note-deletions",
 				manifest.NoteDeletions.Select (d => {
 					return new XElement ("note",
@@ -118,9 +118,9 @@ namespace Tomboy.Sync
 					);
 				})
 			));
-		
+
 			// this has to be performed at last..	
-			xdoc.Root.SetDefaultXmlNamespace ("http://beatniksoftware.com/tomboy");		
+			xdoc.Root.SetDefaultXmlNamespace ("http://beatniksoftware.com/tomboy");
 
 			using (var writer = XmlWriter.Create (output, XmlSettings.DocumentSettings)) {
 				xdoc.WriteTo (writer);
