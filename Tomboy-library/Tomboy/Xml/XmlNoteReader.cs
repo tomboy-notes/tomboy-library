@@ -38,13 +38,13 @@ namespace Tomboy.Xml
 		/// <summary>
 		/// Current XML version
 		/// </summary>
-		public const string CURRENT_VERSION = "0.3";
+		public const float CURRENT_VERSION = 0.4f;
 		
 		/// <summary>
 		/// Read and parses a Stream that should contains valid XML encoded note.
 		/// </summary>
 		/// <param name='stream'>
-		/// A stream that contains XML.
+		/// A stream that contains the note in XML format.
 		/// </param>
 		/// <param name='uri'>
 		/// URI.
@@ -53,7 +53,10 @@ namespace Tomboy.Xml
 		public static Note Read (Stream stream, string uri)
 		{
 			Note note = new Note (uri);
-			string version = String.Empty;
+			string version;
+
+			if (!stream.CanRead)
+				throw new ArgumentException ("passed stream is not readable");
 			
 			try {
 				var xdoc = XDocument.Load (stream, LoadOptions.PreserveWhitespace);
@@ -62,13 +65,19 @@ namespace Tomboy.Xml
 				version =
 					(from el in xdoc.Elements () where el.Name.LocalName == "note"
 					select el.Attribute ("version").Value).Single ();
-				if (version != CURRENT_VERSION)
+				if (version != "0.3" && version != "0.4")
 					throw new Exception ("Version missmatch");
 				
 				note.Title =
 					(from el in elements where el.Name.LocalName == "title"
 					select el.Value).Single ();
-			
+
+				var mimetype =
+					(from el in elements where el.Name.LocalName == "mimetype"
+					select el.Value).FirstOrDefault();
+				if (!string.IsNullOrEmpty (mimetype))
+					note.MimeType = mimetype;
+
 				// <text><note-content> is tricky as it contains tags that might be XML interpreted
 				var text_node = xdoc.Root.Elements().Where (n => n.Name.LocalName == "text").Elements ().First ();
 				// remove namespace from embedded tags

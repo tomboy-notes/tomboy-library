@@ -20,9 +20,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-using System;
 using System.Xml;
-using Tomboy.Tags;
 using System.IO;
 using System.Xml.Linq;
 using System.Linq;
@@ -35,17 +33,18 @@ namespace Tomboy.Xml
 	/// </summary>
 	public static class XmlNoteWriter
 	{
-		public const string CURRENT_VERSION = "0.3";
+		public const float CURRENT_VERSION = 0.4f;
 
 		
 		/// <summary>
 		/// Write the specified Note to the provided XML object
 		/// </summary>
-		/// <param name='xml'>
-		/// Xml.
-		/// </param>
 		/// <param name='note'>
-		/// Note.
+		/// The note to write.
+		/// </param>
+		/// <param name='output'>
+		/// The output stream to write to. Note that the output stream is not closed after writing (but flushed). The
+		/// calling method is responsible for closing the stream.
 		/// </param>
 		public static void Write (Note note, Stream output)
 		{
@@ -70,6 +69,7 @@ namespace Tomboy.Xml
 						XElement.Parse(dummy_tag_open + note.Text + "</dummy>").Nodes()
 					)
 				),
+				new XElement ("mimetype", note.MimeType),
 				new XElement ("create-date", note.CreateDate),
 				new XElement ("last-change-date", note.ChangeDate),
 				new XElement ("last-metadata-change-date", note.MetadataChangeDate),
@@ -87,6 +87,7 @@ namespace Tomboy.Xml
 
 			using (var writer = XmlWriter.Create (output, XmlSettings.DocumentSettings)) {
 				xdoc.WriteTo (writer);
+				output.Flush ();
 			}
 		}
 		public static string Write (Note note)

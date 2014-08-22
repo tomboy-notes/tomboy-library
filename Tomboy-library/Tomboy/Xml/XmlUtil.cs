@@ -54,6 +54,9 @@ namespace Tomboy.Xml
 			documentSettings.CheckCharacters = false;
 			documentSettings.IndentChars = "\t";
 
+			// don't close underlying streams if we close the XmlWriter/Reader
+			documentSettings.CloseOutput = false;
+
 			fragmentSettings = new XmlWriterSettings ();
 			fragmentSettings.NewLineChars = "\n";
 			fragmentSettings.Indent = true;

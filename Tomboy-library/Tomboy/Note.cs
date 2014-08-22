@@ -23,7 +23,6 @@
 using System;
 using System.Collections.Generic;
 using Tomboy.Tags;
-using Tomboy.Notebooks;
 
 namespace Tomboy
 {
@@ -32,13 +31,9 @@ namespace Tomboy
 	/// </summary>
 	public class Note
 	{
-		private readonly string uri;
-		private string title;
-		private string text;
 		private DateTime create_date = DateTime.MinValue;
 		private DateTime change_date = DateTime.MinValue;
 		private DateTime metadata_change_date = DateTime.MinValue;
-		private int x, y;
 		private Dictionary<string, Tag> tags = new Dictionary<string, Tag> ();
 		/// <summary>
 		/// The open the Note on startup.
@@ -89,12 +84,8 @@ namespace Tomboy
 		/// The title.
 		/// </value>
 		public string Title {
-			get {
-				return title;
-			}
-			set {
-				title = value;
-			}
+			get;
+			set;
 		}
 
 		/// <summary>
@@ -104,11 +95,20 @@ namespace Tomboy
 		/// The text.
 		/// </value>
 		public string Text {
+			get;
+			set;
+		}
+
+		private string mimeType = "application/x-tomboy-note";
+		public string MimeType {
 			get {
-				return text;
+				return mimeType;
 			}
 			set {
-				text = value;
+				if (value != "application/x-tomboy-note"
+					&& value != "application/x-tomboy-markdown")
+					throw new ArgumentException ("given MimeType is not allowed");
+				mimeType = value;
 			}
 		}
 
@@ -163,12 +163,8 @@ namespace Tomboy
 		/// The x.
 		/// </value>
 		public int X {
-			get {
-				return x;
-			}
-			set {
-				x = value;
-			}
+			get;
+			set;
 		}
 
 		/// <summary>
@@ -179,12 +175,8 @@ namespace Tomboy
 		/// The y.
 		/// </value>
 		public int Y {
-			get {
-				return y;
-			}
-			set {
-				y = value;
-			}
+			get;
+			set;
 		}
 
 		/// <summary>
@@ -210,8 +202,8 @@ namespace Tomboy
 			if (width <= 0 || height <= 0)
 				return;
 
-			this.x = x;
-			this.y = y;
+			this.X = x;
+			this.Y = y;
 		}
 
 		public int CursorPosition {

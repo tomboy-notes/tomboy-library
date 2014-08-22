@@ -140,6 +140,35 @@ namespace Tomboy
 			sampleNote.Text = "<size:huge>About</size:huge><link:url>http://www.google.com</link:url>";
 			XmlNoteWriter.Write (sampleNote);
 		}
+
+		[Test]
+		public void ReadWriteMimeTypeMarkdown ()
+		{
+			var note = new Note ();
+			note.MimeType = "application/x-tomboy-markdown";
+
+			using (var stream = new MemoryStream ()) {
+				XmlNoteWriter.Write (note, stream);
+				stream.Position = 0;
+				var readin_note = XmlNoteReader.Read (stream, note.Uri);
+				Assert.AreEqual ("application/x-tomboy-markdown", readin_note.MimeType);
+				Assert.AreEqual (note.MimeType, readin_note.MimeType);
+			}
+		}
+
+		[Test]
+		public void ReadWriteMimeTypeDefaultIsConvnetionalMimeType ()
+		{
+			var note = new Note ();
+
+			using (var stream = new MemoryStream ()) {
+				XmlNoteWriter.Write (note, stream);
+				stream.Position = 0;
+				var readin_note = XmlNoteReader.Read (stream, note.Uri);
+				Assert.AreEqual ("application/x-tomboy-note", readin_note.MimeType);
+				Assert.AreEqual (note.MimeType, readin_note.MimeType);
+			}
+		}
 	}
 }
 
