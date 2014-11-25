@@ -49,7 +49,17 @@ namespace Tomboy.Sync.Web
 	/// </summary>
 	public class WebSyncServer : ISyncServer
 	{
-		private string rootApiUrl;
+		private string rootUrl;
+		private string RootUrl {
+			get { return rootUrl; }
+			set {
+				if (!Uri.IsWellFormedUriString (value, UriKind.Absolute))
+					throw new ArgumentException ("rootUrl not a valid URI");
+				rootUrl = value;
+				if (!rootUrl.EndsWith ("/", StringComparison.Ordinal))
+					rootUrl += "/";
+			}
+		}
 		private string userServiceUrl;
 		private string notesServiceUrl;
 
@@ -64,7 +74,7 @@ namespace Tomboy.Sync.Web
 		/// </param>
 		public WebSyncServer (string serverUrl, IOAuthToken accessToken)
 		{
-			rootApiUrl = serverUrl + "/api/1.0";
+			RootUrl = serverUrl + "api/1.0/";
 			this.accessToken = accessToken;
 
 			this.DeletedServerNotes = new List<string> ();
@@ -144,7 +154,7 @@ namespace Tomboy.Sync.Web
 			var restClient = GetJsonClient ();
 
 			// with the first connection we find out the OAuth urls
-			var api_response = restClient.Get<ApiResponse> (rootApiUrl);
+			var api_response = restClient.Get<ApiResponse> (RootUrl);
 
 			// the server tells us the address of the user webservice
 			this.userServiceUrl = api_response.UserRef.ApiRef;
