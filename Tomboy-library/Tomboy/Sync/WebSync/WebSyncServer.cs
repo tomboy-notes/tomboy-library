@@ -74,7 +74,8 @@ namespace Tomboy.Sync.Web
 		/// </param>
 		public WebSyncServer (string serverUrl, IOAuthToken accessToken)
 		{
-			RootUrl = serverUrl + "api/1.0/";
+			RootUrl = serverUrl
+			rootApiUrl = RootUrl + "api/1.0/";
 			this.accessToken = accessToken;
 
 			this.DeletedServerNotes = new List<string> ();
@@ -154,7 +155,7 @@ namespace Tomboy.Sync.Web
 			var restClient = GetJsonClient ();
 
 			// with the first connection we find out the OAuth urls
-			var api_response = restClient.Get<ApiResponse> (RootUrl);
+			var api_response = restClient.Get<ApiResponse> (rootApiUrl);
 
 			// the server tells us the address of the user webservice
 			this.userServiceUrl = api_response.UserRef.ApiRef;
