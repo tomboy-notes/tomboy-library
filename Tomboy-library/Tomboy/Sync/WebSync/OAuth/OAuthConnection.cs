@@ -51,12 +51,12 @@ namespace Tomboy.OAuth
 	
 		string rootUrl;
 		public string RootUrl {
-			get { return rootUrl; }
+			get { return rootUrl;}
 			set {
 				if (!Uri.IsWellFormedUriString (value, UriKind.Absolute))
 					throw new ArgumentException ("rootUrl not a valid URI");
 				rootUrl = value;
-				if (!rootUrl.EndsWith ("/", StringComparison.Ordinal))
+				if (!rootUrl.EndsWith ("/"))
 					rootUrl += "/";
 			}
 		}
@@ -80,7 +80,7 @@ namespace Tomboy.OAuth
 		public OAuthConnection (string rootUrl, bool useNonInteractiveAuth = false)
 		{
 			this.useNonInteractiveAuth = useNonInteractiveAuth;
-			RootUrl = rootUrl;
+			this.rootUrl = rootUrl;
 		}
 
 		#region Public Authorization Methods
@@ -88,7 +88,7 @@ namespace Tomboy.OAuth
 		void GetRootApiRef ()
 		{
 			var rest_client = new JsonServiceClient ();
-			apiRoot = rest_client.Get<ApiResponse> (string.Format ("{0}api/1.0/", RootUrl));
+			apiRoot = rest_client.Get<ApiResponse> (rootUrl+ "api/1.0/");
 		}
 		
 		public string GetAuthorizationUrl (string callbackUrl)
