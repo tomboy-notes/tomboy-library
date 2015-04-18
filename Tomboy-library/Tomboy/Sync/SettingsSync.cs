@@ -25,6 +25,12 @@
 // THE SOFTWARE.
 using System;
 using System.Xml;
+using Tomboy.Tags;
+using System.IO;
+using System.Xml.Linq;
+using System.Linq;
+using System.Text;
+using Tomboy.Xml;
 
 namespace Tomboy.Sync
 {
@@ -87,125 +93,70 @@ namespace Tomboy.Sync
 			settingsFile = System.IO.Path.Combine (settingsDir, "Settings.xml");
 		}
 
-		/// <summary>
-		/// Write API provided to clients to use for saving the settings
-		/// </summary>
-		/// <param name="settings">Settings.</param>
-		public static void Write(SettingsSync settings){
+		public static void Write(SettingsSync settings) {
 			Init();
-			var xmlSettings = new XmlWriterSettings ();
-			xmlSettings.Indent = true;
-			xmlSettings.IndentChars = "\t";
-			XmlWriter writer = XmlWriter.Create (settingsFile, xmlSettings);
-			Write (writer, settings);
-			writer.Close ();
+			using (var fs = File.OpenWrite (settingsFile)) {
+				WriteNew (settings, fs);
+				fs.Close ();
+			}
 		}
 
 		public static void CreateSettings() {
 			Init();
-			System.IO.File.Create(settingsFile);
+			if (!File.Exists (settingsFile))
+				System.IO.File.Create(settingsFile);
 		}
 
-		/// <summary>
-		/// Write the specified xml and settings.
-		/// </summary>
-		/// <param name="xml">Xml.</param>
-		/// <param name="settings">Settings.</param>
-		private static void Write(XmlWriter xml, SettingsSync settings){
-			xml.WriteStartDocument ();
-			xml.WriteStartElement (null, "settings", null);
+		private static void WriteNew( SettingsSync settings, Stream output) {
+			var xdoc = new XDocument ();
 
-			xml.WriteStartElement (null, "sync-url", null);
-			xml.WriteString (settings.syncURL);
-			xml.WriteEndElement ();
+			xdoc.Add (new XElement("settings"));
 
-			if (settings.webSyncURL.Length > 0) {
+			xdoc.Root.Add (
+				new XElement("sync-url",settings.syncURL),
+				new XElement ("web-sync-url", settings.webSyncURL),
+				new XElement ("token",settings.token),
+				new XElement ("secret", settings.secret)
+			);
 
-				xml.WriteStartElement (null, "web-sync-url", null);
-				xml.WriteString (settings.webSyncURL);
-				xml.WriteEndElement ();
-
-				xml.WriteStartElement (null, "token", null);
-				xml.WriteString (settings.token);
-				xml.WriteEndElement ();
-
-				xml.WriteStartElement (null, "secret", null);
-				xml.WriteString (settings.secret);
-				xml.WriteEndElement ();
-			}
-
-			xml.WriteStartElement (null, "auto-sync", null);
-			string temp = "";
-			temp = (settings.autoSync == true) ? temp = "True" : temp = "False";
-			xml.WriteString (temp);
-			xml.WriteEndElement ();
-
-			xml.WriteEndElement ();
-
-		}
-
-		/// <summary>
-		/// Reads from the Settings.xml file and returns all the settings
-		/// </summary>
-		public static SettingsSync Read(){
-			Init();
-			if (System.IO.File.Exists(settingsFile))
-			{
-				XmlReader reader = XmlTextReader.Create(settingsFile);
-				SettingsSync settings = Read(reader);
-				reader.Close();
-				return settings;
-			}
-			else
-			{
-				SettingsSync settings = new SettingsSync();
-				settings.autoSync = true;
-				settings.syncURL = "";
-				return settings;
+			using (var writer = XmlWriter.Create (output, XmlSettings.DocumentSettings)) {
+				xdoc.WriteTo (writer);
 			}
 		}
 
-		/// <summary>
-		/// Read the specified reader.
-		/// </summary>
-		/// <param name="reader">Reader.</param>
-		private static SettingsSync Read(XmlReader reader){
-			SettingsSync settings = new SettingsSync ();
+		private static SettingsSync ReadNew(Stream stream) {
+			SettingsSync settings = new SettingsSync();
 
-			try{
-				while(reader.Read ()){
-					switch(reader.NodeType){
-						case XmlNodeType.Element:
-							switch(reader.Name){
-								case "settings": 
-									break;
-								case "sync-url": 
-									settings.syncURL = reader.ReadString ();
-									break;
-								case "auto-sync":
-									string temp = reader.ReadString ();
-									settings.autoSync = (temp.Equals ("True")) ? settings.autoSync = true : settings.autoSync = false;
-									break;
-								case "web-sync-url":
-									settings.webSyncURL = reader.ReadString ();
-									break;
-								case "token":
-									settings.token = reader.ReadString ();
-									break;
-								case "secret":
-									settings.secret = reader.ReadString ();
-									break;
-							}
-							break;
-					}
-				}
-			}catch(XmlException e){
-				//Console.Write(e.ToString);
+			try {
+				var xdoc = XDocument.Load (stream, LoadOptions.PreserveWhitespace);
+				var elements = xdoc.Root.Elements ();
+
+				settings.syncURL = (from el in elements where el.Name.LocalName == "sync-url" select el.Value).FirstOrDefault ();
+
+				settings.webSyncURL = (from el in elements where el.Name.LocalName == "web-sync-url" select el.Value).FirstOrDefault ();
+
+				settings.token = (from el in elements where el.Name.LocalName == "token" select el.Value).FirstOrDefault ();
+
+				settings.secret = (from el in elements where el.Name.LocalName == "secret" select el.Value).FirstOrDefault ();
+
+
+			}catch( Exception e) {
 			}
 
 			return settings;
 		}
 
+		public static SettingsSync ReadFile(){
+			Init();
+			if (File.Exists (settingsFile))
+				using (var fs = File.OpenRead (settingsFile)) {
+					SettingsSync settings = ReadNew (fs);
+					fs.Close ();
+					return settings;
+				}
+			else
+				return null;
+		}
 	}
 
 }
