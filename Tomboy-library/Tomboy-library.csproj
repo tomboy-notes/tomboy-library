@@ -3,20 +3,20 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{040AA912-9738-438A-A7FD-5BB02C40C30A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Tomboy</RootNamespace>
     <AssemblyName>Tomboy-library</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <ReleaseVersion>0.3.5</ReleaseVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
     <WarningLevel>4</WarningLevel>
     <DefineConstants>DEBUG</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>

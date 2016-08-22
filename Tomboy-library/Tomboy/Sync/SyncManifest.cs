@@ -136,7 +136,7 @@ namespace Tomboy.Sync
 				using (var writer = new StreamWriter (ms, Encoding.UTF8)) {
 					SyncManifest.Write (manifest, ms);	
 					ms.Position = 0;
-					using (var reader = new StreamReader (ms, Encoding.UTF8)) {
+					using (var reader = new StreamReader (ms, Encoding.UTF8, true, 4096, true)) {
 						return reader.ReadToEnd();
 					}
 				}
