@@ -131,8 +131,8 @@ namespace Tomboy.Sync
 			});
 		}
 
-		[Ignore]
 		[Test()]
+		[Ignore("")]
 		public void SyncServerGetAllNotesWithoutBody ()
 		{
 

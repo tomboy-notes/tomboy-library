@@ -21,10 +21,10 @@ using System;
 using System.Collections.Generic;
 using Tomboy.Sync.Web.DTO;
 using System.Linq;
-using ServiceStack.ServiceClient.Web;
 using Tomboy.OAuth;
 using System.Net;
 using System.Net.Http;
+using ServiceStack;
 
 namespace Tomboy.Sync.Web
 {
@@ -74,8 +74,7 @@ namespace Tomboy.Sync.Web
 		/// </param>
 		public WebSyncServer (string serverUrl, IOAuthToken accessToken)
 		{
-			RootUrl = serverUrl
-			rootApiUrl = RootUrl + "api/1.0/";
+			RootUrl = serverUrl + "api/1.0/";
 			this.accessToken = accessToken;
 
 			this.DeletedServerNotes = new List<string> ();
@@ -155,7 +154,7 @@ namespace Tomboy.Sync.Web
 			var restClient = GetJsonClient ();
 
 			// with the first connection we find out the OAuth urls
-			var api_response = restClient.Get<ApiResponse> (rootApiUrl);
+			var api_response = restClient.Get<ApiResponse> (RootUrl);
 
 			// the server tells us the address of the user webservice
 			this.userServiceUrl = api_response.UserRef.ApiRef;

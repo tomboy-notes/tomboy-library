@@ -54,4 +54,4 @@ clean:
 	rm -rf $(ZIPDIR).zip
 	rm -rf $(BINDIR)/*
 	rm -rf $(RELEASEDIR)/*.dll
-	rm -rf $(RELEASEDIR)/*.mdb
+	rm -rf $(RELEASEDIR)/*.pdb

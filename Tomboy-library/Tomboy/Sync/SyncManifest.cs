@@ -33,7 +33,7 @@ namespace Tomboy.Sync
 {
 	public class SyncManifest
 	{
-		private DateTime lastSyncDate;
+		private DateTime lastSyncDate = DateTime.MinValue;
 		public DateTime LastSyncDate {
 			get {
 				return lastSyncDate;

@@ -37,7 +37,6 @@ using System.Text;
 using Tomboy;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
-using ServiceStack.ServiceClient.Web;
 using Tomboy.Sync.Web.DTO;
 using ServiceStack;
 using System.Net.Http;

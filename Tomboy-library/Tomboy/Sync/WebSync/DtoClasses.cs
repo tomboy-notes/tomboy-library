@@ -22,8 +22,8 @@ using System.Runtime.Serialization;
 using System.Collections.Generic;
 using Tomboy.Tags;
 using System.Linq;
-using ServiceStack.Common;
 using Tomboy.Xml;
+using ServiceStack;
 
 namespace Tomboy.Sync.Web.DTO
 {

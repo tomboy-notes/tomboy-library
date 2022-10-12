@@ -1,92 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{216746A7-D297-4108-933A-1E926EB9B167}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>Tomboylibrarytests</RootNamespace>
-    <AssemblyName>Tomboy-library-tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <WarningLevel>4</WarningLevel>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UnitTesting|AnyCPU' ">
-    <Optimize>false</Optimize>
-    <OutputPath>bin\UnitTesting</OutputPath>
-    <WarningLevel>4</WarningLevel>
-    <DebugSymbols>true</DebugSymbols>
-    <DefineConstants>DEBUG</DefineConstants>
-  </PropertyGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Compile Include="EngineTests.cs" />
-    <Compile Include="TesterNote.cs" />
-    <Compile Include="DiskStorageTests.cs" />
-    <Compile Include="NoteXmlTests.cs" />
-    <Compile Include="TagManagerTests.cs" />
-    <Compile Include="SearchTests.cs" />
-    <Compile Include="Dummies\DummyStorage.cs" />
-    <Compile Include="SyncTests\AbstractSyncManagerTests.cs" />
-    <Compile Include="SyncTests\FilesystemSyncManagerTests.cs" />
-    <Compile Include="SyncTests\AbstractSyncManagerTwoWayConflictTests.cs" />
-    <Compile Include="SyncTests\AbstractSyncManagerTwoWayTests.cs" />
-    <Compile Include="SyncTests\FilesystemSyncServerTests.cs" />
-    <Compile Include="SyncTests\AbstractSyncServerTests.cs" />
-    <Compile Include="NoteTests.cs" />
-    <Compile Include="SyncTests\SyncManifestTests.cs" />
-    <Compile Include="IoCTests.cs" />
-    <Compile Include="SyncTests\OAuthTests.cs" />
-    <Compile Include="SyncTests\AbstractSyncManagerTestsBase.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Core" />
-    <Reference Include="ServiceStack.Common">
-      <HintPath>..\..\nuget-packages\ServiceStack.Common.3.9.71\lib\net35\ServiceStack.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="ServiceStack.Interfaces">
-      <HintPath>..\..\nuget-packages\ServiceStack.Common.3.9.71\lib\net35\ServiceStack.Interfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="ServiceStack.Text">
-      <HintPath>..\..\nuget-packages\ServiceStack.Text.3.9.71\lib\net35\ServiceStack.Text.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web" />
-    <Reference Include="nunit.framework">
-      <HintPath>..\..\nuget-packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Tomboy-library.csproj">
-      <Project>{040AA912-9738-438A-A7FD-5BB02C40C30A}</Project>
-      <Name>Tomboy-library</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="SyncTests\" />
-    <Folder Include="Dummies\" />
-  </ItemGroup>
-  <ProjectExtensions>
-    <MonoDevelop>
-      <Properties>
-        <Policies>
-          <TextStylePolicy FileWidth="120" TabsToSpaces="False" NoTabsAfterNonTabs="True" EolMarker="Unix" inheritsSet="VisualStudio" inheritsScope="text/plain" scope="text/x-csharp" />
-          <CSharpFormattingPolicy inheritsSet="Mono" inheritsScope="text/x-csharp" scope="text/x-csharp" />
-        </Policies>
-      </Properties>
-    </MonoDevelop>
-  </ProjectExtensions>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<IsPackable>false</IsPackable>
+		<RootNamespace>Tomboylibrarytests</RootNamespace>
+		<AssemblyName>Tomboy-library-tests</AssemblyName>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="NUnit" />
+		<PackageReference Include="NUnit3TestAdapter" />
+		<PackageReference Include="NUnit.Analyzers" />
+		<PackageReference Include="coverlet.collector" />
+
+		<PackageReference Include="ServiceStack" />
+		<PackageReference Include="ServiceStack.Client" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Tomboy\Tomboy-library.csproj" />
+	</ItemGroup>
+
 </Project>
