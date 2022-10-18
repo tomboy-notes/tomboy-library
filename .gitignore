@@ -1,18 +1,16 @@
 #Ignore userprefs file (Contains stuff like which files you have open)
-*.userprefs
+*.user
 #Ignore MonoDevelop Parser Information Database
 *.pidb
 #Ignore build output folders
-bin/
 test-results/
 TestResult.xml
 Tomboy-library/Tomboy-library-tests/test_notes/proper_notes/Backup
 
-DevDefined.OAuth/src/DevDefined.OAuth/obj/
+bin/
 obj/
-nuget-packages/*
 release/*.dll
+.vs
 
 # OS annoying files
 .DS_Store
-*.mdb

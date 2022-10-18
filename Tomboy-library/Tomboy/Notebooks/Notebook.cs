@@ -1,5 +1,5 @@
 using System;
-using Mono.Unix;
+//using Mono.Unix;
 using Tomboy;
 
 namespace Tomboy.Notebooks
@@ -52,14 +52,15 @@ namespace Tomboy.Notebooks
 						name = trimmedName;
 						normalizedName = trimmedName.ToLower ();
 
-						// The templateNoteTite should show the name of the
+						// The templateNoteTitle should show the name of the
 						// notebook.  For example, if the name of the notebooks
 						// "Meetings", the templateNoteTitle should be "Meetings
 						// Notebook Template".  Translators should place the
 						// name of the notebook accordingly using "{0}".
 						// TODO: Figure out how to make this note for
 						// translators appear properly.
-						string format = Catalog.GetString ("{0} Notebook Template");
+						// FIXME: add translation back
+						string format = "{0} Notebook Template"; //Catalog.GetString ("{0} Notebook Template");
 						templateNoteTitle = string.Format (format, Name);
 					}
 				}

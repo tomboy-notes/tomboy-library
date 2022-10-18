@@ -24,7 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using ServiceStack.ServiceClient.Web;
+using ServiceStack;
 using Tomboy.Sync.Web.DTO;
 using Tomboy.OAuth;
 
@@ -37,7 +37,7 @@ namespace Tomboy.Sync.Web
 		public static void SetAccessToken (this JsonServiceClient client, IOAuthToken access_token)
 		{
 			// we use a request filter to add the required OAuth header
-			client.LocalHttpWebRequestFilter += webservice_request => {
+			client.RequestFilter += webservice_request => {
 				
 				RequestMethod method = RequestMethod.GET;
 				switch (webservice_request.Method) {

@@ -1,8 +1,7 @@
 using System;
 using Tomboy.Sync.Web;
 using Tomboy.OAuth;
-using ServiceStack.ServiceClient.Web;
-using ServiceStack.ServiceHost;
+using ServiceStack;
 
 namespace Tomboy.Sync.Web.Developer
 {

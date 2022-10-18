@@ -32,8 +32,8 @@ namespace Tomboy.Sync
 		// conflict resolution requires more work (think about GUI interaction)
 		// implement this and re-enable those unit tests
 
-		[Ignore]
 		[Test]
+		[Ignore("")]
 		public void TwoWayConflictTitleAlreadyExists ()
 		{
 			// provoke a conflict by creating two notes with the same title
@@ -53,8 +53,8 @@ namespace Tomboy.Sync
 			// TODO Assert the right exception is thrown / have conflict resolution in place
 		}
 
-		[Ignore]
 		[Test]
+		[Ignore("")]
 		public void TwoWayConflictLocalAndRemoteChanges ()
 		{
 			// initial sync

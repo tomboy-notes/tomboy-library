@@ -201,21 +201,19 @@ namespace Tomboy
 		}
 
 		[Test()]
-		[ExpectedException (typeof (TomboyException))]
 		public void ReadConfigVariable_NoConfigFile_ThrowsException ()
 		{
 			IStorage storage = new DiskStorage (NOTE_FOLDER_TEMP);
 
-			storage.GetConfigVariable ("whatever");
+            Assert.Throws<TomboyException>(() => storage.GetConfigVariable ("whatever"));
 		}
 
 		[Test()]
-		[ExpectedException (typeof (TomboyException))]
 		public void ReadConfigVariable_NoVariableExists_ThrowsException ()
 		{
 			IStorage storage = new DiskStorage (NOTE_FOLDER_TEMP);
 
-			storage.GetConfigVariable ("whatever");
+			Assert.Throws<TomboyException>(() => storage.GetConfigVariable ("whatever"));
 		}
 	}
 }

@@ -24,6 +24,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+
+using ServiceStack.Data;
 using ServiceStack.OrmLite;
 using Tomboy;
 using Tomboy.Db;

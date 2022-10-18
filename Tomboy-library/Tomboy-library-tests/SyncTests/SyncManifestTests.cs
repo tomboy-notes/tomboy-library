@@ -134,10 +134,10 @@ namespace Tomboy.Sync
 		[Test]
 		public void ReadSyncManifestWithoutLastSyncDateSucceeds ()
 		{
-			using (var fs = File.OpenRead ("../../test_manifest/sample_manifest_without_lastsyncdate.xml")) {
-				var manifest = SyncManifest.Read (fs);
-				Assert.AreEqual (DateTime.MinValue, manifest.LastSyncDate);
-			}
+			var path = Path.Combine("..", "..", "test_manifest", "sample_manifest_without_lastsyncdate.xml");
+			using var fs = File.OpenRead(path);
+			var manifest = SyncManifest.Read(fs);
+			Assert.AreEqual(DateTime.MinValue.ToUniversalTime(), manifest.LastSyncDate);
 		}
 		[Test]
 		public void WriteSyncManifestToString ()

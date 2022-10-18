@@ -35,11 +35,10 @@ namespace Tomboy
 		}
 
 		[Test()]
-		[ExpectedException (typeof (System.Xml.XmlException))]
 		public void Read_NonsenseNoteFile_ThrowsException ()
 		{
 			string StartHereNotePath = "../../test_notes/corrupt_notes/nonsense.note";
-			this.ReadNoteFromFile (StartHereNotePath, "tomboy://nonsense");
+			Assert.Throws<System.Xml.XmlException>(() => this.ReadNoteFromFile (StartHereNotePath, "tomboy://nonsense"));
 		}
 
 		[Test()]

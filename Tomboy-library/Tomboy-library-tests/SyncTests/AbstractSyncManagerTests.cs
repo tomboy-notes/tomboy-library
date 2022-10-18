@@ -184,7 +184,7 @@ namespace Tomboy.Sync
 		}
 
 		[Test]
-		[Ignore]
+		[Ignore("")]
 		public void MassiveAmountOfNotes ()
 		{
 			// we have some notes added by default, so substract from total amount

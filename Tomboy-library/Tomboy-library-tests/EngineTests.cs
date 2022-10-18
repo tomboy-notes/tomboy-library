@@ -148,7 +148,7 @@ namespace Tomboy
 			note.Text = "Modified Text Body";
 			// make sure the ChangeDate is different since we modified the note.
 			engine.SaveNote (note);
-			Assert.AreNotSame (time, note.ChangeDate);
+			Assert.That(note.ChangeDate, Is.Not.EqualTo(time));
 		}
 	}
 }

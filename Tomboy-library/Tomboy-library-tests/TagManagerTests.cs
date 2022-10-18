@@ -82,13 +82,14 @@ namespace Tomboy
 			Assert.IsTrue (tagMgr.GetTags ().ContainsKey ("school"));
 		}
 
-		[Test ()][ExpectedException ("System.ArgumentException")]
+		[Test ()]
 		public void Remove_Tag ()
 		{
 			tagMgr.AddTagMap (note);
 			tagMgr.RemoveTag (tag_school);
 			Assert.IsFalse (tagMgr.GetTags ().ContainsKey ("school"));
-			Assert.IsFalse (tagMgr.GetNotesByTag ("School").Contains (note)); // The tag should no longer exist
+            // The tag should no longer exist
+            Assert.Throws<ArgumentException>(() => tagMgr.GetNotesByTag ("School").Contains (note));
 		}
 
 		[Test ()]
